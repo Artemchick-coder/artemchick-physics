@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Физика и Шахматы</title>
+    <title>Физика, Шахматы и 2048</title>
     
     <!-- MathJax для формул -->
     <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
@@ -43,6 +43,7 @@
             min-height: 100vh;
             background-attachment: fixed;
             box-sizing: border-box;
+            touch-action: pan-y; /* Для свайпов в 2048 */
         }
 
         body::before {
@@ -87,17 +88,17 @@
         /* --- ГЛАВНОЕ МЕНЮ --- */
         .menu-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 15px;
             margin-top: 30px;
         }
-        @media (max-width: 600px) { .menu-grid { grid-template-columns: 1fr; } }
+        @media (max-width: 700px) { .menu-grid { grid-template-columns: 1fr; } }
 
         .menu-card {
             background: rgba(255, 255, 255, 0.05);
             border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 15px;
-            padding: 40px 20px;
+            padding: 30px 10px;
             cursor: pointer;
             transition: all 0.3s ease;
         }
@@ -107,8 +108,8 @@
             box-shadow: 0 10px 20px rgba(0,0,0,0.3);
             border-color: var(--accent);
         }
-        .menu-icon { font-size: 60px; margin-bottom: 15px; }
-        .menu-title { font-size: 22px; font-weight: bold; }
+        .menu-icon { font-size: 50px; margin-bottom: 15px; }
+        .menu-title { font-size: 18px; font-weight: bold; }
 
         /* --- ОБЩИЕ КНОПКИ --- */
         .main-btn {
@@ -149,63 +150,41 @@
         /* --- ШАХМАТЫ --- */
         .chess-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
         .chess-status { font-size: 18px; font-weight: bold; color: var(--accent); margin-bottom: 15px; min-height: 25px; }
-        
-        /* Исправленная сетка */
-        .board-container {
-            display: grid;
-            grid-template-columns: repeat(8, 1fr);
-            grid-template-rows: repeat(8, 1fr);
-            width: 100%;
-            max-width: 480px;
-            aspect-ratio: 1 / 1;
-            margin: 0 auto;
-            border: 4px solid rgba(255,255,255,0.1);
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-        }
-        .square {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            position: relative;
-            cursor: pointer;
-            user-select: none;
-        }
+        .board-container { display: grid; grid-template-columns: repeat(8, 1fr); grid-template-rows: repeat(8, 1fr); width: 100%; max-width: 480px; aspect-ratio: 1 / 1; margin: 0 auto; border: 4px solid rgba(255,255,255,0.1); border-radius: 8px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .square { display: flex; justify-content: center; align-items: center; position: relative; cursor: pointer; user-select: none; }
         .square.light { background-color: var(--board-light); }
         .square.dark { background-color: var(--board-dark); }
-        
-        .square.selected::after {
-            content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
-            background-color: var(--board-select); opacity: 0.6; z-index: 1;
-        }
-        .square.valid-move::before {
-            content: ''; position: absolute; width: 25%; height: 25%; border-radius: 50%;
-            background-color: rgba(16, 185, 129, 0.8); z-index: 2;
-        }
-        .square.valid-capture::before {
-            content: ''; position: absolute; width: 80%; height: 80%; border-radius: 50%;
-            border: 4px solid rgba(239, 68, 68, 0.8); background-color: transparent; z-index: 2;
-        }
+        .square.selected::after { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background-color: var(--board-select); opacity: 0.6; z-index: 1; }
+        .square.valid-move::before { content: ''; position: absolute; width: 25%; height: 25%; border-radius: 50%; background-color: rgba(16, 185, 129, 0.8); z-index: 2; }
+        .square.valid-capture::before { content: ''; position: absolute; width: 80%; height: 80%; border-radius: 50%; border: 4px solid rgba(239, 68, 68, 0.8); background-color: transparent; z-index: 2; }
+        .piece { font-size: clamp(30px, 8vw, 55px); line-height: 1; z-index: 10; position: relative; pointer-events: none; font-family: "Arial", sans-serif; }
+        .piece.white { color: #ffffff; text-shadow: 1px 1px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 0 0 5px rgba(0,0,0,0.5); }
+        .piece.black { color: #1a1a1a; text-shadow: 1px 1px 0 #fff, -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff, 0 0 5px rgba(255,255,255,0.5); }
 
-        /* Исправленные фигуры (плотные и контрастные) */
-        .piece {
-            font-size: clamp(30px, 8vw, 55px);
-            line-height: 1;
-            z-index: 10;
-            position: relative;
-            pointer-events: none;
-            /* Убираем стандартную прозрачность */
-            font-family: "Arial", sans-serif; 
-        }
-        .piece.white {
-            color: #ffffff;
-            text-shadow: 1px 1px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 0 0 5px rgba(0,0,0,0.5);
-        }
-        .piece.black {
-            color: #1a1a1a;
-            text-shadow: 1px 1px 0 #fff, -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff, 0 0 5px rgba(255,255,255,0.5);
-        }
+        /* --- 2048 --- */
+        .game-2048-container { position: relative; max-width: 400px; margin: 0 auto; }
+        .score-box { background: rgba(0,0,0,0.3); padding: 10px 20px; border-radius: 8px; display: inline-block; margin-bottom: 15px; font-size: 18px; font-weight: bold; }
+        .grid-2048 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; background: rgba(0,0,0,0.4); padding: 10px; border-radius: 12px; aspect-ratio: 1/1; }
+        .tile-2048 { display: flex; justify-content: center; align-items: center; font-size: 28px; font-weight: 900; border-radius: 8px; background: rgba(255,255,255,0.05); transition: all 0.1s ease; color: transparent; }
+        
+        /* Цвета плиток */
+        .tile-2 { background: #eee4da; color: #776e65; }
+        .tile-4 { background: #ede0c8; color: #776e65; }
+        .tile-8 { background: #f2b179; color: #f9f6f2; }
+        .tile-16 { background: #f59563; color: #f9f6f2; }
+        .tile-32 { background: #f67c5f; color: #f9f6f2; }
+        .tile-64 { background: #f65e3b; color: #f9f6f2; }
+        .tile-128 { background: #edcf72; color: #f9f6f2; font-size: 24px; }
+        .tile-256 { background: #edcc61; color: #f9f6f2; font-size: 24px; }
+        .tile-512 { background: #edc850; color: #f9f6f2; font-size: 24px; }
+        .tile-1024 { background: #edc53f; color: #f9f6f2; font-size: 20px; }
+        .tile-2048 { background: #edc22e; color: #f9f6f2; font-size: 20px; box-shadow: 0 0 15px #edc22e; }
+        .tile-super { background: #3c3a32; color: #f9f6f2; font-size: 18px; }
+
+        /* Оверлеи для 2048 */
+        .overlay { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(5px); border-radius: 12px; display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 10; }
+        .overlay h2 { font-size: 32px; margin-bottom: 20px; color: var(--correct); text-align: center; padding: 0 10px; }
+        .overlay.lose h2 { color: var(--wrong); }
     </style>
 </head>
 <body>
@@ -223,13 +202,16 @@
                 <div class="menu-icon">♟️</div>
                 <div class="menu-title">Играть в шахматы</div>
             </div>
+            <div class="menu-card" onclick="switchApp('2048')">
+                <div class="menu-icon">🔢</div>
+                <div class="menu-title">Играть в 2048</div>
+            </div>
         </div>
     </div>
 
     <!-- ПРИЛОЖЕНИЕ: ФИЗИКА -->
     <div id="app-physics" class="hidden">
         <button class="main-btn secondary-btn" style="position: absolute; left: 20px; top: 20px; padding: 8px 15px;" onclick="switchApp('menu')">← Меню</button>
-        
         <div id="test-screen">
             <h1 style="margin-top: 40px;">Тренажёр формул</h1>
             <div class="top-bar">
@@ -245,7 +227,6 @@
             </div>
             <div class="feedback" id="feedback"></div>
         </div>
-
         <div id="result-screen" class="hidden">
             <h1>Тест завершён!</h1>
             <div class="result-score" id="result-score">Баллы: 0 из 64</div>
@@ -254,7 +235,6 @@
             <button class="main-btn" onclick="startNewTest()">Начать заново</button>
             <button class="main-btn secondary-btn" onclick="showStudyScreen()">Изучать формулы</button>
         </div>
-
         <div id="study-screen" class="hidden">
             <div class="study-header">
                 <h2>Все формулы</h2>
@@ -280,6 +260,30 @@
             Вы играете: <span id="player-color" style="font-weight:bold; color: var(--accent);"></span>
         </div>
     </div>
+
+    <!-- ПРИЛОЖЕНИЕ: 2048 -->
+    <div id="app-2048" class="hidden">
+        <div class="chess-header">
+            <button class="main-btn secondary-btn" onclick="switchApp('menu')">← Меню</button>
+            <h1 style="margin: 0;">2048</h1>
+            <button class="main-btn" onclick="init2048()">Заново</button>
+        </div>
+        
+        <div class="game-2048-container">
+            <div class="score-box">Счёт: <span id="score-2048">0</span></div>
+            <div class="grid-2048" id="grid-2048">
+                <!-- Сетка генерируется в JS -->
+            </div>
+            
+            <div id="overlay-2048" class="overlay hidden">
+                <h2 id="overlay-2048-text">Вы победили!</h2>
+                <button class="main-btn" onclick="init2048()">Играть ещё</button>
+            </div>
+        </div>
+        <div style="margin-top: 20px; color: var(--text-muted);">
+            Управление: Стрелки или свайпы
+        </div>
+    </div>
 </div>
 
 <script>
@@ -295,22 +299,28 @@
         document.getElementById('main-menu').classList.add('hidden');
         document.getElementById('app-physics').classList.add('hidden');
         document.getElementById('app-chess').classList.add('hidden');
+        document.getElementById('app-2048').classList.add('hidden');
 
         if (appName === 'menu') {
             document.getElementById('main-menu').classList.remove('hidden');
-            localStorage.removeItem('physicsScreenState');
-            localStorage.removeItem('chessState');
+            // Очищаем состояния при выходе в меню (опционально, можно убрать, если хотите сохранять между сессиями)
+            // localStorage.removeItem('physicsState');
+            // localStorage.removeItem('chessState');
+            // localStorage.removeItem('state2048');
         } else if (appName === 'physics') {
             document.getElementById('app-physics').classList.remove('hidden');
             loadPhysicsState();
         } else if (appName === 'chess') {
             document.getElementById('app-chess').classList.remove('hidden');
             loadChessState();
+        } else if (appName === '2048') {
+            document.getElementById('app-2048').classList.remove('hidden');
+            load2048State();
         }
     }
 
     // ==========================================
-    // ЛОГИКА ФИЗИКИ
+    // ЛОГИКА ФИЗИКИ (ВСТАВЛЕНЫ ВСЕ ФОРМУЛЫ)
     // ==========================================
     const mainFormulas = [
         { category: "Механика", name: "Проекция скорости при равномерном прямолинейном движении", formula: "v_x = \\frac{s_x}{t}" },
@@ -344,13 +354,11 @@
         { category: "Механика", name: "Давление твёрдого тела", formula: "p = \\frac{F}{S}" },
         { category: "Механика", name: "Давление внутри жидкости", formula: "p = p_{атм} + \\rho gh" },
         { category: "Механика", name: "Модуль силы Архимеда", formula: "F_A = \\rho_ж g V_{пор}" },
-        
         { category: "Колебания и волны", name: "Связь частоты и периода колебаний", formula: "\\nu = \\frac{1}{T}" },
         { category: "Колебания и волны", name: "Период колебаний математического маятника", formula: "T = 2\\pi \\sqrt{\\frac{l}{g}}" },
         { category: "Колебания и волны", name: "Период колебаний пружинного маятника", formula: "T = 2\\pi \\sqrt{\\frac{m}{k}}" },
         { category: "Колебания и волны", name: "Длина волны", formula: "\\lambda = vT" },
         { category: "Колебания и волны", name: "Скорость распространения волны", formula: "v = \\lambda \\nu" },
-        
         { category: "Тепловые явления", name: "Количество теплоты при нагревании/охлаждении", formula: "Q = cm(t_2 - t_1)" },
         { category: "Тепловые явления", name: "Закон сохранения энергии (Тепловой баланс)", formula: "Q_{пол} = Q_{отд}" },
         { category: "Тепловые явления", name: "Количество теплоты при кипении/конденсации", formula: "Q = Lm" },
@@ -359,7 +367,6 @@
         { category: "Тепловые явления", name: "Первый закон термодинамики", formula: "Q = \\Delta U + A" },
         { category: "Тепловые явления", name: "Работа газа", formula: "A = p\\Delta V" },
         { category: "Тепловые явления", name: "КПД теплового двигателя", formula: "\\eta = \\frac{A_{пол}}{Q_{затр}} \\cdot 100\\%" },
-        
         { category: "Электромагнитные явления", name: "Закон Кулона", formula: "F = k\\frac{|q_1 q_2|}{r^2}" },
         { category: "Электромагнитные явления", name: "Сила тока", formula: "I = \\frac{q}{t}" },
         { category: "Электромагнитные явления", name: "Напряжение", formula: "U = \\frac{A}{q}" },
@@ -372,13 +379,11 @@
         { category: "Электромагнитные явления", name: "Закон Джоуля — Ленца", formula: "Q = I^2Rt" },
         { category: "Электромагнитные явления", name: "Сила Ампера", formula: "F_A = BIl \\sin \\alpha" },
         { category: "Электромагнитные явления", name: "Сила Лоренца", formula: "F_Л = |q|vB \\sin \\alpha" },
-        
         { category: "Оптика", name: "Оптическая сила линзы", formula: "D = \\frac{1}{F}" },
         { category: "Оптика", name: "Формула тонкой линзы", formula: "\\frac{1}{F} = \\frac{1}{d} + \\frac{1}{f}" },
         { category: "Оптика", name: "Увеличение линзы", formula: "\\Gamma = \\frac{H}{h} = \\frac{f}{d}" },
         { category: "Оптика", name: "Закон отражения света", formula: "\\alpha = \\gamma" },
         { category: "Оптика", name: "Закон преломления света", formula: "\\frac{\\sin \\alpha}{\\sin \\beta} = n" },
-        
         { category: "Квантовые явления", name: "Закон альфа-распада", formula: "{}_{Z}^{A}X \\rightarrow {}_{Z-2}^{A-4}Y + {}_{2}^{4}He" },
         { category: "Квантовые явления", name: "Закон бета-распада", formula: "{}_{Z}^{A}X \\rightarrow {}_{Z+1}^{A}Y + {}_{-1}^{0}e" },
         { category: "Квантовые явления", name: "Закон гамма-распада", formula: "{}_{Z}^{A}X^* \\rightarrow {}_{Z}^{A}X + \\gamma" }
@@ -399,7 +404,7 @@
     let currentIndex = 0;
     let solvedCount = 0;
     let totalScore = 0;
-    const maxScore = mainFormulas.length; // 64
+    const maxScore = mainFormulas.length;
     
     let currentItem = null;
     let currentAttempt = 1;
@@ -433,7 +438,7 @@
 
             if (state.screen === 'result') {
                 document.getElementById('result-screen').classList.remove('hidden');
-                showResults(true); // true = не сбрасывать экраны
+                showResults(true);
             } else if (state.screen === 'study') {
                 document.getElementById('study-screen').classList.remove('hidden');
                 showStudyScreen(true);
@@ -721,7 +726,6 @@
     let validMoves = [];
     let isAiThinking = false;
 
-    // Используем только плотные (solid) фигуры для обоих цветов
     const pieces = {
         'wK': '♚', 'wQ': '♛', 'wR': '♜', 'wB': '♝', 'wN': '♞', 'wP': '♟',
         'bK': '♚', 'bQ': '♛', 'bR': '♜', 'bB': '♝', 'bN': '♞', 'bP': '♟'
@@ -795,7 +799,6 @@
 
                 if (piece) {
                     let pieceSpan = document.createElement('span');
-                    // Добавляем класс цвета для правильной стилизации (белый/черный)
                     pieceSpan.className = `piece ${piece.color === 'w' ? 'white' : 'black'}`;
                     pieceSpan.innerHTML = pieces[piece.color + piece.type.toUpperCase()];
                     squareDiv.appendChild(pieceSpan);
@@ -883,7 +886,6 @@
         if (depth === 0 || game.game_over()) return evaluateBoard(game);
 
         let possibleMoves = game.moves();
-        // Простая сортировка (взятия в приоритете для лучшего отсечения)
         possibleMoves.sort((a, b) => {
             let moveA = game.move(a); let scoreA = moveA && moveA.captured ? 1 : 0; game.undo();
             let moveB = game.move(b); let scoreB = moveB && moveB.captured ? 1 : 0; game.undo();
@@ -921,7 +923,7 @@
         let isMaximizing = game.turn() === 'w';
         let bestValue = isMaximizing ? -Infinity : Infinity;
 
-        possibleMoves.sort(() => Math.random() - 0.5); // Рандомизация для разнообразия
+        possibleMoves.sort(() => Math.random() - 0.5);
 
         for (let move of possibleMoves) {
             game.move(move);
@@ -938,12 +940,215 @@
     }
 
     // ==========================================
+    // ЛОГИКА 2048
+    // ==========================================
+    let board2048 = [];
+    let score2048 = 0;
+    let isGameOver2048 = false;
+    let isWon2048 = false;
+
+    function init2048() {
+        board2048 = Array(16).fill(0);
+        score2048 = 0;
+        isGameOver2048 = false;
+        isWon2048 = false;
+        document.getElementById('overlay-2048').classList.add('hidden');
+        document.getElementById('overlay-2048').classList.remove('lose');
+        
+        addRandomTile2048();
+        addRandomTile2048();
+        update2048UI();
+        save2048State();
+    }
+
+    function addRandomTile2048() {
+        const emptyCells = board2048.map((val, index) => val === 0 ? index : null).filter(val => val !== null);
+        if (emptyCells.length > 0) {
+            const randomCell = emptyCells[Math.floor(Math.random() * emptyCells.length)];
+            board2048[randomCell] = Math.random() < 0.9 ? 2 : 4;
+        }
+    }
+
+    function update2048UI() {
+        const gridEl = document.getElementById('grid-2048');
+        gridEl.innerHTML = '';
+        document.getElementById('score-2048').textContent = score2048;
+
+        board2048.forEach(val => {
+            const tile = document.createElement('div');
+            tile.className = 'tile-2048';
+            if (val > 0) {
+                tile.classList.add(`tile-${val > 2048 ? 'super' : val}`);
+                tile.textContent = val;
+            }
+            gridEl.appendChild(tile);
+        });
+    }
+
+    function move2048(direction) {
+        if (isGameOver2048) return;
+        
+        let moved = false;
+        let newBoard = [...board2048];
+
+        // 0: Влево, 1: Вправо, 2: Вверх, 3: Вниз
+        for (let i = 0; i < 4; i++) {
+            let row = [];
+            for (let j = 0; j < 4; j++) {
+                let index = 0;
+                if (direction === 0) index = i * 4 + j;
+                else if (direction === 1) index = i * 4 + (3 - j);
+                else if (direction === 2) index = j * 4 + i;
+                else if (direction === 3) index = (3 - j) * 4 + i;
+                
+                if (board2048[index] !== 0) row.push(board2048[index]);
+            }
+
+            // Слияние
+            for (let j = 0; j < row.length - 1; j++) {
+                if (row[j] === row[j + 1]) {
+                    row[j] *= 2;
+                    score2048 += row[j];
+                    if (row[j] === 2048 && !isWon2048) {
+                        isWon2048 = true;
+                        showOverlay2048("ПОБЕДА! Вы собрали 2048! 🎉", false);
+                    }
+                    row.splice(j + 1, 1);
+                }
+            }
+
+            // Заполнение нулями
+            while (row.length < 4) row.push(0);
+
+            // Запись обратно
+            for (let j = 0; j < 4; j++) {
+                let index = 0;
+                if (direction === 0) index = i * 4 + j;
+                else if (direction === 1) index = i * 4 + (3 - j);
+                else if (direction === 2) index = j * 4 + i;
+                else if (direction === 3) index = (3 - j) * 4 + i;
+                
+                if (board2048[index] !== row[j]) moved = true;
+                newBoard[index] = row[j];
+            }
+        }
+
+        if (moved) {
+            board2048 = newBoard;
+            addRandomTile2048();
+            update2048UI();
+            checkGameOver2048();
+            save2048State();
+        }
+    }
+
+    function checkGameOver2048() {
+        if (board2048.includes(0)) return; // Есть пустые места
+        
+        // Проверка на возможность слияния
+        for (let i = 0; i < 4; i++) {
+            for (let j = 0; j < 4; j++) {
+                let index = i * 4 + j;
+                if (j < 3 && board2048[index] === board2048[index + 1]) return;
+                if (i < 3 && board2048[index] === board2048[index + 4]) return;
+            }
+        }
+
+        isGameOver2048 = true;
+        showOverlay2048("хахаха неудачник", true);
+    }
+
+    function showOverlay2048(text, isLose) {
+        const overlay = document.getElementById('overlay-2048');
+        document.getElementById('overlay-2048-text').textContent = text;
+        overlay.classList.remove('hidden');
+        if (isLose) overlay.classList.add('lose');
+    }
+
+    // Сохранение и загрузка 2048
+    function save2048State() {
+        if (currentApp !== '2048') return;
+        localStorage.setItem('state2048', JSON.stringify({
+            board: board2048,
+            score: score2048,
+            isGameOver: isGameOver2048,
+            isWon: isWon2048
+        }));
+    }
+
+    function load2048State() {
+        const saved = localStorage.getItem('state2048');
+        if (saved) {
+            const state = JSON.parse(saved);
+            board2048 = state.board;
+            score2048 = state.score;
+            isGameOver2048 = state.isGameOver;
+            isWon2048 = state.isWon;
+            
+            update2048UI();
+            
+            if (isGameOver2048) showOverlay2048("хахаха неудачник", true);
+            else if (isWon2048) showOverlay2048("ПОБЕДА! Вы собрали 2048! 🎉", false);
+            else document.getElementById('overlay-2048').classList.add('hidden');
+            
+        } else {
+            init2048();
+        }
+    }
+
+    // Управление клавиатурой
+    document.addEventListener('keydown', (e) => {
+        if (currentApp !== '2048') return;
+        if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
+            e.preventDefault();
+            if (e.key === 'ArrowLeft') move2048(0);
+            if (e.key === 'ArrowRight') move2048(1);
+            if (e.key === 'ArrowUp') move2048(2);
+            if (e.key === 'ArrowDown') move2048(3);
+        }
+    });
+
+    // Управление свайпами
+    let touchStartX = 0;
+    let touchStartY = 0;
+    const gameBoard = document.getElementById('app-2048');
+
+    gameBoard.addEventListener('touchstart', e => {
+        if (currentApp !== '2048') return;
+        touchStartX = e.changedTouches[0].screenX;
+        touchStartY = e.changedTouches[0].screenY;
+    }, { passive: false });
+
+    gameBoard.addEventListener('touchend', e => {
+        if (currentApp !== '2048') return;
+        let touchEndX = e.changedTouches[0].screenX;
+        let touchEndY = e.changedTouches[0].screenY;
+        
+        let dx = touchEndX - touchStartX;
+        let dy = touchEndY - touchStartY;
+
+        if (Math.abs(dx) > Math.abs(dy)) {
+            if (Math.abs(dx) > 30) {
+                if (dx > 0) move2048(1); // Вправо
+                else move2048(0); // Влево
+            }
+        } else {
+            if (Math.abs(dy) > 30) {
+                if (dy > 0) move2048(3); // Вниз
+                else move2048(2); // Вверх
+            }
+        }
+    }, { passive: false });
+
+
+    // ==========================================
     // ИНИЦИАЛИЗАЦИЯ
     // ==========================================
     window.onload = () => {
         document.getElementById('main-menu').classList.add('hidden');
         document.getElementById('app-physics').classList.add('hidden');
         document.getElementById('app-chess').classList.add('hidden');
+        document.getElementById('app-2048').classList.add('hidden');
 
         const savedApp = localStorage.getItem('appMode') || 'menu';
         switchApp(savedApp);
