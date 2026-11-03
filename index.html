@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Физика, Шахматы, 2048 и Крестики-нолики</title>
+    <title>WEIXTOR GAMES</title>
     
     <!-- MathJax для формул -->
     <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
@@ -77,6 +77,33 @@
             z-index: 10;
         }
 
+        /* --- ГЛАВНЫЙ ЗАГОЛОВОК С АНИМАЦИЕЙ --- */
+        .weixtor-title {
+            font-size: 42px;
+            font-weight: 900;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            background: linear-gradient(90deg, #a78bfa, #34d399, #38bdf8, #a78bfa);
+            background-size: 300% 100%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: gradientShift 4s linear infinite;
+            margin-bottom: 10px;
+            margin-top: 0;
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 300% 50%; }
+        }
+
+        .weixtor-subtitle {
+            font-size: 18px;
+            color: var(--text-muted);
+            margin-bottom: 30px;
+            letter-spacing: 1px;
+        }
+
         h1 {
             font-size: 28px;
             margin-bottom: 20px;
@@ -148,7 +175,7 @@
         .study-formula { font-size: 18px; color: #f8fafc; overflow-x: auto; }
         mjx-container { font-size: 1.1em !important; }
 
-        /* --- ШАХМАТЫ (С АНИМАЦИЕЙ) --- */
+        /* --- ШАХМАТЫ --- */
         .chess-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
         .chess-status { font-size: 20px; font-weight: bold; color: var(--accent); margin-bottom: 15px; min-height: 28px; }
         
@@ -205,19 +232,13 @@
             position: relative; 
             pointer-events: none; 
             font-family: "Arial Unicode MS", "Segoe UI Symbol", sans-serif;
-            /* Анимация появления фигуры */
             animation: pieceAppear 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
         @keyframes pieceAppear {
             0% { transform: scale(0.5); opacity: 0; }
             100% { transform: scale(1); opacity: 1; }
         }
-        /* Легкий эффект при наведении на фигуру */
-        .square:hover .piece {
-            transform: scale(1.05);
-            transition: transform 0.2s;
-        }
-
+        .square:hover .piece { transform: scale(1.05); transition: transform 0.2s; }
         .piece.white { color: #ffffff; text-shadow: 0 2px 3px rgba(0,0,0,0.4), 0 0 1px #000; }
         .piece.black { color: #1a1a1a; text-shadow: 0 2px 3px rgba(255,255,255,0.2), 0 0 1px #fff; }
 
@@ -278,19 +299,18 @@
         .ttt-cell:hover { background: rgba(255,255,255,0.1); }
         .ttt-cell.disabled { cursor: not-allowed; }
         
-        /* Анимация отрисовки SVG */
         .ttt-svg { width: 80%; height: 80%; }
         .ttt-svg path, .ttt-svg circle {
             fill: none;
             stroke-width: 10;
             stroke-linecap: round;
             stroke-linejoin: round;
-            stroke-dasharray: 200; /* Достаточно для любой фигуры */
+            stroke-dasharray: 200;
             stroke-dashoffset: 200;
             animation: drawLine 0.3s ease-out forwards;
         }
-        .ttt-svg.x path { stroke: #8b5cf6; } /* Фиолетовый X */
-        .ttt-svg.o circle { stroke: #10b981; } /* Зеленый O */
+        .ttt-svg.x path { stroke: #8b5cf6; }
+        .ttt-svg.o circle { stroke: #10b981; }
 
         @keyframes drawLine {
             to { stroke-dashoffset: 0; }
@@ -304,7 +324,8 @@
 <div class="container">
     <!-- ГЛАВНОЕ МЕНЮ -->
     <div id="main-menu">
-        <h1>Выберите режим</h1>
+        <h1 class="weixtor-title">WEIXTOR GAMES</h1>
+        <p class="weixtor-subtitle">Начинайте Игру. Удачи</p>
         <div class="menu-grid">
             <div class="menu-card" onclick="switchApp('physics')">
                 <div class="menu-icon">⚛️</div>
@@ -401,9 +422,10 @@
     <!-- ПРИЛОЖЕНИЕ: КРЕСТИКИ-НОЛИКИ -->
     <div id="app-ttt" class="hidden">
         <div class="chess-header">
-            <button class="main-btn secondary-btn" onclick="showTttMenu()">← Меню</button>
+            <!-- ИСПРАВЛЕНО: теперь ведет на главное меню -->
+            <button class="main-btn secondary-btn" onclick="switchApp('menu')">← Главное меню</button>
             <h1 style="margin: 0;">Крестики-нолики</h1>
-            <div style="width: 100px;"></div> <!-- Заглушка для выравнивания -->
+            <div style="width: 120px;"></div> <!-- Заглушка для выравнивания -->
         </div>
 
         <!-- Экран выбора сложности -->
@@ -416,7 +438,7 @@
                     Средний <span>Для обычных челов (как повезет)</span>
                 </button>
                 <button class="ttt-menu-btn" onclick="startTTT('hard')">
-                    Сложный <span>Невозможно, для гениев (шанс 1 к 20)</span>
+                    Невозможно <span>(только гений справится)</span>
                 </button>
                 <button class="ttt-menu-btn" onclick="startTTT('friend')">
                     Играть с другом <span>На одном ПК по очереди</span>
@@ -428,7 +450,10 @@
         <div id="ttt-game" class="hidden">
             <div class="ttt-status" id="ttt-status">Ваш ход (X)</div>
             <div class="ttt-board" id="ttt-board"></div>
-            <button class="main-btn secondary-btn" style="margin-top: 20px;" onclick="startTTT(currentTttMode)">Начать заново</button>
+            <div style="margin-top: 20px; display: flex; justify-content: center; gap: 10px;">
+                <button class="main-btn secondary-btn" onclick="startTTT(currentTttMode)">Начать заново</button>
+                <button class="main-btn secondary-btn" onclick="showTttMenu()">← Выбор сложности</button>
+            </div>
         </div>
     </div>
 </div>
@@ -469,7 +494,6 @@
     // ==========================================
     // ЛОГИКА ФИЗИКИ
     // ==========================================
-    // (Полный массив формул остается без изменений)
     const mainFormulas = [
         { category: "Механика", name: "Проекция скорости при равномерном прямолинейном движении", formula: "v_x = \\frac{s_x}{t}" },
         { category: "Механика", name: "Средняя путевая скорость", formula: "v_{cp} = \\frac{S_{общ}}{t_{общ}}" },
@@ -797,7 +821,7 @@
     }
 
     // ==========================================
-    // ЛОГИКА ШАХМАТ (С АНИМАЦИЕЙ)
+    // ЛОГИКА ШАХМАТ
     // ==========================================
     let game = new Chess();
     let playerColor = 'w';
@@ -1192,9 +1216,6 @@
         
         updateTttStatus();
         renderTttBoard();
-
-        // Если режим не с другом и бот играет первым (например, мы решили, что бот всегда X, а игрок O)
-        // Для простоты сделаем так: игрок всегда X и ходит первым. Это честнее для сложного режима.
     }
 
     function renderTttBoard() {
@@ -1246,7 +1267,7 @@
             } else if (winner === 'Draw') {
                 updateTttStatus("Ничья! 🤝");
             }
-            renderTttBoard(); // Отключить клики
+            renderTttBoard();
             return;
         }
 
@@ -1288,24 +1309,19 @@
         let moveIndex = -1;
 
         if (currentTttMode === 'easy') {
-            // Режим "для нубов" - бот выбирает случайную клетку, но с 80% вероятностью избегает выигрышных для себя ходов, чтобы проиграть
             const available = tttBoard.map((v, i) => v === null ? i : null).filter(v => v !== null);
             moveIndex = available[Math.floor(Math.random() * available.length)];
         } else if (currentTttMode === 'medium') {
-            // Пытается выиграть, пытается заблокировать, иначе рандом
             moveIndex = findWinningMove('O') ?? findWinningMove('X') ?? getRandomTttMove();
         } else if (currentTttMode === 'hard') {
-            // Проверяем счетчик игр (сохраняем в localStorage)
             let gamesPlayed = parseInt(localStorage.getItem('tttHardGames') || '0');
             gamesPlayed++;
             localStorage.setItem('tttHardGames', gamesPlayed);
 
             if (gamesPlayed % 21 === 0) {
-                // 21-я игра - бот поддается (легкий режим)
                 const available = tttBoard.map((v, i) => v === null ? i : null).filter(v => v !== null);
                 moveIndex = available[Math.floor(Math.random() * available.length)];
             } else {
-                // Непобедимый минимакс
                 moveIndex = getBestTttMoveMinimax();
             }
         }
@@ -1333,14 +1349,10 @@
         return available[Math.floor(Math.random() * available.length)];
     }
 
-    // Минимакс для TTT
     function getBestTttMoveMinimax() {
         let bestScore = -Infinity;
         let bestMove = -1;
-        
-        // Если доска пуста, занять центр или угол (оптимизация)
         if (tttBoard.every(cell => cell === null)) return 4;
-        
         for (let i = 0; i < 9; i++) {
             if (tttBoard[i] === null) {
                 tttBoard[i] = 'O';
