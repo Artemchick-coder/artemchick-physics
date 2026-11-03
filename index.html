@@ -193,8 +193,15 @@
             align-items: center;
         }
         .level-btn:hover { background: var(--accent); transform: scale(1.05); }
-        .level-btn.completed { border-color: var(--correct); box-shadow: 0 0 10px rgba(16, 185, 129, 0.3); }
+        .level-btn.completed { border-color: var(--correct); box-shadow: 0 0 10px rgba(16, 185, 129, 0.3); color: var(--correct); }
+        .level-btn.current { border-color: var(--warning); box-shadow: 0 0 10px rgba(245, 158, 11, 0.5); animation: pulse-border 2s infinite; }
         
+        @keyframes pulse-border {
+            0% { box-shadow: 0 0 5px rgba(245, 158, 11, 0.5); }
+            50% { box-shadow: 0 0 15px rgba(245, 158, 11, 0.9); }
+            100% { box-shadow: 0 0 5px rgba(245, 158, 11, 0.5); }
+        }
+
         .crown-icon {
             position: absolute;
             top: -15px;
@@ -642,7 +649,7 @@
                 <div class="chess-header">
                     <button class="main-btn secondary-btn" onclick="showHangmanLevels()">← Уровни</button>
                     <h1 class="animated-title" style="margin: 0; font-size: 24px;">Виселица</h1>
-                    <button class="main-btn" onclick="startHangmanLevel(hangmanState.currentLevel)">Заново</button>
+                    <button class="main-btn" onclick="resetCurrentHangmanLevel()">Сбросить</button>
                 </div>
                 
                 <div class="hangman-info">
@@ -841,9 +848,12 @@
     if (!progress.physics) progress.physics = { score: 0, played: false };
     if (progress.physics.score === undefined) progress.physics.score = 0;
 
-    if (!progress.hangman) progress.hangman = { score: 0, rank: "", completed: false, currentLevel: 0 };
+    if (!progress.hangman) progress.hangman = { score: 0, rank: "", completed: false, currentLevel: 0, activeWord: "", guessedLetters: [], mistakes: 0, completedWords: {} };
     if (progress.hangman.score === undefined) progress.hangman.score = 0;
     if (progress.hangman.currentLevel === undefined) progress.hangman.currentLevel = 0;
+    if (!progress.hangman.completedWords) progress.hangman.completedWords = {};
+    if (!progress.hangman.guessedLetters) progress.hangman.guessedLetters = [];
+    if (progress.hangman.mistakes === undefined) progress.hangman.mistakes = 0;
 
     if (!progress.chessStats) progress.chessStats = { w: 0, l: 0, d: 0 };
     if (progress.chessStats.w === undefined) progress.chessStats.w = 0;
@@ -1337,16 +1347,7 @@
         ["УСКОРЕНИЕ", "ТРАЕКТОРИЯ", "ПЕРЕМЕЩЕНИЕ", "ОТНОСИТЕЛЬНОСТЬ", "РАВНОМЕРНОЕ", "УСКОРЕННОЕ", "ЦЕНТРОСТРЕМИТЕЛЬНОЕ", "ИМПУЛЬС", "РЕАКТИВНОЕ", "ВСЕМИРНОЕ", "ТЯГОТЕНИЕ", "НЕВЕСОМОСТЬ", "ОРБИТА", "СПУТНИК", "РАКЕТА", "КОСМОНАВТ", "ЛИНЗА", "ФОКУС", "ДИОПТРИЯ", "МИКРОСКОП", "ТЕЛЕСКОП", "ДИСПЕРСИЯ", "СПЕКТР", "ИНТЕРФЕРЕНЦИЯ", "ДИФРАКЦИЯ", "ПОЛЯРИЗАЦИЯ", "ФОТОН", "КВАНТ", "ПЛАНК", "БОР", "РЕЗЕРФОРД", "РАДИОАКТИВНОСТЬ", "ИЗОТОП", "НЕЙТРОН", "ПРОТОН", "ЭЛЕКТРОН", "ЯДРО", "РАСПАД", "ГАММА", "БЕТА", "АЛЬФА", "АТОМ", "ИОН", "ПЛАЗМА", "ВАККУУМ", "АНТИЧАСТИЦА", "ПОЗИТРОН", "НЕЙТРИНО", "ГРАВИТОН", "КВАЗАР"]
     ];
 
-    let hangmanState = JSON.parse(localStorage.getItem('hangmanState')) || {};
-    if (hangmanState.currentLevel === undefined) hangmanState.currentLevel = 0;
-    if (hangmanState.score === undefined) hangmanState.score = 0;
-    if (hangmanState.hintsLeft === undefined) hangmanState.hintsLeft = 5;
-    if (hangmanState.completed === undefined) hangmanState.completed = false;
-    if (hangmanState.rank === undefined) hangmanState.rank = "";
-
     let currentHangmanWord = "";
-    let guessedLetters = [];
-    let mistakes = 0;
     let isHangmanActive = false;
 
     function showHangmanLevels() {
@@ -1376,14 +1377,22 @@
                 btn.className = 'level-btn';
                 btn.textContent = i + 1;
                 
-                if (i < hangmanState.currentLevel) {
+                if (progress.hangman.completedWords[i]) {
                     btn.classList.add('completed');
                 }
-                if (i === hangmanState.currentLevel) {
-                    btn.style.borderColor = 'var(--warning)';
+                if (i === progress.hangman.currentLevel && progress.hangman.activeWord !== "") {
+                    btn.classList.add('current');
                 }
 
-                btn.onclick = () => startHangmanLevel(i);
+                btn.onclick = () => {
+                    if (progress.hangman.completedWords[i]) {
+                        if (confirm(`Вы уже угадали это слово: "${progress.hangman.completedWords[i]}".\nХотите сыграть его заново?`)) {
+                            startHangmanLevel(i, true);
+                        }
+                    } else {
+                        startHangmanLevel(i, false);
+                    }
+                };
                 gridDiv.appendChild(btn);
             }
             groupDiv.appendChild(gridDiv);
@@ -1391,32 +1400,44 @@
         });
     }
 
-    function startHangmanLevel(levelIndex) {
+    function startHangmanLevel(levelIndex, forceRestart = false) {
         document.getElementById('hangman-level-screen').classList.add('hidden');
         document.getElementById('hangman-game-screen').classList.remove('hidden');
         document.getElementById('hangman-result-screen').classList.add('hidden');
 
-        hangmanState.currentLevel = levelIndex;
-        saveHangmanState();
-        
-        currentHangmanWord = hangmanWords[Math.floor(levelIndex / 50)][levelIndex % 50];
-        guessedLetters = [];
-        mistakes = 0;
-        isHangmanActive = true;
+        // Если это текущий уровень и есть активное слово, и мы не просим рестарт - продолжаем
+        if (levelIndex === progress.hangman.currentLevel && progress.hangman.activeWord !== "" && !forceRestart) {
+            currentHangmanWord = progress.hangman.activeWord;
+            isHangmanActive = true;
+        } else {
+            // Начинаем новый уровень
+            progress.hangman.currentLevel = levelIndex;
+            currentHangmanWord = hangmanWords[Math.floor(levelIndex / 50)][levelIndex % 50];
+            progress.hangman.activeWord = currentHangmanWord;
+            progress.hangman.guessedLetters = [];
+            progress.hangman.mistakes = 0;
+            isHangmanActive = true;
 
-        let maxMistakes = 3;
-        if (levelIndex >= 50 && levelIndex < 100) maxMistakes = 4;
-        else if (levelIndex >= 100) maxMistakes = 5;
-        
-        hangmanState.maxMistakes = maxMistakes;
-
-        if (levelIndex === 0 || levelIndex === 50 || levelIndex === 100) {
-            hangmanState.hintsLeft = 5;
+            if (levelIndex === 0 || levelIndex === 50 || levelIndex === 100) {
+                progress.hangman.hintsLeft = 5;
+            }
         }
 
+        saveHangmanState();
         renderHangmanWord();
         renderKeyboard();
         updateHangmanInfo();
+    }
+
+    function resetCurrentHangmanLevel() {
+        if (confirm("Вы уверены, что хотите сбросить прогресс текущего слова?")) {
+            startHangmanLevel(progress.hangman.currentLevel, true);
+        }
+    }
+
+    function saveHangmanState() {
+        localStorage.setItem('weixtor_progress', JSON.stringify(progress));
+        updateMenuBadges();
     }
 
     function renderHangmanWord() {
@@ -1426,7 +1447,7 @@
             const letter = currentHangmanWord[i];
             const span = document.createElement('span');
             span.style.margin = '0 5px';
-            if (guessedLetters.includes(letter)) {
+            if (progress.hangman.guessedLetters.includes(letter)) {
                 span.textContent = letter;
             } else {
                 span.textContent = '_';
@@ -1454,7 +1475,7 @@
                 btn.textContent = char;
                 btn.id = `key-${char}`;
                 
-                if (guessedLetters.includes(char)) {
+                if (progress.hangman.guessedLetters.includes(char)) {
                     btn.disabled = true;
                     if (currentHangmanWord.includes(char)) {
                         btn.classList.add('correct');
@@ -1475,16 +1496,20 @@
 
     function updateHangmanInfo() {
         let groupName = "";
-        if (hangmanState.currentLevel < 50) groupName = "1 (Легкие)";
-        else if (hangmanState.currentLevel < 100) groupName = "2 (Средние)";
+        if (progress.hangman.currentLevel < 50) groupName = "1 (Легкие)";
+        else if (progress.hangman.currentLevel < 100) groupName = "2 (Средние)";
         else groupName = "3 (Сложные)";
         
-        document.getElementById('hangman-group').textContent = `Уровень: ${hangmanState.currentLevel + 1} | Группа: ${groupName}`;
-        document.getElementById('hangman-mistakes').textContent = `Ошибки: ${mistakes} / ${hangmanState.maxMistakes}`;
+        let maxMistakes = 3;
+        if (progress.hangman.currentLevel >= 50 && progress.hangman.currentLevel < 100) maxMistakes = 4;
+        else if (progress.hangman.currentLevel >= 100) maxMistakes = 5;
+
+        document.getElementById('hangman-group').textContent = `Уровень: ${progress.hangman.currentLevel + 1} | Группа: ${groupName}`;
+        document.getElementById('hangman-mistakes').textContent = `Ошибки: ${progress.hangman.mistakes} / ${maxMistakes}`;
         
         const hintBtn = document.getElementById('hangman-hint-btn');
-        hintBtn.textContent = `Подсказка (Осталось: ${hangmanState.hintsLeft})`;
-        if (hangmanState.hintsLeft <= 0 || !isHangmanActive) {
+        hintBtn.textContent = `Подсказка (Осталось: ${progress.hangman.hintsLeft})`;
+        if (progress.hangman.hintsLeft <= 0 || !isHangmanActive) {
             hintBtn.disabled = true;
             hintBtn.style.opacity = 0.5;
         } else {
@@ -1494,9 +1519,9 @@
     }
 
     function handleHangmanGuess(char) {
-        if (!isHangmanActive || guessedLetters.includes(char)) return;
+        if (!isHangmanActive || progress.hangman.guessedLetters.includes(char)) return;
 
-        guessedLetters.push(char);
+        progress.hangman.guessedLetters.push(char);
         document.getElementById(`key-${char}`).classList.add(currentHangmanWord.includes(char) ? 'correct' : 'wrong');
         document.getElementById(`key-${char}`).disabled = true;
 
@@ -1504,9 +1529,15 @@
             renderHangmanWord();
             checkHangmanWin();
         } else {
-            mistakes++;
+            progress.hangman.mistakes++;
+            saveHangmanState();
             updateHangmanInfo();
-            if (mistakes >= hangmanState.maxMistakes) {
+            
+            let maxMistakes = 3;
+            if (progress.hangman.currentLevel >= 50 && progress.hangman.currentLevel < 100) maxMistakes = 4;
+            else if (progress.hangman.currentLevel >= 100) maxMistakes = 5;
+
+            if (progress.hangman.mistakes >= maxMistakes) {
                 hangmanGameOver();
             }
         }
@@ -1515,29 +1546,33 @@
     function checkHangmanWin() {
         let allGuessed = true;
         for (let char of currentHangmanWord) {
-            if (!guessedLetters.includes(char)) {
+            if (!progress.hangman.guessedLetters.includes(char)) {
                 allGuessed = false;
                 break;
             }
         }
         if (allGuessed) {
             isHangmanActive = false;
-            hangmanState.score++;
-            progress.hangman.score = hangmanState.score;
-            hangmanState.currentLevel++;
             
-            if (hangmanState.currentLevel >= 150) {
-                hangmanState.completed = true;
+            // Записываем угаданное слово
+            progress.hangman.completedWords[progress.hangman.currentLevel] = currentHangmanWord;
+            
+            progress.hangman.score++;
+            progress.hangman.currentLevel++;
+            progress.hangman.activeWord = ""; // Сбрасываем активное слово
+            
+            if (progress.hangman.currentLevel >= 150) {
+                progress.hangman.completed = true;
             }
 
             saveHangmanState();
-            saveProgress();
             
             setTimeout(() => {
-                if (hangmanState.currentLevel >= 150) {
+                if (progress.hangman.currentLevel >= 150) {
                     finishHangman();
                 } else {
-                    showHangmanLevels();
+                    // Автоматически запускаем следующий уровень
+                    startHangmanLevel(progress.hangman.currentLevel, false);
                 }
             }, 1000);
         }
@@ -1545,7 +1580,8 @@
 
     function hangmanGameOver() {
         isHangmanActive = false;
-        guessedLetters = currentHangmanWord.split('');
+        // Показываем правильное слово
+        progress.hangman.guessedLetters = currentHangmanWord.split('');
         renderHangmanWord();
         renderKeyboard();
         
@@ -1555,13 +1591,14 @@
     }
 
     function useHangmanHint() {
-        if (hangmanState.hintsLeft <= 0 || !isHangmanActive) return;
-        hangmanState.hintsLeft--;
+        if (progress.hangman.hintsLeft <= 0 || !isHangmanActive) return;
+        progress.hangman.hintsLeft--;
+        saveHangmanState();
         updateHangmanInfo();
 
         let hiddenChars = [];
         for (let char of currentHangmanWord) {
-            if (!guessedLetters.includes(char)) {
+            if (!progress.hangman.guessedLetters.includes(char)) {
                 hiddenChars.push(char);
             }
         }
@@ -1574,7 +1611,7 @@
 
     function finishHangman() {
         isHangmanActive = false;
-        let score = hangmanState.score;
+        let score = progress.hangman.score;
         let rank = "";
         if (score >= 130) rank = "Альберт Эйнштейн";
         else if (score >= 100) rank = "Исаак Ньютон";
@@ -1584,9 +1621,6 @@
         else if (score >= 20) rank = "Ребенок";
         else rank = "Тупица";
 
-        hangmanState.completed = true;
-        hangmanState.rank = rank;
-        
         progress.hangman.completed = true;
         progress.hangman.rank = rank;
         progress.hangman.score = score;
@@ -1600,22 +1634,19 @@
         document.getElementById('hangman-score').textContent = `Баллы: ${score}/150`;
     }
 
-    function saveHangmanState() {
-        localStorage.setItem('hangmanState', JSON.stringify(hangmanState));
-    }
-
     function resetHangman() {
-        if (confirm("Вы уверены, что хотите сбросить прогресс Виселицы?")) {
-            hangmanState = {
-                currentLevel: 0,
+        if (confirm("Вы уверены, что хотите полностью сбросить прогресс Виселицы?")) {
+            progress.hangman = {
                 score: 0,
-                hintsLeft: 5,
-                maxMistakes: 3,
+                rank: "",
                 completed: false,
-                rank: ""
+                currentLevel: 0,
+                activeWord: "",
+                guessedLetters: [],
+                mistakes: 0,
+                completedWords: {},
+                hintsLeft: 5
             };
-            progress.hangman = { score: 0, rank: "", completed: false };
-            saveHangmanState();
             saveProgress();
             showHangmanLevels();
         }
