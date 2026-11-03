@@ -848,12 +848,16 @@
     if (!progress.physics) progress.physics = { score: 0, played: false };
     if (progress.physics.score === undefined) progress.physics.score = 0;
 
-    if (!progress.hangman) progress.hangman = { score: 0, rank: "", completed: false, currentLevel: 0, activeWord: "", guessedLetters: [], mistakes: 0, completedWords: {} };
+    if (!progress.hangman) progress.hangman = {};
     if (progress.hangman.score === undefined) progress.hangman.score = 0;
+    if (progress.hangman.rank === undefined) progress.hangman.rank = "";
+    if (progress.hangman.completed === undefined) progress.hangman.completed = false;
     if (progress.hangman.currentLevel === undefined) progress.hangman.currentLevel = 0;
-    if (!progress.hangman.completedWords) progress.hangman.completedWords = {};
+    if (progress.hangman.activeWord === undefined) progress.hangman.activeWord = "";
     if (!progress.hangman.guessedLetters) progress.hangman.guessedLetters = [];
     if (progress.hangman.mistakes === undefined) progress.hangman.mistakes = 0;
+    if (!progress.hangman.completedWords) progress.hangman.completedWords = {};
+    if (progress.hangman.hintsLeft === undefined) progress.hangman.hintsLeft = 5;
 
     if (!progress.chessStats) progress.chessStats = { w: 0, l: 0, d: 0 };
     if (progress.chessStats.w === undefined) progress.chessStats.w = 0;
@@ -1380,7 +1384,7 @@
                 if (progress.hangman.completedWords[i]) {
                     btn.classList.add('completed');
                 }
-                if (i === progress.hangman.currentLevel && progress.hangman.activeWord !== "") {
+                if (i === progress.hangman.currentLevel && progress.hangman.activeWord !== "" && progress.hangman.activeWord !== undefined) {
                     btn.classList.add('current');
                 }
 
@@ -1406,13 +1410,15 @@
         document.getElementById('hangman-result-screen').classList.add('hidden');
 
         // Если это текущий уровень и есть активное слово, и мы не просим рестарт - продолжаем
-        if (levelIndex === progress.hangman.currentLevel && progress.hangman.activeWord !== "" && !forceRestart) {
+        if (levelIndex === progress.hangman.currentLevel && progress.hangman.activeWord !== "" && progress.hangman.activeWord !== undefined && !forceRestart) {
             currentHangmanWord = progress.hangman.activeWord;
             isHangmanActive = true;
         } else {
             // Начинаем новый уровень
             progress.hangman.currentLevel = levelIndex;
             currentHangmanWord = hangmanWords[Math.floor(levelIndex / 50)][levelIndex % 50];
+            if (!currentHangmanWord) currentHangmanWord = "СИЛА"; // Защита от пустого слова
+            
             progress.hangman.activeWord = currentHangmanWord;
             progress.hangman.guessedLetters = [];
             progress.hangman.mistakes = 0;
@@ -1443,6 +1449,8 @@
     function renderHangmanWord() {
         const wordEl = document.getElementById('hangman-word');
         wordEl.innerHTML = '';
+        if (!currentHangmanWord) return;
+        
         for (let i = 0; i < currentHangmanWord.length; i++) {
             const letter = currentHangmanWord[i];
             const span = document.createElement('span');
