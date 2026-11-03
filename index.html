@@ -160,56 +160,7 @@
         .secondary-btn { background: #475569; }
         .secondary-btn:hover { background: #334155; }
 
-        /* --- СЕТКИ УРОВНЕЙ --- */
-        .level-group { margin-bottom: 25px; }
-        .level-group-title { font-size: 18px; font-weight: bold; color: var(--text-muted); margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1px; }
-        
-        .level-grid {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            justify-content: center;
-            max-height: 300px;
-            overflow-y: auto;
-            padding: 10px;
-            background: rgba(0,0,0,0.2);
-            border-radius: 10px;
-        }
-        
-        .level-btn {
-            background: rgba(255,255,255,0.1);
-            border: 2px solid rgba(255,255,255,0.2);
-            color: white;
-            width: 45px;
-            height: 45px;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.2s;
-            position: relative;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-        .level-btn:hover { background: var(--accent); transform: scale(1.05); }
-        .level-btn.completed { border-color: var(--correct); box-shadow: 0 0 10px rgba(16, 185, 129, 0.3); color: var(--correct); }
-        .level-btn.current { border-color: var(--warning); box-shadow: 0 0 10px rgba(245, 158, 11, 0.5); animation: pulse-border 2s infinite; }
-        
-        @keyframes pulse-border {
-            0% { box-shadow: 0 0 5px rgba(245, 158, 11, 0.5); }
-            50% { box-shadow: 0 0 15px rgba(245, 158, 11, 0.9); }
-            100% { box-shadow: 0 0 5px rgba(245, 158, 11, 0.5); }
-        }
-
-        .crown-icon {
-            position: absolute;
-            top: -15px;
-            font-size: 20px;
-            filter: drop-shadow(0 0 5px gold);
-        }
-
-        /* --- ФИЗИКА (ПОДМЕНЮ) --- */
+        /* --- ФИЗИКА/НАУКИ (ПОДМЕНЮ) --- */
         .physics-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -247,7 +198,7 @@
             z-index: 0;
         }
         .physics-card-title {
-            font-size: 28px;
+            font-size: 24px;
             font-weight: 900;
             z-index: 1;
             margin-bottom: 15px;
@@ -262,7 +213,7 @@
             border-radius: 15px;
         }
 
-        /* --- ФИЗИКА (ФОРМУЛЫ) --- */
+        /* --- ФОРМУЛЫ --- */
         .top-bar { display: flex; justify-content: space-between; align-items: center; font-size: 14px; color: var(--text-muted); margin-bottom: 20px; background: rgba(0,0,0,0.2); padding: 10px 15px; border-radius: 10px; }
         .progress-bar-container { flex-grow: 1; margin: 0 15px; background: rgba(255,255,255,0.1); height: 8px; border-radius: 4px; overflow: hidden; }
         .progress-bar { height: 100%; background: linear-gradient(90deg, #8b5cf6, #10b981); width: 0%; transition: width 0.3s ease; }
@@ -290,66 +241,34 @@
         .study-formula { font-size: 18px; color: #f8fafc; overflow-x: auto; }
         mjx-container { font-size: 1.1em !important; }
 
-        /* --- ФИЗИКА (ВИСЕЛИЦА) --- */
-        .hangman-word {
-            font-size: 32px;
-            font-weight: 900;
-            letter-spacing: 5px;
-            margin: 20px 0;
-            color: var(--accent);
-            text-transform: uppercase;
-            word-break: break-all;
+        /* --- ХИМИЯ (ТАБЛИЦА МЕНДЕЛЕЕВА) --- */
+        .chem-score { font-size: 24px; font-weight: bold; color: var(--warning); margin-bottom: 20px; }
+        .chem-element-box {
+            width: 150px; height: 150px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 4px solid var(--accent);
+            border-radius: 15px;
+            display: flex; justify-content: center; align-items: center;
+            font-size: 64px; font-weight: 900; color: #fff;
+            margin: 0 auto 30px auto;
+            box-shadow: 0 0 30px rgba(139, 92, 246, 0.5);
+            text-shadow: 0 0 10px var(--accent);
         }
-        .hangman-info {
-            display: flex;
-            justify-content: space-between;
-            font-size: 16px;
-            margin-bottom: 20px;
-            color: var(--text-muted);
-            background: rgba(0,0,0,0.3);
-            padding: 10px;
-            border-radius: 10px;
+        .chem-options-grid {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+            max-width: 600px; margin: 0 auto 20px auto;
         }
-        .keyboard {
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
-            margin-top: 10px;
-            background: rgba(0,0,0,0.2);
-            padding: 10px;
-            border-radius: 10px;
+        @media (max-width: 600px) { .chem-options-grid { grid-template-columns: 1fr; } }
+        .chem-btn {
+            background: var(--btn-bg); color: white;
+            border: 2px solid rgba(255,255,255,0.1);
+            padding: 15px; font-size: 16px; font-weight: bold;
+            border-radius: 10px; cursor: pointer; transition: all 0.2s;
         }
-        .keyboard-row {
-            display: flex;
-            justify-content: center;
-            gap: 3px;
-        }
-        .key-btn {
-            background: #334155;
-            border: 1px solid #475569;
-            color: white;
-            font-size: 14px;
-            font-weight: bold;
-            width: 32px;
-            height: 38px;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background 0.2s;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            text-transform: uppercase;
-            padding: 0;
-        }
-        .key-btn:hover:not(:disabled) { background: #475569; }
-        .key-btn:disabled { cursor: not-allowed; opacity: 0.3; }
-        .key-btn.correct { background: var(--correct); border-color: var(--correct); }
-        .key-btn.wrong { background: var(--wrong); border-color: var(--wrong); }
-        
-        @media (max-width: 600px) {
-            .hangman-word { font-size: 24px; letter-spacing: 3px; }
-            .key-btn { width: 26px; height: 32px; font-size: 12px; }
-        }
+        .chem-btn:hover:not(:disabled) { background: var(--btn-hover); transform: translateY(-2px); }
+        .chem-btn:disabled { cursor: not-allowed; opacity: 0.5; }
+        .chem-btn.correct { background: var(--correct) !important; border-color: var(--correct); color: white;}
+        .chem-btn.wrong { background: var(--wrong) !important; border-color: var(--wrong); color: white;}
 
         /* --- ШАХМАТЫ --- */
         .chess-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px;}
@@ -396,6 +315,9 @@
         .overlay.lose h2 { color: var(--wrong); }
 
         /* --- КРЕСТИКИ-НОЛИКИ --- */
+        .ttt-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; position: relative; }
+        .ttt-header h1 { position: absolute; left: 50%; transform: translateX(-50%); margin: 0; font-size: 24px; width: max-content;}
+        
         .ttt-menu { display: flex; flex-direction: column; gap: 10px; max-width: 400px; margin: 0 auto; }
         .ttt-menu-btn { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: white; padding: 15px; border-radius: 10px; cursor: pointer; font-size: 16px; transition: all 0.2s; text-align: left; }
         .ttt-menu-btn:hover { background: rgba(255,255,255,0.1); transform: translateX(5px); border-color: var(--accent); }
@@ -538,67 +460,67 @@
         <h1 class="animated-title weixtor-title">WEIXTOR GAMES</h1>
         <p class="weixtor-subtitle">Начинайте Игру. Удачи</p>
         <div class="menu-grid">
-            <div class="menu-card" onclick="switchApp('physics')">
+            <div class="menu-card" onclick="switchApp('sciences')">
                 <div class="menu-icon">⚛️</div>
-                <div class="menu-title">Формулы и Виселица</div>
-                <div class="menu-badge" id="badge-physics">Играть</div>
+                <div class="menu-title">Науки</div>
+                <div class="menu-badge" id="badge-sciences">Играть</div>
             </div>
             <div class="menu-card" onclick="switchApp('chess')">
                 <div class="menu-icon">♟️</div>
-                <div class="menu-title">Шахматы</div>
+                <div class="menu-title">WeixtChess</div>
                 <div class="menu-badge" id="badge-chess">0 В / 0 П</div>
             </div>
             <div class="menu-card" onclick="switchApp('2048')">
                 <div class="menu-icon">🔢</div>
-                <div class="menu-title">2048</div>
+                <div class="menu-title">Weixt2048</div>
                 <div class="menu-badge" id="badge-2048">Рекорд: 0</div>
             </div>
             <div class="menu-card" onclick="switchApp('ttt')">
                 <div class="menu-icon">❌⭕</div>
-                <div class="menu-title">Крестики-нолики</div>
+                <div class="menu-title">WeixTicTacToE</div>
                 <div class="menu-badge" id="badge-ttt">0 В / 0 П</div>
             </div>
             <div class="menu-card" onclick="switchApp('snake')">
                 <div class="menu-icon">🐍</div>
-                <div class="menu-title">Змейка</div>
+                <div class="menu-title">SlitherWeixt</div>
                 <div class="menu-badge" id="badge-snake">Рекорд: 0</div>
             </div>
             <div class="menu-card" onclick="switchApp('moles')">
                 <div class="menu-icon">🔨</div>
-                <div class="menu-title">Убей крота</div>
+                <div class="menu-title">Weixt Kill The Mole</div>
                 <div class="menu-badge" id="badge-moles">Рекорд: 0</div>
             </div>
         </div>
     </div>
 
-    <!-- ПРИЛОЖЕНИЕ: ФИЗИКА -->
-    <div id="app-physics" class="hidden">
+    <!-- ПРИЛОЖЕНИЕ: НАУКИ -->
+    <div id="app-sciences" class="hidden">
         <button class="main-btn secondary-btn" style="position: absolute; left: 20px; top: 20px; padding: 8px 15px;" onclick="switchApp('menu')">← Главное меню</button>
         
-        <!-- Подменю физики -->
-        <div id="physics-submenu">
-            <h1 class="animated-title" style="margin-top: 40px;">Раздел Физики</h1>
+        <!-- Подменю наук -->
+        <div id="sciences-submenu">
+            <h1 class="animated-title" style="margin-top: 40px;">Науки</h1>
             <div class="physics-grid">
                 <!-- Карточка Формулы -->
-                <div class="physics-card" onclick="showPhysicsGame('formulas')">
+                <div class="physics-card" onclick="showSciencesGame('formulas')">
                     <div class="bg-icon">📐</div>
-                    <div class="physics-card-title">Формулы</div>
-                    <div class="physics-card-rank" id="physics-rank-formulas">Звание: Школьник</div>
+                    <div class="physics-card-title">Формулы Физика (WeixtPhysic)</div>
+                    <div class="physics-card-rank" id="sciences-rank-formulas">Звание: Школьник</div>
                 </div>
-                <!-- Карточка Виселица -->
-                <div class="physics-card" onclick="showPhysicsGame('hangman')">
-                    <div class="bg-icon">🔤</div>
-                    <div class="physics-card-title">Виселица</div>
-                    <div class="physics-card-rank" id="physics-rank-hangman">Звание: Тупица</div>
+                <!-- Карточка Химия -->
+                <div class="physics-card" onclick="showSciencesGame('chemistry')">
+                    <div class="bg-icon">🧪</div>
+                    <div class="physics-card-title">Таблица Менделеева (WeixtChemistry)</div>
+                    <div class="physics-card-rank" id="sciences-rank-chemistry">Рекорд: 0</div>
                 </div>
             </div>
         </div>
 
         <!-- Формулы -->
-        <div id="physics-formulas" class="hidden">
-            <button class="main-btn secondary-btn" style="position: absolute; left: 20px; top: 20px; padding: 8px 15px;" onclick="showPhysicsGame('menu')">← Назад</button>
+        <div id="sciences-formulas" class="hidden">
+            <button class="main-btn secondary-btn" style="position: absolute; left: 20px; top: 20px; padding: 8px 15px;" onclick="showSciencesGame('menu')">← Назад</button>
             <div id="test-screen">
-                <h1 class="animated-title" style="margin-top: 40px;">Тренажёр формул</h1>
+                <h1 class="animated-title" style="margin-top: 40px;">Формулы Физика (WeixtPhysic)</h1>
                 <div class="top-bar">
                     <span id="hints-display">💡 50/50: 2</span>
                     <div class="progress-bar-container"><div class="progress-bar" id="progress-bar"></div></div>
@@ -632,48 +554,18 @@
             </div>
         </div>
 
-        <!-- Виселица -->
-        <div id="physics-hangman" class="hidden">
-            <!-- Меню выбора уровней Виселицы -->
-            <div id="hangman-level-screen">
-                <div class="chess-header">
-                    <button class="main-btn secondary-btn" onclick="showPhysicsGame('menu')">← Назад</button>
-                    <h1 class="animated-title" style="margin: 0; font-size: 28px;">Виселица</h1>
-                    <div style="width: 100px;"></div>
-                </div>
-                <div id="hangman-levels-container"></div>
-            </div>
-
-            <!-- Игровой экран Виселицы -->
-            <div id="hangman-game-screen" class="hidden">
-                <div class="chess-header">
-                    <button class="main-btn secondary-btn" onclick="showHangmanLevels()">← Уровни</button>
-                    <h1 class="animated-title" style="margin: 0; font-size: 24px;">Виселица</h1>
-                    <button class="main-btn" onclick="resetCurrentHangmanLevel()">Сбросить</button>
-                </div>
-                
-                <div class="hangman-info">
-                    <span id="hangman-group">Группа: 1</span>
-                    <span id="hangman-mistakes" style="color: var(--wrong);">Ошибки: 0 / 3</span>
-                </div>
-                
-                <div class="hangman-word" id="hangman-word">_ _ _ _ _</div>
-                
-                <div style="display: flex; justify-content: center; gap: 10px; margin-bottom: 10px;">
-                    <button class="main-btn" id="hangman-hint-btn" onclick="useHangmanHint()" style="background: var(--warning);">Подсказка (Осталось: 5)</button>
-                </div>
-                
-                <div class="keyboard" id="keyboard"></div>
-            </div>
-
-            <!-- Экран результатов Виселицы -->
-            <div id="hangman-result-screen" class="hidden">
-                <h1 class="animated-title">Игра пройдена!</h1>
-                <div class="result-title" style="font-size: 28px; margin-bottom: 20px;">Ваше звание:</div>
-                <div class="result-rank" id="hangman-rank">Альберт Эйнштейн</div>
-                <div class="result-score" id="hangman-score">Баллы: 150/150</div>
-                <button class="main-btn" onclick="resetHangman()">Начать заново</button>
-            </div>
+        <!-- Химия -->
+        <div id="sciences-chemistry" class="hidden">
+            <button class="main-btn secondary-btn" style="position: absolute; left: 20px; top: 20px; padding: 8px 15px;" onclick="showSciencesGame('menu')">← Назад</button>
+            
+            <h1 class="animated-title" style="margin-top: 40px;">Таблица Менделеева (WeixtChemistry)</h1>
+            <div class="chem-score">Правильно: <span id="chem-score-val">0</span></div>
+            
+            <div class="chem-element-box" id="chem-element">H</div>
+            
+            <div class="chem-options-grid" id="chem-options"></div>
+            
+            <div class="feedback" id="chem-feedback"></div>
         </div>
     </div>
 
@@ -681,7 +573,7 @@
     <div id="app-chess" class="hidden">
         <div class="chess-header">
             <button class="main-btn secondary-btn" onclick="switchApp('menu')">← Меню</button>
-            <h1 class="animated-title" style="margin: 0; font-size: 28px;">Шахматы</h1>
+            <h1 class="animated-title" style="margin: 0; font-size: 28px;">WeixtChess</h1>
             <button class="main-btn" onclick="startChess()">Заново</button>
         </div>
         <div class="stats-container" id="chess-stats">Победы: 0 | Поражения: 0 | Ничьи: 0</div>
@@ -696,7 +588,7 @@
     <div id="app-2048" class="hidden">
         <div class="chess-header">
             <button class="main-btn secondary-btn" onclick="switchApp('menu')">← Меню</button>
-            <h1 class="animated-title" style="margin: 0; font-size: 28px;">2048</h1>
+            <h1 class="animated-title" style="margin: 0; font-size: 28px;">Weixt2048</h1>
             <button class="main-btn" onclick="init2048()">Заново</button>
         </div>
         
@@ -715,10 +607,10 @@
 
     <!-- ПРИЛОЖЕНИЕ: КРЕСТИКИ-НОЛИКИ -->
     <div id="app-ttt" class="hidden">
-        <div class="chess-header">
+        <div class="ttt-header">
             <button class="main-btn secondary-btn" onclick="switchApp('menu')">← Главное меню</button>
-            <h1 class="animated-title" style="margin: 0; font-size: 24px;">Крестики-нолики</h1>
-            <div style="width: 120px;"></div>
+            <h1 class="animated-title">WeixTicTacToE</h1>
+            <div style="width: 120px;"></div> <!-- Спейсер для центровки -->
         </div>
 
         <div id="ttt-mode-select">
@@ -754,7 +646,7 @@
     <div id="app-snake" class="hidden">
         <div class="chess-header">
             <button class="main-btn secondary-btn" onclick="switchApp('menu')">← Меню</button>
-            <h1 class="animated-title" style="margin: 0; font-size: 28px;">Змейка</h1>
+            <h1 class="animated-title" style="margin: 0; font-size: 28px;">SlitherWeixt</h1>
             <button class="main-btn" onclick="startSnake(snakeLevel)">Заново</button>
         </div>
 
@@ -795,7 +687,7 @@
     <div id="app-moles" class="hidden">
         <div class="chess-header">
             <button class="main-btn secondary-btn" onclick="switchApp('menu')">← Меню</button>
-            <h1 class="animated-title" style="margin: 0; font-size: 28px;">Убей крота</h1>
+            <h1 class="animated-title" style="margin: 0; font-size: 24px;">Weixt Kill The Mole</h1>
             <button class="main-btn" onclick="startMoles(moleLevel)">Заново</button>
         </div>
 
@@ -830,13 +722,13 @@
 
 <script>
     // ==========================================
-    // ГЛОБАЛЬНЫЕ ДАННЫЕ И ПРОГРЕСС (БРОНЕБОЙНАЯ ЗАЩИТА)
+    // ГЛОБАЛЬНЫЕ ДАННЫЕ И ПРОГРЕСС
     // ==========================================
     let currentApp = 'menu';
     
     let progress = JSON.parse(localStorage.getItem('weixtor_progress')) || {};
 
-    // Безопасная инициализация всех полей
+    // Инициализация (защита от ошибок старых сохранений)
     if (!progress.snake) progress.snake = { completed: [], record: 0 };
     if (!progress.snake.completed) progress.snake.completed = [];
     if (progress.snake.record === undefined) progress.snake.record = 0;
@@ -845,43 +737,20 @@
     if (!progress.moles.completed) progress.moles.completed = [];
     if (progress.moles.record === undefined) progress.moles.record = 0;
 
-    if (!progress.physics) progress.physics = { score: 0, played: false };
-    if (progress.physics.score === undefined) progress.physics.score = 0;
-
-    if (!progress.hangman) progress.hangman = {};
-    if (progress.hangman.score === undefined) progress.hangman.score = 0;
-    if (progress.hangman.rank === undefined) progress.hangman.rank = "";
-    if (progress.hangman.completed === undefined) progress.hangman.completed = false;
-    if (progress.hangman.currentLevel === undefined) progress.hangman.currentLevel = 0;
-    if (progress.hangman.activeWord === undefined) progress.hangman.activeWord = "";
-    if (!progress.hangman.guessedLetters) progress.hangman.guessedLetters = [];
-    if (progress.hangman.mistakes === undefined) progress.hangman.mistakes = 0;
-    if (!progress.hangman.completedWords) progress.hangman.completedWords = {};
-    if (progress.hangman.hintsLeft === undefined) progress.hangman.hintsLeft = 5;
+    if (!progress.sciences) progress.sciences = { formulaScore: 0, formulaPlayed: false };
+    if (!progress.sciences.formulaScore) progress.sciences.formulaScore = 0;
+    
+    if (!progress.chemistry) progress.chemistry = { record: 0 };
+    if (!progress.chemistry.record) progress.chemistry.record = 0;
 
     if (!progress.chessStats) progress.chessStats = { w: 0, l: 0, d: 0 };
-    if (progress.chessStats.w === undefined) progress.chessStats.w = 0;
-    if (progress.chessStats.l === undefined) progress.chessStats.l = 0;
-    if (progress.chessStats.d === undefined) progress.chessStats.d = 0;
-
     if (!progress.tttStats) progress.tttStats = { w: 0, l: 0, d: 0 };
-    if (progress.tttStats.w === undefined) progress.tttStats.w = 0;
-    if (progress.tttStats.l === undefined) progress.tttStats.l = 0;
-    if (progress.tttStats.d === undefined) progress.tttStats.d = 0;
-
     if (!progress.game2048) progress.game2048 = { highScore: 0 };
-    if (progress.game2048.highScore === undefined) progress.game2048.highScore = 0;
 
     function saveProgress() {
         localStorage.setItem('weixtor_progress', JSON.stringify(progress));
         updateMenuBadges();
     }
-
-    const genitiveRanks = {
-        "Эйнштейн": "Эйнштейна", "Ньютон": "Ньютона", "Галилей": "Галилея", "Герц": "Герца",
-        "Архимед": "Архимеда", "Профессор": "Профессора", "Учитель": "Учителя", "Ученик": "Ученика",
-        "Студент": "Студента", "Школьник": "Школьника", "Ребенок": "Ребенка", "Тупица": "Тупицы"
-    };
 
     function getFormulaRank(score) {
         if (score >= 60) return { name: "Эйнштейн", val: 11 };
@@ -893,24 +762,21 @@
         return { name: "Школьник", val: 2 };
     }
 
-    function getHangmanRank(score) {
-        if (score >= 130) return { name: "Эйнштейн", val: 11 };
-        if (score >= 100) return { name: "Ньютон", val: 10 };
-        if (score >= 80) return { name: "Галилей", val: 9 };
-        if (score >= 60) return { name: "Герц", val: 7 };
-        if (score >= 40) return { name: "Ученик", val: 4 };
-        if (score >= 20) return { name: "Ребенок", val: 1 };
-        return { name: "Тупица", val: 0 };
-    }
-
     function updateMenuBadges() {
         try {
-            const snakeBadge = document.getElementById('badge-snake');
-            const molesBadge = document.getElementById('badge-moles');
-            const physicsBadge = document.getElementById('badge-physics');
+            const sciencesBadge = document.getElementById('badge-sciences');
             const chessBadge = document.getElementById('badge-chess');
             const tttBadge = document.getElementById('badge-ttt');
             const game2048Badge = document.getElementById('badge-2048');
+            const snakeBadge = document.getElementById('badge-snake');
+            const molesBadge = document.getElementById('badge-moles');
+
+            let fRank = getFormulaRank(progress.sciences.formulaScore);
+            sciencesBadge.textContent = `Физика: ${fRank.name}`;
+
+            chessBadge.textContent = `В: ${progress.chessStats.w} | П: ${progress.chessStats.l}`;
+            tttBadge.textContent = `В: ${progress.tttStats.w} | П: ${progress.tttStats.l}`;
+            game2048Badge.textContent = `Рекорд: ${progress.game2048.highScore}`;
             
             snakeBadge.textContent = `Рекорд: ${progress.snake.record}`;
             if (progress.snake.completed.length > 0) {
@@ -924,23 +790,9 @@
                 molesBadge.classList.add('record');
             }
 
-            chessBadge.textContent = `В: ${progress.chessStats.w} | П: ${progress.chessStats.l}`;
-            tttBadge.textContent = `В: ${progress.tttStats.w} | П: ${progress.tttStats.l}`;
-            game2048Badge.textContent = `Рекорд: ${progress.game2048.highScore}`;
+            document.getElementById('sciences-rank-formulas').textContent = `Звание: ${fRank.name}`;
+            document.getElementById('sciences-rank-chemistry').textContent = `Рекорд: ${progress.chemistry.record}`;
 
-            let fRank = getFormulaRank(progress.physics.score);
-            let hRank = getHangmanRank(progress.hangman.score);
-
-            document.getElementById('physics-rank-formulas').textContent = `Звание: ${fRank.name}`;
-            document.getElementById('physics-rank-hangman').textContent = `Звание: ${hRank.name}`;
-
-            if (fRank.val > hRank.val) {
-                physicsBadge.textContent = `Лучшее: ${fRank.name}`;
-            } else if (hRank.val > fRank.val) {
-                physicsBadge.textContent = `Лучшее: ${hRank.name}`;
-            } else {
-                physicsBadge.textContent = `Умнее ${genitiveRanks[fRank.name]}`;
-            }
         } catch (e) {
             console.error("Ошибка при обновлении бейджей:", e);
         }
@@ -950,14 +802,14 @@
         if (currentApp === 'snake' && appName !== 'snake') snakeStopGame();
         if (currentApp === 'moles' && appName !== 'moles') molesStopGame();
 
-        const validApps = ['menu', 'physics', 'chess', '2048', 'ttt', 'snake', 'moles'];
+        const validApps = ['menu', 'sciences', 'chess', '2048', 'ttt', 'snake', 'moles'];
         if (!validApps.includes(appName)) appName = 'menu';
 
         currentApp = appName;
         localStorage.setItem('appMode', appName);
 
         document.getElementById('main-menu').classList.add('hidden');
-        document.getElementById('app-physics').classList.add('hidden');
+        document.getElementById('app-sciences').classList.add('hidden');
         document.getElementById('app-chess').classList.add('hidden');
         document.getElementById('app-2048').classList.add('hidden');
         document.getElementById('app-ttt').classList.add('hidden');
@@ -967,9 +819,9 @@
         if (appName === 'menu') {
             updateMenuBadges();
             document.getElementById('main-menu').classList.remove('hidden');
-        } else if (appName === 'physics') {
-            document.getElementById('app-physics').classList.remove('hidden');
-            showPhysicsGame('menu');
+        } else if (appName === 'sciences') {
+            document.getElementById('app-sciences').classList.remove('hidden');
+            showSciencesGame('menu');
         } else if (appName === 'chess') {
             document.getElementById('app-chess').classList.remove('hidden');
             loadChessState();
@@ -989,20 +841,20 @@
         }
     }
 
-    function showPhysicsGame(subApp) {
-        document.getElementById('physics-submenu').classList.add('hidden');
-        document.getElementById('physics-formulas').classList.add('hidden');
-        document.getElementById('physics-hangman').classList.add('hidden');
+    function showSciencesGame(subApp) {
+        document.getElementById('sciences-submenu').classList.add('hidden');
+        document.getElementById('sciences-formulas').classList.add('hidden');
+        document.getElementById('sciences-chemistry').classList.add('hidden');
 
         if (subApp === 'menu') {
             updateMenuBadges();
-            document.getElementById('physics-submenu').classList.remove('hidden');
+            document.getElementById('sciences-submenu').classList.remove('hidden');
         } else if (subApp === 'formulas') {
-            document.getElementById('physics-formulas').classList.remove('hidden');
+            document.getElementById('sciences-formulas').classList.remove('hidden');
             loadPhysicsState();
-        } else if (subApp === 'hangman') {
-            document.getElementById('physics-hangman').classList.remove('hidden');
-            showHangmanLevels();
+        } else if (subApp === 'chemistry') {
+            document.getElementById('sciences-chemistry').classList.remove('hidden');
+            initChemistry();
         }
     }
 
@@ -1098,7 +950,7 @@
     let isStudyRendered = false;
 
     function savePhysicsState() {
-        if (currentApp !== 'physics') return;
+        if (currentApp !== 'sciences') return;
         const state = {
             screen: document.getElementById('test-screen').classList.contains('hidden') ? 
                    (document.getElementById('result-screen').classList.contains('hidden') ? 'study' : 'result') : 'test',
@@ -1287,9 +1139,9 @@
             savePhysicsState();
         }
         
-        if (totalScore > progress.physics.score) {
-            progress.physics.score = totalScore;
-            progress.physics.played = true;
+        if (totalScore > progress.sciences.formulaScore) {
+            progress.sciences.formulaScore = totalScore;
+            progress.sciences.formulaPlayed = true;
             saveProgress();
         }
 
@@ -1343,320 +1195,121 @@
     }
 
     // ==========================================
-    // ЛОГИКА ВИСЕЛИЦЫ
+    // ЛОГИКА ХИМИИ (ТАБЛИЦА МЕНДЕЛЕЕВА)
     // ==========================================
-    const hangmanWords = [
-        ["СИЛА", "МАССА", "ВРЕМЯ", "ПУТЬ", "СКОРОСТЬ", "ПЛОТНОСТЬ", "ДАВЛЕНИЕ", "РАБОТА", "МОЩНОСТЬ", "ЭНЕРГИЯ", "АТОМ", "МОЛЕКУЛА", "ТЕПЛО", "ПАР", "ЛЕД", "ВОДА", "ОГОНЬ", "СВЕТ", "ЗВУК", "ВОЛНА", "ОПЫТ", "МЕТР", "СЕКУНДА", "КИЛОГРАММ", "НЬЮТОН", "ДЖОУЛЬ", "ВАТТ", "ПАСКАЛЬ", "СИЛАЧ", "РЫЧАГ", "БЛОК", "ВИНТ", "ТРЕНИЕ", "ИНЕРЦИЯ", "ДИНАМОМЕТР", "МЕНЗУРКА", "ВЕСЫ", "ЛИНЕЙКА", "ТЕРМОМЕТР", "СВЕЧА", "ЛАМПА", "ТЕНЬ", "ЭХО", "РАДУГА", "МОЛНИЯ", "ГРОМ", "ВЕТЕР", "ПЫЛЬ", "КРИСТАЛЛ", "ГРАД"],
-        ["ТЕМПЕРАТУРА", "КОЛИЧЕСТВО", "ТЕПЛОПЕРЕДАЧА", "ТЕПЛОПРОВОДНОСТЬ", "КОНВЕКЦИЯ", "ИЗЛУЧЕНИЕ", "ПЛАВЛЕНИЕ", "КРИСТАЛЛИЗАЦИЯ", "ИСПАРЕНИЕ", "КОНДЕНСАЦИЯ", "КИПЕНИЕ", "ВЛАЖНОСТЬ", "ДВИГАТЕЛЬ", "ТУРБИНА", "ЭЛЕКТРИЗАЦИЯ", "ЗАРЯД", "ЭЛЕКТРОСКОП", "ПРОВОДНИК", "ДИЭЛЕКТРИК", "НАПРЯЖЕНИЕ", "СОПРОТИВЛЕНИЕ", "АМПЕРМЕТР", "ВОЛЬТМЕТР", "РЕЗИСТОР", "РЕОСТАТ", "ПОЛУПРОВОДНИК", "ТОК", "ЭЛЕКТРОН", "ПРОВОД", "ЛАМПА", "ПРЕДОХРАНИТЕЛЬ", "КОРОТКОЕ", "МАГНИТ", "КАТУШКА", "ЭЛЕКТРОМАГНИТ", "КОМПАС", "МОТОР", "ГЕНЕРАТОР", "ТРАНСФОРМАТОР", "ЗВУК", "ЭХО", "ИНФРАЗВУК", "УЛЬТРАЗВУК", "ОКТАВА", "ТЕМБР", "АМПЛИТУДА", "ЧАСТОТА", "ПЕРИОД", "РЕЗОНАНС", "КОЛЕБАНИЕ"],
-        ["УСКОРЕНИЕ", "ТРАЕКТОРИЯ", "ПЕРЕМЕЩЕНИЕ", "ОТНОСИТЕЛЬНОСТЬ", "РАВНОМЕРНОЕ", "УСКОРЕННОЕ", "ЦЕНТРОСТРЕМИТЕЛЬНОЕ", "ИМПУЛЬС", "РЕАКТИВНОЕ", "ВСЕМИРНОЕ", "ТЯГОТЕНИЕ", "НЕВЕСОМОСТЬ", "ОРБИТА", "СПУТНИК", "РАКЕТА", "КОСМОНАВТ", "ЛИНЗА", "ФОКУС", "ДИОПТРИЯ", "МИКРОСКОП", "ТЕЛЕСКОП", "ДИСПЕРСИЯ", "СПЕКТР", "ИНТЕРФЕРЕНЦИЯ", "ДИФРАКЦИЯ", "ПОЛЯРИЗАЦИЯ", "ФОТОН", "КВАНТ", "ПЛАНК", "БОР", "РЕЗЕРФОРД", "РАДИОАКТИВНОСТЬ", "ИЗОТОП", "НЕЙТРОН", "ПРОТОН", "ЭЛЕКТРОН", "ЯДРО", "РАСПАД", "ГАММА", "БЕТА", "АЛЬФА", "АТОМ", "ИОН", "ПЛАЗМА", "ВАККУУМ", "АНТИЧАСТИЦА", "ПОЗИТРОН", "НЕЙТРИНО", "ГРАВИТОН", "КВАЗАР"]
+    // Полная таблица элементов (Символ, Название)
+    const periodicTable = [
+        { s: "H", n: "Водород" }, { s: "He", n: "Гелий" }, { s: "Li", n: "Литий" }, { s: "Be", n: "Бериллий" },
+        { s: "B", n: "Бор" }, { s: "C", n: "Углерод" }, { s: "N", n: "Азот" }, { s: "O", n: "Кислород" },
+        { s: "F", n: "Фтор" }, { s: "Ne", n: "Неон" }, { s: "Na", n: "Натрий" }, { s: "Mg", n: "Магний" },
+        { s: "Al", n: "Алюминий" }, { s: "Si", n: "Кремний" }, { s: "P", n: "Фосфор" }, { s: "S", n: "Сера" },
+        { s: "Cl", n: "Хлор" }, { s: "Ar", n: "Аргон" }, { s: "K", n: "Калий" }, { s: "Ca", n: "Кальций" },
+        { s: "Sc", n: "Скандий" }, { s: "Ti", n: "Титан" }, { s: "V", n: "Ванадий" }, { s: "Cr", n: "Хром" },
+        { s: "Mn", n: "Марганец" }, { s: "Fe", n: "Железо" }, { s: "Co", n: "Кобальт" }, { s: "Ni", n: "Никель" },
+        { s: "Cu", n: "Медь" }, { s: "Zn", n: "Цинк" }, { s: "Ga", n: "Галлий" }, { s: "Ge", n: "Германий" },
+        { s: "As", n: "Арсен" }, { s: "Se", n: "Селен" }, { s: "Br", n: "Бром" }, { s: "Kr", n: "Криптон" },
+        { s: "Rb", n: "Рубидий" }, { s: "Sr", n: "Стронций" }, { s: "Y", n: "Иттрий" }, { s: "Zr", n: "Цирконий" },
+        { s: "Nb", n: "Ниобий" }, { s: "Mo", n: "Молибден" }, { s: "Tc", n: "Технеций" }, { s: "Ru", n: "Рутений" },
+        { s: "Rh", n: "Родий" }, { s: "Pd", n: "Палладий" }, { s: "Ag", n: "Серебро" }, { s: "Cd", n: "Кадмий" },
+        { s: "In", n: "Индий" }, { s: "Sn", n: "Олово" }, { s: "Sb", n: "Сурьма" }, { s: "Te", n: "Теллур" },
+        { s: "I", n: "Иод" }, { s: "Xe", n: "Ксенон" }, { s: "Cs", n: "Цезий" }, { s: "Ba", n: "Барий" },
+        { s: "La", n: "Лантан" }, { s: "Ce", n: "Церий" }, { s: "Pr", n: "Празеодим" }, { s: "Nd", n: "Неодим" },
+        { s: "Pm", n: "Прометий" }, { s: "Sm", n: "Самарий" }, { s: "Eu", n: "Европий" }, { s: "Gd", n: "Гадолиний" },
+        { s: "Tb", n: "Тербий" }, { s: "Dy", n: "Диспрозий" }, { s: "Ho", n: "Гольмий" }, { s: "Er", n: "Эрбий" },
+        { s: "Tm", n: "Тулий" }, { s: "Yb", n: "Иттербий" }, { s: "Lu", n: "Лютеций" }, { s: "Hf", n: "Гафний" },
+        { s: "Ta", n: "Тантал" }, { s: "W", n: "Вольфрам" }, { s: "Re", n: "Рений" }, { s: "Os", n: "Осмий" },
+        { s: "Ir", n: "Иридий" }, { s: "Pt", n: "Платина" }, { s: "Au", n: "Золото" }, { s: "Hg", n: "Ртуть" },
+        { s: "Tl", n: "Таллий" }, { s: "Pb", n: "Свинец" }, { s: "Bi", n: "Висмут" }, { s: "Po", n: "Полоний" },
+        { s: "At", n: "Астат" }, { s: "Rn", n: "Радон" }, { s: "Fr", n: "Франций" }, { s: "Ra", n: "Радий" },
+        { s: "Ac", n: "Актиний" }, { s: "Th", n: "Торий" }, { s: "Pa", n: "Протактиний" }, { s: "U", n: "Уран" },
+        { s: "Np", n: "Нептуний" }, { s: "Pu", n: "Плутоний" }, { s: "Am", n: "Америций" }, { s: "Cm", n: "Кюрий" },
+        { s: "Bk", n: "Берклий" }, { s: "Cf", n: "Калифорний" }, { s: "Es", n: "Эйнштейний" }, { s: "Fm", n: "Фермий" },
+        { s: "Md", n: "Менделевий" }, { s: "No", n: "Нобелий" }, { s: "Lr", n: "Лоуренсий" }, { s: "Rf", n: "Резерфордий" },
+        { s: "Db", n: "Дубний" }, { s: "Sg", n: "Сиборгий" }, { s: "Bh", n: "Борий" }, { s: "Hs", n: "Хассий" },
+        { s: "Mt", n: "Мейтнерий" }, { s: "Ds", n: "Дармштадтий" }, { s: "Rg", n: "Рентгений" }, { s: "Cn", n: "Коперниций" },
+        { s: "Nh", n: "Нихоний" }, { s: "Fl", n: "Флеровий" }, { s: "Mc", n: "Московий" }, { s: "Lv", n: "Ливерморий" },
+        { s: "Ts", n: "Теннессин" }, { s: "Og", n: "Оганесон" }
     ];
 
-    let currentHangmanWord = "";
-    let isHangmanActive = false;
+    let chemScore = 0;
+    let chemCurrentElement = null;
+    let chemLocked = false;
 
-    function showHangmanLevels() {
-        document.getElementById('hangman-level-screen').classList.remove('hidden');
-        document.getElementById('hangman-game-screen').classList.add('hidden');
-        document.getElementById('hangman-result-screen').classList.add('hidden');
+    function initChemistry() {
+        chemScore = 0;
+        document.getElementById('chem-score-val').textContent = chemScore;
+        document.getElementById('chem-feedback').textContent = "";
+        loadChemQuestion();
+    }
 
-        const container = document.getElementById('hangman-levels-container');
-        container.innerHTML = '';
+    function loadChemQuestion() {
+        chemLocked = false;
+        // Выбираем случайный элемент
+        chemCurrentElement = periodicTable[Math.floor(Math.random() * periodicTable.length)];
+        
+        // Показываем символ
+        document.getElementById('chem-element').textContent = chemCurrentElement.s;
 
-        const groups = [
-            { name: "Группа 1 (Легкие)", start: 0, end: 49 },
-            { name: "Группа 2 (Средние)", start: 50, end: 99 },
-            { name: "Группа 3 (Сложные)", start: 100, end: 149 }
-        ];
+        // Генерируем 6 вариантов (1 правильный + 5 неправильных)
+        let options = [chemCurrentElement.n];
+        let allNames = periodicTable.map(e => e.n).filter(n => n !== chemCurrentElement.n);
+        allNames = shuffle(allNames);
+        
+        for (let i = 0; i < 5; i++) {
+            options.push(allNames[i]);
+        }
+        options = shuffle(options);
 
-        groups.forEach((group, gIdx) => {
-            const groupDiv = document.createElement('div');
-            groupDiv.className = 'level-group';
-            groupDiv.innerHTML = `<div class="level-group-title">${group.name}</div>`;
-            
-            const gridDiv = document.createElement('div');
-            gridDiv.className = 'level-grid';
-
-            for (let i = group.start; i <= group.end; i++) {
-                const btn = document.createElement('button');
-                btn.className = 'level-btn';
-                btn.textContent = i + 1;
-                
-                if (progress.hangman.completedWords[i]) {
-                    btn.classList.add('completed');
-                }
-                if (i === progress.hangman.currentLevel && progress.hangman.activeWord !== "" && progress.hangman.activeWord !== undefined) {
-                    btn.classList.add('current');
-                }
-
-                btn.onclick = () => {
-                    if (progress.hangman.completedWords[i]) {
-                        if (confirm(`Вы уже угадали это слово: "${progress.hangman.completedWords[i]}".\nХотите сыграть его заново?`)) {
-                            startHangmanLevel(i, true);
-                        }
-                    } else {
-                        startHangmanLevel(i, false);
-                    }
-                };
-                gridDiv.appendChild(btn);
-            }
-            groupDiv.appendChild(gridDiv);
-            container.appendChild(groupDiv);
+        // Отрисовываем кнопки
+        const optionsEl = document.getElementById('chem-options');
+        optionsEl.innerHTML = "";
+        options.forEach(opt => {
+            const btn = document.createElement('button');
+            btn.className = 'chem-btn';
+            btn.textContent = opt;
+            btn.onclick = () => checkChemAnswer(btn, opt);
+            optionsEl.appendChild(btn);
         });
+        
+        document.getElementById('chem-feedback').textContent = "";
     }
 
-    function startHangmanLevel(levelIndex, forceRestart = false) {
-        document.getElementById('hangman-level-screen').classList.add('hidden');
-        document.getElementById('hangman-game-screen').classList.remove('hidden');
-        document.getElementById('hangman-result-screen').classList.add('hidden');
-
-        // Если это текущий уровень и есть активное слово, и мы не просим рестарт - продолжаем
-        if (levelIndex === progress.hangman.currentLevel && progress.hangman.activeWord !== "" && progress.hangman.activeWord !== undefined && !forceRestart) {
-            currentHangmanWord = progress.hangman.activeWord;
-            isHangmanActive = true;
-        } else {
-            // Начинаем новый уровень
-            progress.hangman.currentLevel = levelIndex;
-            currentHangmanWord = hangmanWords[Math.floor(levelIndex / 50)][levelIndex % 50];
-            if (!currentHangmanWord) currentHangmanWord = "СИЛА"; // Защита от пустого слова
+    function checkChemAnswer(btn, selectedName) {
+        if (chemLocked) return;
+        chemLocked = true;
+        
+        const buttons = document.querySelectorAll('.chem-btn');
+        
+        if (selectedName === chemCurrentElement.n) {
+            btn.classList.add('correct');
+            document.getElementById('chem-feedback').textContent = "Правильно! 🎉";
+            document.getElementById('chem-feedback').style.color = "var(--correct)";
             
-            progress.hangman.activeWord = currentHangmanWord;
-            progress.hangman.guessedLetters = [];
-            progress.hangman.mistakes = 0;
-            isHangmanActive = true;
-
-            if (levelIndex === 0 || levelIndex === 50 || levelIndex === 100) {
-                progress.hangman.hintsLeft = 5;
+            chemScore++;
+            document.getElementById('chem-score-val').textContent = chemScore;
+            
+            if (chemScore > progress.chemistry.record) {
+                progress.chemistry.record = chemScore;
+                saveProgress();
             }
-        }
-
-        saveHangmanState();
-        renderHangmanWord();
-        renderKeyboard();
-        updateHangmanInfo();
-    }
-
-    function resetCurrentHangmanLevel() {
-        if (confirm("Вы уверены, что хотите сбросить прогресс текущего слова?")) {
-            startHangmanLevel(progress.hangman.currentLevel, true);
-        }
-    }
-
-    function saveHangmanState() {
-        localStorage.setItem('weixtor_progress', JSON.stringify(progress));
-        updateMenuBadges();
-    }
-
-    function renderHangmanWord() {
-        const wordEl = document.getElementById('hangman-word');
-        wordEl.innerHTML = '';
-        if (!currentHangmanWord) return;
-        
-        for (let i = 0; i < currentHangmanWord.length; i++) {
-            const letter = currentHangmanWord[i];
-            const span = document.createElement('span');
-            span.style.margin = '0 5px';
-            if (progress.hangman.guessedLetters.includes(letter)) {
-                span.textContent = letter;
-            } else {
-                span.textContent = '_';
-            }
-            wordEl.appendChild(span);
-        }
-    }
-
-    function renderKeyboard() {
-        const keyboardEl = document.getElementById('keyboard');
-        keyboardEl.innerHTML = '';
-        
-        const rows = [
-            "ЙЦУКЕНГШЩЗХЪ",
-            "ФЫВАПРОЛДЖЭ",
-            "ЯЧСМИТЬБЮ"
-        ];
-
-        rows.forEach(rowStr => {
-            const rowDiv = document.createElement('div');
-            rowDiv.className = 'keyboard-row';
-            for (let char of rowStr) {
-                const btn = document.createElement('button');
-                btn.className = 'key-btn';
-                btn.textContent = char;
-                btn.id = `key-${char}`;
-                
-                if (progress.hangman.guessedLetters.includes(char)) {
-                    btn.disabled = true;
-                    if (currentHangmanWord.includes(char)) {
-                        btn.classList.add('correct');
-                    } else {
-                        btn.classList.add('wrong');
-                    }
-                } else if (!isHangmanActive) {
-                    btn.disabled = true;
-                } else {
-                    btn.onclick = () => handleHangmanGuess(char);
+            
+            buttons.forEach(b => b.disabled = true);
+            setTimeout(loadChemQuestion, 1000);
+        } else {
+            btn.classList.add('wrong');
+            document.getElementById('chem-feedback').textContent = "Ошибка! 😢";
+            document.getElementById('chem-feedback').style.color = "var(--wrong)";
+            
+            buttons.forEach(b => {
+                if (b.textContent === chemCurrentElement.n) {
+                    b.classList.add('correct');
                 }
-
-                rowDiv.appendChild(btn);
-            }
-            keyboardEl.appendChild(rowDiv);
-        });
-    }
-
-    function updateHangmanInfo() {
-        let groupName = "";
-        if (progress.hangman.currentLevel < 50) groupName = "1 (Легкие)";
-        else if (progress.hangman.currentLevel < 100) groupName = "2 (Средние)";
-        else groupName = "3 (Сложные)";
-        
-        let maxMistakes = 3;
-        if (progress.hangman.currentLevel >= 50 && progress.hangman.currentLevel < 100) maxMistakes = 4;
-        else if (progress.hangman.currentLevel >= 100) maxMistakes = 5;
-
-        document.getElementById('hangman-group').textContent = `Уровень: ${progress.hangman.currentLevel + 1} | Группа: ${groupName}`;
-        document.getElementById('hangman-mistakes').textContent = `Ошибки: ${progress.hangman.mistakes} / ${maxMistakes}`;
-        
-        const hintBtn = document.getElementById('hangman-hint-btn');
-        hintBtn.textContent = `Подсказка (Осталось: ${progress.hangman.hintsLeft})`;
-        if (progress.hangman.hintsLeft <= 0 || !isHangmanActive) {
-            hintBtn.disabled = true;
-            hintBtn.style.opacity = 0.5;
-        } else {
-            hintBtn.disabled = false;
-            hintBtn.style.opacity = 1;
-        }
-    }
-
-    function handleHangmanGuess(char) {
-        if (!isHangmanActive || progress.hangman.guessedLetters.includes(char)) return;
-
-        progress.hangman.guessedLetters.push(char);
-        document.getElementById(`key-${char}`).classList.add(currentHangmanWord.includes(char) ? 'correct' : 'wrong');
-        document.getElementById(`key-${char}`).disabled = true;
-
-        if (currentHangmanWord.includes(char)) {
-            renderHangmanWord();
-            checkHangmanWin();
-        } else {
-            progress.hangman.mistakes++;
-            saveHangmanState();
-            updateHangmanInfo();
-            
-            let maxMistakes = 3;
-            if (progress.hangman.currentLevel >= 50 && progress.hangman.currentLevel < 100) maxMistakes = 4;
-            else if (progress.hangman.currentLevel >= 100) maxMistakes = 5;
-
-            if (progress.hangman.mistakes >= maxMistakes) {
-                hangmanGameOver();
-            }
-        }
-    }
-
-    function checkHangmanWin() {
-        let allGuessed = true;
-        for (let char of currentHangmanWord) {
-            if (!progress.hangman.guessedLetters.includes(char)) {
-                allGuessed = false;
-                break;
-            }
-        }
-        if (allGuessed) {
-            isHangmanActive = false;
-            
-            // Записываем угаданное слово
-            progress.hangman.completedWords[progress.hangman.currentLevel] = currentHangmanWord;
-            
-            progress.hangman.score++;
-            progress.hangman.currentLevel++;
-            progress.hangman.activeWord = ""; // Сбрасываем активное слово
-            
-            if (progress.hangman.currentLevel >= 150) {
-                progress.hangman.completed = true;
-            }
-
-            saveHangmanState();
+                b.disabled = true;
+            });
             
             setTimeout(() => {
-                if (progress.hangman.currentLevel >= 150) {
-                    finishHangman();
-                } else {
-                    // Автоматически запускаем следующий уровень
-                    startHangmanLevel(progress.hangman.currentLevel, false);
-                }
-            }, 1000);
-        }
-    }
-
-    function hangmanGameOver() {
-        isHangmanActive = false;
-        // Показываем правильное слово
-        progress.hangman.guessedLetters = currentHangmanWord.split('');
-        renderHangmanWord();
-        renderKeyboard();
-        
-        setTimeout(() => {
-            showHangmanLevels();
-        }, 2000);
-    }
-
-    function useHangmanHint() {
-        if (progress.hangman.hintsLeft <= 0 || !isHangmanActive) return;
-        progress.hangman.hintsLeft--;
-        saveHangmanState();
-        updateHangmanInfo();
-
-        let hiddenChars = [];
-        for (let char of currentHangmanWord) {
-            if (!progress.hangman.guessedLetters.includes(char)) {
-                hiddenChars.push(char);
-            }
-        }
-
-        if (hiddenChars.length > 0) {
-            let randomChar = hiddenChars[Math.floor(Math.random() * hiddenChars.length)];
-            handleHangmanGuess(randomChar);
-        }
-    }
-
-    function finishHangman() {
-        isHangmanActive = false;
-        let score = progress.hangman.score;
-        let rank = "";
-        if (score >= 130) rank = "Альберт Эйнштейн";
-        else if (score >= 100) rank = "Исаак Ньютон";
-        else if (score >= 80) rank = "Галилео Галилей";
-        else if (score >= 60) rank = "Генрих Герц";
-        else if (score >= 40) rank = "Ученик";
-        else if (score >= 20) rank = "Ребенок";
-        else rank = "Тупица";
-
-        progress.hangman.completed = true;
-        progress.hangman.rank = rank;
-        progress.hangman.score = score;
-        saveProgress();
-
-        document.getElementById('hangman-level-screen').classList.add('hidden');
-        document.getElementById('hangman-game-screen').classList.add('hidden');
-        document.getElementById('hangman-result-screen').classList.remove('hidden');
-
-        document.getElementById('hangman-rank').textContent = `Вы: ${rank}`;
-        document.getElementById('hangman-score').textContent = `Баллы: ${score}/150`;
-    }
-
-    function resetHangman() {
-        if (confirm("Вы уверены, что хотите полностью сбросить прогресс Виселицы?")) {
-            progress.hangman = {
-                score: 0,
-                rank: "",
-                completed: false,
-                currentLevel: 0,
-                activeWord: "",
-                guessedLetters: [],
-                mistakes: 0,
-                completedWords: {},
-                hintsLeft: 5
-            };
-            saveProgress();
-            showHangmanLevels();
+                initChemistry(); // Сброс при ошибке
+            }, 2000);
         }
     }
 
@@ -2882,7 +2535,7 @@
         updateMenuBadges();
         
         const savedApp = localStorage.getItem('appMode');
-        if (savedApp && !['menu', 'physics', 'chess', '2048', 'ttt', 'snake', 'moles'].includes(savedApp)) {
+        if (savedApp && !['menu', 'sciences', 'chess', '2048', 'ttt', 'snake', 'moles'].includes(savedApp)) {
             localStorage.setItem('appMode', 'menu');
         }
 
