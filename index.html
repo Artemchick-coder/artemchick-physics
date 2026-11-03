@@ -149,12 +149,15 @@
         /* --- ШАХМАТЫ --- */
         .chess-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
         .chess-status { font-size: 18px; font-weight: bold; color: var(--accent); margin-bottom: 15px; min-height: 25px; }
+        
+        /* Исправленная сетка */
         .board-container {
             display: grid;
             grid-template-columns: repeat(8, 1fr);
+            grid-template-rows: repeat(8, 1fr);
             width: 100%;
-            max-width: 500px;
-            aspect-ratio: 1;
+            max-width: 480px;
+            aspect-ratio: 1 / 1;
             margin: 0 auto;
             border: 4px solid rgba(255,255,255,0.1);
             border-radius: 8px;
@@ -165,37 +168,49 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            font-size: 40px;
+            position: relative;
             cursor: pointer;
             user-select: none;
-            position: relative;
         }
-        @media (max-width: 600px) { .square { font-size: 30px; } }
-        .square.light { background-color: var(--board-light); color: #0f172a; }
-        .square.dark { background-color: var(--board-dark); color: #f8fafc; }
+        .square.light { background-color: var(--board-light); }
+        .square.dark { background-color: var(--board-dark); }
         
         .square.selected::after {
             content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
-            background-color: var(--board-select); opacity: 0.6;
+            background-color: var(--board-select); opacity: 0.6; z-index: 1;
         }
         .square.valid-move::before {
             content: ''; position: absolute; width: 25%; height: 25%; border-radius: 50%;
-            background-color: rgba(16, 185, 129, 0.7);
-            z-index: 5;
+            background-color: rgba(16, 185, 129, 0.8); z-index: 2;
         }
         .square.valid-capture::before {
             content: ''; position: absolute; width: 80%; height: 80%; border-radius: 50%;
-            border: 4px solid rgba(239, 68, 68, 0.7);
-            background-color: transparent;
-            z-index: 5;
+            border: 4px solid rgba(239, 68, 68, 0.8); background-color: transparent; z-index: 2;
         }
-        .piece { z-index: 10; position: relative; text-shadow: 1px 1px 2px rgba(0,0,0,0.4); pointer-events: none;}
+
+        /* Исправленные фигуры (плотные и контрастные) */
+        .piece {
+            font-size: clamp(30px, 8vw, 55px);
+            line-height: 1;
+            z-index: 10;
+            position: relative;
+            pointer-events: none;
+            /* Убираем стандартную прозрачность */
+            font-family: "Arial", sans-serif; 
+        }
+        .piece.white {
+            color: #ffffff;
+            text-shadow: 1px 1px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 0 0 5px rgba(0,0,0,0.5);
+        }
+        .piece.black {
+            color: #1a1a1a;
+            text-shadow: 1px 1px 0 #fff, -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff, 0 0 5px rgba(255,255,255,0.5);
+        }
     </style>
 </head>
 <body>
 
 <div class="container">
-    
     <!-- ГЛАВНОЕ МЕНЮ -->
     <div id="main-menu">
         <h1>Выберите режим</h1>
@@ -203,12 +218,10 @@
             <div class="menu-card" onclick="switchApp('physics')">
                 <div class="menu-icon">⚛️</div>
                 <div class="menu-title">Решать физику</div>
-                <p style="color: var(--text-muted); font-size: 14px; margin-top: 10px;">Тренажёр формул ОГЭ</p>
             </div>
             <div class="menu-card" onclick="switchApp('chess')">
                 <div class="menu-icon">♟️</div>
                 <div class="menu-title">Играть в шахматы</div>
-                <p style="color: var(--text-muted); font-size: 14px; margin-top: 10px;">Бот ~1200 Elo</p>
             </div>
         </div>
     </div>
@@ -218,7 +231,7 @@
         <button class="main-btn secondary-btn" style="position: absolute; left: 20px; top: 20px; padding: 8px 15px;" onclick="switchApp('menu')">← Меню</button>
         
         <div id="test-screen">
-            <h1>Тренажёр формул</h1>
+            <h1 style="margin-top: 40px;">Тренажёр формул</h1>
             <div class="top-bar">
                 <span id="hints-display">💡 50/50: 2</span>
                 <div class="progress-bar-container"><div class="progress-bar" id="progress-bar"></div></div>
@@ -299,18 +312,95 @@
     // ==========================================
     // ЛОГИКА ФИЗИКИ
     // ==========================================
-    const mainFormulas = [ /* ... (База формул, чтобы не раздувать код, я оставил её внутри) ... */ ];
-    // Вставь сюда массив mainFormulas и distractors из предыдущего сообщения
-    // (Я сократил их здесь только для читаемости ответа, в полном коде они раскомментированы)
-    
-    // --- ВНИМАНИЕ: ДЛЯ РАБОТЫ СКОПИРУЙТЕ МАССИВЫ mainFormulas И distractors ИЗ ПРЕДЫДУЩЕГО КОДА ---
-    const distractors = [];
+    const mainFormulas = [
+        { category: "Механика", name: "Проекция скорости при равномерном прямолинейном движении", formula: "v_x = \\frac{s_x}{t}" },
+        { category: "Механика", name: "Средняя путевая скорость", formula: "v_{cp} = \\frac{S_{общ}}{t_{общ}}" },
+        { category: "Механика", name: "Координата при равномерном прямолинейном движении", formula: "x(t) = x_0 + v_x t" },
+        { category: "Механика", name: "Координата при равноускоренном прямолинейном движении", formula: "x(t) = x_0 + v_{0x}t + \\frac{a_x t^2}{2}" },
+        { category: "Механика", name: "Проекция перемещения при равноускоренном движении", formula: "s_x = v_{0x}t + \\frac{a_x t^2}{2}" },
+        { category: "Механика", name: "Проекция скорости при равноускоренном движении", formula: "v_x = v_{0x} + a_x t" },
+        { category: "Механика", name: "Проекция ускорения при равноускоренном движении", formula: "a_x = \\frac{v_x - v_{0x}}{t}" },
+        { category: "Механика", name: "Проекция перемещения без времени", formula: "s_x = \\frac{v_x^2 - v_{0x}^2}{2a_x}" },
+        { category: "Механика", name: "Модуль линейной скорости по окружности", formula: "v = \\frac{2\\pi R}{T}" },
+        { category: "Механика", name: "Модуль центростремительного ускорения", formula: "a_ц = \\frac{v^2}{R}" },
+        { category: "Механика", name: "Плотность вещества", formula: "\\rho = \\frac{m}{V}" },
+        { category: "Механика", name: "Второй закон Ньютона", formula: "\\vec{F} = m\\vec{a}" },
+        { category: "Механика", name: "Третий закон Ньютона", formula: "\\vec{F}_{1\\to2} = -\\vec{F}_{2\\to1}" },
+        { category: "Механика", name: "Сила трения скольжения", formula: "F_{тр} = \\mu N" },
+        { category: "Механика", name: "Модуль силы упругости. Закон Гука", formula: "F_{упр} = k|\\Delta l|" },
+        { category: "Механика", name: "Модуль силы всемирного тяготения", formula: "F = G\\frac{m_1 m_2}{R^2}" },
+        { category: "Механика", name: "Сила тяжести", formula: "F_{тяж} = mg" },
+        { category: "Механика", name: "Импульс тела", formula: "p = mv" },
+        { category: "Механика", name: "Закон сохранения импульса", formula: "p_{10} + p_{20} = p_1 + p_2" },
+        { category: "Механика", name: "Работа постоянной силы", formula: "A = Fs \\cos \\alpha" },
+        { category: "Механика", name: "Механическая мощность", formula: "P = \\frac{A}{t}" },
+        { category: "Механика", name: "Кинетическая энергия тела", formula: "E_к = \\frac{mv^2}{2}" },
+        { category: "Механика", name: "Потенциальная энергия над Землёй", formula: "E_п = mgh" },
+        { category: "Механика", name: "Полная механическая энергия", formula: "E = E_к + E_п" },
+        { category: "Механика", name: "Закон сохранения механической энергии", formula: "E_{нач} = E_{кон}" },
+        { category: "Механика", name: "Момент силы", formula: "M = Fl" },
+        { category: "Механика", name: "Условие равновесия рычага", formula: "M_1 = M_2" },
+        { category: "Механика", name: "КПД простого механизма", formula: "\\eta = \\frac{A_{пол}}{A_{затр}} \\cdot 100\\%" },
+        { category: "Механика", name: "Давление твёрдого тела", formula: "p = \\frac{F}{S}" },
+        { category: "Механика", name: "Давление внутри жидкости", formula: "p = p_{атм} + \\rho gh" },
+        { category: "Механика", name: "Модуль силы Архимеда", formula: "F_A = \\rho_ж g V_{пор}" },
+        
+        { category: "Колебания и волны", name: "Связь частоты и периода колебаний", formula: "\\nu = \\frac{1}{T}" },
+        { category: "Колебания и волны", name: "Период колебаний математического маятника", formula: "T = 2\\pi \\sqrt{\\frac{l}{g}}" },
+        { category: "Колебания и волны", name: "Период колебаний пружинного маятника", formula: "T = 2\\pi \\sqrt{\\frac{m}{k}}" },
+        { category: "Колебания и волны", name: "Длина волны", formula: "\\lambda = vT" },
+        { category: "Колебания и волны", name: "Скорость распространения волны", formula: "v = \\lambda \\nu" },
+        
+        { category: "Тепловые явления", name: "Количество теплоты при нагревании/охлаждении", formula: "Q = cm(t_2 - t_1)" },
+        { category: "Тепловые явления", name: "Закон сохранения энергии (Тепловой баланс)", formula: "Q_{пол} = Q_{отд}" },
+        { category: "Тепловые явления", name: "Количество теплоты при кипении/конденсации", formula: "Q = Lm" },
+        { category: "Тепловые явления", name: "Количество теплоты при плавлении/отвердевании", formula: "Q = \\lambda m" },
+        { category: "Тепловые явления", name: "Количество теплоты при сгорании топлива", formula: "Q = qm" },
+        { category: "Тепловые явления", name: "Первый закон термодинамики", formula: "Q = \\Delta U + A" },
+        { category: "Тепловые явления", name: "Работа газа", formula: "A = p\\Delta V" },
+        { category: "Тепловые явления", name: "КПД теплового двигателя", formula: "\\eta = \\frac{A_{пол}}{Q_{затр}} \\cdot 100\\%" },
+        
+        { category: "Электромагнитные явления", name: "Закон Кулона", formula: "F = k\\frac{|q_1 q_2|}{r^2}" },
+        { category: "Электромагнитные явления", name: "Сила тока", formula: "I = \\frac{q}{t}" },
+        { category: "Электромагнитные явления", name: "Напряжение", formula: "U = \\frac{A}{q}" },
+        { category: "Электромагнитные явления", name: "Электрическое сопротивление", formula: "R = \\rho \\frac{l}{S}" },
+        { category: "Электромагнитные явления", name: "Закон Ома для участка цепи", formula: "I = \\frac{U}{R}" },
+        { category: "Электромагнитные явления", name: "Последовательное соединение (R)", formula: "R_{общ} = R_1 + R_2 + ... + R_n" },
+        { category: "Электромагнитные явления", name: "Параллельное соединение (R)", formula: "\\frac{1}{R_{общ}} = \\frac{1}{R_1} + \\frac{1}{R_2} + ..." },
+        { category: "Электромагнитные явления", name: "Работа электрического тока", formula: "A = UIt = I^2Rt = \\frac{U^2}{R}t" },
+        { category: "Электромагнитные явления", name: "Мощность электрического тока", formula: "P = UI = I^2R = \\frac{U^2}{R}" },
+        { category: "Электромагнитные явления", name: "Закон Джоуля — Ленца", formula: "Q = I^2Rt" },
+        { category: "Электромагнитные явления", name: "Сила Ампера", formula: "F_A = BIl \\sin \\alpha" },
+        { category: "Электромагнитные явления", name: "Сила Лоренца", formula: "F_Л = |q|vB \\sin \\alpha" },
+        
+        { category: "Оптика", name: "Оптическая сила линзы", formula: "D = \\frac{1}{F}" },
+        { category: "Оптика", name: "Формула тонкой линзы", formula: "\\frac{1}{F} = \\frac{1}{d} + \\frac{1}{f}" },
+        { category: "Оптика", name: "Увеличение линзы", formula: "\\Gamma = \\frac{H}{h} = \\frac{f}{d}" },
+        { category: "Оптика", name: "Закон отражения света", formula: "\\alpha = \\gamma" },
+        { category: "Оптика", name: "Закон преломления света", formula: "\\frac{\\sin \\alpha}{\\sin \\beta} = n" },
+        
+        { category: "Квантовые явления", name: "Закон альфа-распада", formula: "{}_{Z}^{A}X \\rightarrow {}_{Z-2}^{A-4}Y + {}_{2}^{4}He" },
+        { category: "Квантовые явления", name: "Закон бета-распада", formula: "{}_{Z}^{A}X \\rightarrow {}_{Z+1}^{A}Y + {}_{-1}^{0}e" },
+        { category: "Квантовые явления", name: "Закон гамма-распада", formula: "{}_{Z}^{A}X^* \\rightarrow {}_{Z}^{A}X + \\gamma" }
+    ];
+
+    const distractors = [
+        "pV = \\frac{m}{M}RT", "E = mc^2", "\\Phi = BS \\cos \\alpha", "\\mathcal{E} = -\\frac{\\Delta \\Phi}{\\Delta t}",
+        "E = h\\nu", "h\\nu = A_{вых} + \\frac{mv^2}{2}", "I = \\frac{\\mathcal{E}}{R+r}", "C = \\frac{q}{U}",
+        "W = \\frac{CU^2}{2}", "\\Phi = LI", "W = \\frac{LI^2}{2}", "\\eta = \\frac{T_1 - T_2}{T_1}",
+        "x = A \\cos(\\omega t)", "v = \\omega R", "a = \\omega^2 R", "\\omega = 2\\pi\\nu",
+        "p = nkT", "U = \\frac{3}{2}\\nu RT", "A = \\nu RT", "Q = \\Delta U + A",
+        "\\frac{p_1}{T_1} = \\frac{p_2}{T_2}", "\\frac{V_1}{T_1} = \\frac{V_2}{T_2}", "p_1 V_1 = p_2 V_2", "E = \\frac{kq}{r^2}",
+        "\\varphi = \\frac{W}{q}", "\\lambda = \\frac{h}{p}", "E_{св} = \\Delta m c^2", "N = N_0 2^{-t/T}",
+        "F = k\\frac{|q_1 q_2|}{\\varepsilon r^2}", "U = A + \\frac{mv^2}{2}"
+    ];
 
     let queue = [];
     let currentIndex = 0;
     let solvedCount = 0;
     let totalScore = 0;
-    const maxScore = 64; // Основных формул 64
+    const maxScore = mainFormulas.length; // 64
+    
     let currentItem = null;
     let currentAttempt = 1;
     let isLocked = false;
@@ -342,14 +432,16 @@
             document.getElementById('study-screen').classList.add('hidden');
 
             if (state.screen === 'result') {
-                showResults();
+                document.getElementById('result-screen').classList.remove('hidden');
+                showResults(true); // true = не сбрасывать экраны
             } else if (state.screen === 'study') {
-                showStudyScreen();
+                document.getElementById('study-screen').classList.remove('hidden');
+                showStudyScreen(true);
             } else {
                 document.getElementById('test-screen').classList.remove('hidden');
                 if (queue.length > 0 && currentIndex < queue.length) {
                     currentItem = queue[currentIndex];
-                    loadNextQuestion();
+                    loadNextQuestion(true);
                 } else {
                     startNewTest();
                 }
@@ -359,9 +451,266 @@
         }
     }
 
-    // ... (Функции startNewTest, loadNextQuestion, checkAnswer, etc. остаются как были, но в конце каждой вызывается savePhysicsState())
-    
-    // Вставь сюда функции физики из предыдущего кода, добавив savePhysicsState() в нужные места.
+    function shuffle(array) {
+        let currentIndex = array.length, randomIndex;
+        while (currentIndex !== 0) {
+            randomIndex = Math.floor(Math.random() * currentIndex);
+            currentIndex--;
+            [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
+        }
+        return array;
+    }
+
+    function startNewTest() {
+        queue = shuffle([...mainFormulas]);
+        currentIndex = 0;
+        solvedCount = 0;
+        totalScore = 0;
+        hintsLeft = 2;
+        
+        document.getElementById('result-screen').classList.add('hidden');
+        document.getElementById('study-screen').classList.add('hidden');
+        document.getElementById('test-screen').classList.remove('hidden');
+        
+        updateHintsUI();
+        loadNextQuestion();
+    }
+
+    function loadNextQuestion(isLoadingState = false) {
+        if (currentIndex >= queue.length) {
+            showResults();
+            return;
+        }
+
+        currentItem = queue[currentIndex];
+        currentAttempt = 1;
+        isLocked = false;
+        
+        document.getElementById('feedback').textContent = "";
+        document.getElementById('skip-btn').disabled = false;
+        document.getElementById('hint-btn').disabled = hintsLeft === 0;
+
+        const progressPercent = (solvedCount / maxScore) * 100;
+        document.getElementById('progress-bar').style.width = `${progressPercent}%`;
+        document.getElementById('progress-text').textContent = `${solvedCount} из ${maxScore}`;
+
+        document.getElementById('question').textContent = currentItem.name;
+
+        let options = [currentItem.formula];
+        let allWrongPool = mainFormulas.filter(f => f.formula !== currentItem.formula).map(f => f.formula);
+        allWrongPool = allWrongPool.concat(distractors);
+        allWrongPool = shuffle(allWrongPool);
+
+        for (let i = 0; i < 7; i++) {
+            options.push(allWrongPool[i]);
+        }
+
+        options = shuffle(options);
+
+        const optionsEl = document.getElementById('options');
+        optionsEl.innerHTML = "";
+        options.forEach(option => {
+            const btn = document.createElement('button');
+            btn.className = 'option-btn';
+            btn.innerHTML = `\\(${option}\\)`;
+            btn.onclick = () => checkAnswer(btn, option);
+            optionsEl.appendChild(btn);
+        });
+
+        if (window.MathJax) {
+            MathJax.typesetPromise([document.getElementById('question'), optionsEl]).catch(err => console.error(err));
+        }
+        
+        savePhysicsState();
+    }
+
+    function checkAnswer(btn, selectedOption) {
+        if (isLocked) return;
+        
+        if (selectedOption === currentItem.formula) {
+            isLocked = true;
+            btn.classList.add('correct');
+            
+            let points = 0;
+            if (currentAttempt === 1) points = 1.0;
+            else if (currentAttempt === 2) points = 0.5;
+            else if (currentAttempt === 3) points = 0.25;
+            
+            totalScore += points;
+            solvedCount++;
+            
+            const feedbackEl = document.getElementById('feedback');
+            feedbackEl.textContent = `Правильно! +${points} балл(а)`;
+            feedbackEl.style.color = "var(--correct)";
+            
+            disableAllButtons();
+            savePhysicsState();
+            setTimeout(() => {
+                currentIndex++;
+                loadNextQuestion();
+            }, 400); 
+            
+        } else {
+            btn.classList.add('wrong');
+            btn.disabled = true;
+            currentAttempt++;
+
+            if (currentAttempt > 3) {
+                isLocked = true;
+                solvedCount++;
+                
+                const feedbackEl = document.getElementById('feedback');
+                feedbackEl.textContent = "Попытки закончились 😢 Правильный ответ подсвечен.";
+                feedbackEl.style.color = "var(--wrong)";
+                
+                revealCorrectAnswer();
+                disableAllButtons();
+                savePhysicsState();
+                setTimeout(() => {
+                    currentIndex++;
+                    loadNextQuestion();
+                }, 1000);
+            } else {
+                const feedbackEl = document.getElementById('feedback');
+                feedbackEl.textContent = `Ошибка! У вас осталось ${3 - currentAttempt + 1} попытки.`;
+                feedbackEl.style.color = "var(--warning)";
+                savePhysicsState();
+            }
+        }
+    }
+
+    function revealCorrectAnswer() {
+        const buttons = document.getElementById('options').querySelectorAll('.option-btn');
+        buttons.forEach(b => {
+            if (b.innerHTML.includes(currentItem.formula)) {
+                b.classList.add('correct');
+            }
+        });
+    }
+
+    function disableAllButtons() {
+        const buttons = document.getElementById('options').querySelectorAll('.option-btn');
+        buttons.forEach(b => b.disabled = true);
+        document.getElementById('skip-btn').disabled = true;
+        document.getElementById('hint-btn').disabled = true;
+    }
+
+    function skipQuestion() {
+        if (isLocked) return;
+        
+        queue.push(currentItem);
+        currentIndex++;
+        
+        const feedbackEl = document.getElementById('feedback');
+        feedbackEl.textContent = "Вопрос отложен на конец.";
+        feedbackEl.style.color = "var(--text-muted)";
+        
+        isLocked = true;
+        disableAllButtons();
+        savePhysicsState();
+        
+        setTimeout(() => {
+            loadNextQuestion();
+        }, 400);
+    }
+
+    function useHint() {
+        if (hintsLeft <= 0 || isLocked) return;
+        
+        hintsLeft--;
+        updateHintsUI();
+        
+        const buttons = Array.from(document.getElementById('options').querySelectorAll('.option-btn'));
+        const wrongButtons = buttons.filter(b => !b.innerHTML.includes(currentItem.formula));
+        
+        shuffle(wrongButtons);
+        for (let i = 0; i < 6; i++) {
+            if (wrongButtons[i]) {
+                wrongButtons[i].disabled = true;
+                wrongButtons[i].style.opacity = '0.1';
+            }
+        }
+        
+        if (hintsLeft === 0) document.getElementById('hint-btn').disabled = true;
+        savePhysicsState();
+    }
+
+    function updateHintsUI() {
+        document.getElementById('hints-display').textContent = `💡 50/50: ${hintsLeft}`;
+        document.getElementById('hint-btn').textContent = `💡 50/50`;
+        if (hintsLeft === 0) document.getElementById('hint-btn').disabled = true;
+    }
+
+    function showResults(isLoading = false) {
+        if (!isLoading) {
+            document.getElementById('test-screen').classList.add('hidden');
+            document.getElementById('study-screen').classList.add('hidden');
+            document.getElementById('result-screen').classList.remove('hidden');
+            savePhysicsState();
+        }
+
+        const percent = (totalScore / maxScore) * 100;
+        
+        document.getElementById('result-score').textContent = `Баллы: ${totalScore.toFixed(2)} из ${maxScore}`;
+        document.getElementById('result-percent').textContent = `${percent.toFixed(1)}%`;
+
+        let rank = "";
+        if (percent >= 93.7) rank = "Эйнштейн! 🏆";
+        else if (percent >= 78.1) rank = "Ньютон 🍎";
+        else if (percent >= 62.5) rank = "Архимед 🛁";
+        else if (percent >= 46.8) rank = "Профессор 🎓";
+        else if (percent >= 31.2) rank = "Учитель 📚";
+        else if (percent >= 15.6) rank = "Студент 🎒";
+        else rank = "Школьник 📝";
+
+        document.getElementById('result-rank').textContent = rank;
+    }
+
+    function showStudyScreen(isLoading = false) {
+        if (!isLoading) {
+            document.getElementById('test-screen').classList.add('hidden');
+            document.getElementById('result-screen').classList.add('hidden');
+            document.getElementById('study-screen').classList.remove('hidden');
+            savePhysicsState();
+        }
+
+        const studyContentEl = document.getElementById('study-content');
+        if (!isStudyRendered) {
+            const grouped = {};
+            mainFormulas.forEach(f => {
+                if (!grouped[f.category]) grouped[f.category] = [];
+                grouped[f.category].push(f);
+            });
+
+            let html = "";
+            for (const category in grouped) {
+                html += `<div class="study-section">`;
+                html += `<h3>${category}</h3>`;
+                grouped[category].forEach(f => {
+                    html += `
+                        <div class="study-item">
+                            <div class="study-name">${f.name}</div>
+                            <div class="study-formula">\\(${f.formula}\\)</div>
+                        </div>
+                    `;
+                });
+                html += `</div>`;
+            }
+            studyContentEl.innerHTML = html;
+            isStudyRendered = true;
+
+            if (window.MathJax) {
+                MathJax.typesetPromise([studyContentEl]).catch(err => console.error(err));
+            }
+        }
+    }
+
+    function returnToResults() {
+        document.getElementById('study-screen').classList.add('hidden');
+        document.getElementById('test-screen').classList.add('hidden');
+        document.getElementById('result-screen').classList.remove('hidden');
+        showResults(true);
+    }
 
     // ==========================================
     // ЛОГИКА ШАХМАТ
@@ -372,9 +721,9 @@
     let validMoves = [];
     let isAiThinking = false;
 
-    // Юникод фигуры
+    // Используем только плотные (solid) фигуры для обоих цветов
     const pieces = {
-        'wK': '♔', 'wQ': '♕', 'wR': '♖', 'wB': '♗', 'wN': '♘', 'wP': '♙',
+        'wK': '♚', 'wQ': '♛', 'wR': '♜', 'wB': '♝', 'wN': '♞', 'wP': '♟',
         'bK': '♚', 'bQ': '♛', 'bR': '♜', 'bB': '♝', 'bN': '♞', 'bP': '♟'
     };
 
@@ -398,10 +747,7 @@
 
     function saveChessState() {
         if (currentApp !== 'chess') return;
-        const state = {
-            fen: game.fen(),
-            playerColor: playerColor
-        };
+        const state = { fen: game.fen(), playerColor: playerColor };
         localStorage.setItem('chessState', JSON.stringify(state));
     }
 
@@ -429,7 +775,6 @@
 
         for (let r = 0; r < 8; r++) {
             for (let c = 0; c < 8; c++) {
-                // Инверсия доски, если играем за чёрных
                 let actualR = playerColor === 'w' ? r : 7 - r;
                 let actualC = playerColor === 'w' ? c : 7 - c;
 
@@ -442,10 +787,7 @@
                 squareDiv.className = `square ${(actualR + actualC) % 2 === 0 ? 'light' : 'dark'}`;
                 squareDiv.id = squareId;
 
-                // Подсветка
-                if (selectedSquare === squareId) {
-                    squareDiv.classList.add('selected');
-                }
+                if (selectedSquare === squareId) squareDiv.classList.add('selected');
                 if (validMoves.includes(squareId)) {
                     if (piece) squareDiv.classList.add('valid-capture');
                     else squareDiv.classList.add('valid-move');
@@ -453,7 +795,8 @@
 
                 if (piece) {
                     let pieceSpan = document.createElement('span');
-                    pieceSpan.className = 'piece';
+                    // Добавляем класс цвета для правильной стилизации (белый/черный)
+                    pieceSpan.className = `piece ${piece.color === 'w' ? 'white' : 'black'}`;
                     pieceSpan.innerHTML = pieces[piece.color + piece.type.toUpperCase()];
                     squareDiv.appendChild(pieceSpan);
                 }
@@ -467,22 +810,15 @@
     function handleSquareClick(squareId) {
         if (isAiThinking || game.game_over() || game.turn() !== playerColor) return;
 
-        // Если уже выбрана фигура и кликнули на валидный ход
         if (selectedSquare && validMoves.includes(squareId)) {
-            const move = game.move({
-                from: selectedSquare,
-                to: squareId,
-                promotion: 'q' // Всегда превращаем в ферзя для простоты
-            });
+            game.move({ from: selectedSquare, to: squareId, promotion: 'q' });
             selectedSquare = null;
             validMoves = [];
             renderBoard();
             saveChessState();
             updateChessStatus();
             
-            if (!game.game_over()) {
-                makeAiMove();
-            }
+            if (!game.game_over()) makeAiMove();
             return;
         }
 
@@ -515,17 +851,12 @@
         }
     }
 
-    // --- ИИ (Минимакс с альфа-бета отсечением) ---
     function makeAiMove() {
         isAiThinking = true;
         updateChessStatus();
-        
-        // Таймаут, чтобы интерфейс успел обновиться перед тяжелыми вычислениями
         setTimeout(() => {
-            const bestMove = getBestMove(game, 2); // Глубина 2 (быстро, ~1200 Эло)
-            if (bestMove) {
-                game.move(bestMove);
-            }
+            const bestMove = getBestMove(game, 2);
+            if (bestMove) game.move(bestMove);
             isAiThinking = false;
             renderBoard();
             saveChessState();
@@ -549,19 +880,13 @@
     }
 
     function minimax(depth, alpha, beta, isMaximizingPlayer) {
-        if (depth === 0 || game.game_over()) {
-            return evaluateBoard(game);
-        }
+        if (depth === 0 || game.game_over()) return evaluateBoard(game);
 
         let possibleMoves = game.moves();
-        // Простая сортировка (взятия в приоритете)
+        // Простая сортировка (взятия в приоритете для лучшего отсечения)
         possibleMoves.sort((a, b) => {
-            let moveA = game.move(a);
-            let scoreA = moveA && moveA.captured ? 1 : 0;
-            game.undo();
-            let moveB = game.move(b);
-            let scoreB = moveB && moveB.captured ? 1 : 0;
-            game.undo();
+            let moveA = game.move(a); let scoreA = moveA && moveA.captured ? 1 : 0; game.undo();
+            let moveB = game.move(b); let scoreB = moveB && moveB.captured ? 1 : 0; game.undo();
             return scoreB - scoreA;
         });
 
@@ -593,12 +918,10 @@
     function getBestMove(game, depth) {
         let possibleMoves = game.moves();
         let bestMove = null;
-        
         let isMaximizing = game.turn() === 'w';
         let bestValue = isMaximizing ? -Infinity : Infinity;
 
-        // Перемешаем ходы, чтобы бот не играл однообразно
-        possibleMoves.sort(() => Math.random() - 0.5);
+        possibleMoves.sort(() => Math.random() - 0.5); // Рандомизация для разнообразия
 
         for (let move of possibleMoves) {
             game.move(move);
@@ -618,12 +941,10 @@
     // ИНИЦИАЛИЗАЦИЯ
     // ==========================================
     window.onload = () => {
-        // Принудительно закрываем все экраны
         document.getElementById('main-menu').classList.add('hidden');
         document.getElementById('app-physics').classList.add('hidden');
         document.getElementById('app-chess').classList.add('hidden');
 
-        // Проверяем, где мы были в прошлый раз
         const savedApp = localStorage.getItem('appMode') || 'menu';
         switchApp(savedApp);
     };
