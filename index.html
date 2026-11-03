@@ -5,10 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>WEIXTOR GAMES</title>
     
-    <!-- MathJax для формул -->
     <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-    <!-- Chess.js для правил шахмат -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
 
     <style>
@@ -31,7 +29,6 @@
             --board-highlight: rgba(255, 255, 51, 0.5);
             --board-check: radial-gradient(circle, #ff6b6b 20%, transparent 80%);
             --board-select: rgba(139, 92, 246, 0.6);
-            --board-move: rgba(16, 185, 129, 0.6);
         }
 
         body {
@@ -111,17 +108,17 @@
 
         .hidden { display: none !important; }
 
-        /* --- МЕНЮ (МАКСИМУМ 3 В РЯД) --- */
+        /* --- МЕНЮ --- */
         .menu-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 15px;
             margin-top: 30px;
         }
-        @media (max-width: 600px) {
+        @media (max-width: 700px) {
             .menu-grid { grid-template-columns: repeat(2, 1fr); }
         }
-        @media (max-width: 400px) {
+        @media (max-width: 450px) {
             .menu-grid { grid-template-columns: 1fr; }
         }
         
@@ -129,9 +126,13 @@
             background: rgba(255, 255, 255, 0.05);
             border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 15px;
-            padding: 25px 10px;
+            padding: 20px 10px;
             cursor: pointer;
             transition: all 0.3s ease;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
         .menu-card:hover {
             background: rgba(255, 255, 255, 0.1);
@@ -140,7 +141,17 @@
             border-color: var(--accent);
         }
         .menu-icon { font-size: 40px; margin-bottom: 10px; }
-        .menu-title { font-size: 16px; font-weight: bold; }
+        .menu-title { font-size: 16px; font-weight: bold; margin-bottom: 5px; }
+        
+        .menu-badge {
+            font-size: 12px;
+            background: rgba(0,0,0,0.4);
+            padding: 3px 8px;
+            border-radius: 10px;
+            color: var(--correct);
+            margin-top: 5px;
+        }
+        .menu-badge.record { color: var(--warning); }
 
         /* --- ОБЩИЕ КНОПКИ --- */
         .main-btn {
@@ -150,7 +161,44 @@
         .secondary-btn { background: #475569; }
         .secondary-btn:hover { background: #334155; }
 
-        /* --- ФИЗИКА --- */
+        /* --- СЕТКИ УРОВНЕЙ (ЗМЕЙКА И КРОТЫ) --- */
+        .level-group { margin-bottom: 25px; }
+        .level-group-title { font-size: 18px; font-weight: bold; color: var(--text-muted); margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1px; }
+        
+        .level-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+        }
+        
+        .level-btn {
+            background: rgba(255,255,255,0.1);
+            border: 2px solid rgba(255,255,255,0.2);
+            color: white;
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            font-size: 22px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .level-btn:hover { background: var(--accent); transform: scale(1.05); }
+        .level-btn.completed { border-color: var(--correct); box-shadow: 0 0 10px rgba(16, 185, 129, 0.3); }
+        
+        .crown-icon {
+            position: absolute;
+            top: -15px;
+            font-size: 20px;
+            filter: drop-shadow(0 0 5px gold);
+        }
+
+        /* --- ИГРА: ФИЗИКА --- */
         .top-bar { display: flex; justify-content: space-between; align-items: center; font-size: 14px; color: var(--text-muted); margin-bottom: 20px; background: rgba(0,0,0,0.2); padding: 10px 15px; border-radius: 10px; }
         .progress-bar-container { flex-grow: 1; margin: 0 15px; background: rgba(255,255,255,0.1); height: 8px; border-radius: 4px; overflow: hidden; }
         .progress-bar { height: 100%; background: linear-gradient(90deg, #8b5cf6, #10b981); width: 0%; transition: width 0.3s ease; }
@@ -237,14 +285,8 @@
         .ttt-status { font-size: 24px; font-weight: bold; margin-bottom: 20px; color: var(--accent); }
 
         /* --- ЗМЕЙКА --- */
-        .snake-level-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 20px; }
-        .snake-level-btn { background: rgba(255,255,255,0.1); border: 2px solid rgba(255,255,255,0.2); color: white; width: 50px; height: 50px; border-radius: 10px; font-size: 20px; font-weight: bold; cursor: pointer; transition: all 0.2s; }
-        .snake-level-btn:hover { background: var(--accent); transform: scale(1.1); }
-        
         .snake-board {
             display: grid;
-            grid-template-columns: repeat(10, 1fr);
-            grid-template-rows: repeat(10, 1fr);
             width: 100%;
             max-width: 500px;
             aspect-ratio: 1 / 1;
@@ -255,6 +297,7 @@
             overflow: hidden;
             box-shadow: 0 15px 35px rgba(0,0,0,0.6);
             touch-action: none;
+            position: relative;
         }
         .snake-cell {
             border: 1px solid rgba(255, 255, 255, 0.03);
@@ -276,39 +319,77 @@
         }
         @keyframes pulse { 0% { transform: scale(0.9); } 100% { transform: scale(1.1); } }
 
-        /* Кнопки управления змейкой для телефона */
-        .snake-controls {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 10px;
-            margin-top: 20px;
-        }
-        .snake-controls-row {
-            display: flex;
-            gap: 10px;
-        }
-        .snake-ctrl-btn {
-            background: rgba(255,255,255,0.1);
-            border: 2px solid rgba(255,255,255,0.2);
-            color: white;
-            font-size: 24px;
-            width: 65px;
-            height: 65px;
+        .snake-controls { display: flex; flex-direction: column; align-items: center; gap: 10px; margin-top: 20px; }
+        .snake-controls-row { display: flex; gap: 10px; }
+        .snake-ctrl-btn { background: rgba(255,255,255,0.1); border: 2px solid rgba(255,255,255,0.2); color: white; font-size: 24px; width: 65px; height: 65px; border-radius: 12px; cursor: pointer; user-select: none; display: flex; justify-content: center; align-items: center; }
+        .snake-ctrl-btn:active { background: var(--accent); transform: scale(0.95); }
+
+        /* --- УБЕЙ КРОТА --- */
+        #moles-grid {
+            display: grid;
+            width: 100%;
+            max-width: 500px;
+            aspect-ratio: 1 / 1;
+            margin: 0 auto;
+            background: #2d1b0e;
+            border: 4px solid #5c3a21;
             border-radius: 12px;
-            cursor: pointer;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.8), 0 15px 35px rgba(0,0,0,0.6);
+            overflow: hidden;
             user-select: none;
+        }
+        .mole-hole {
+            position: relative;
+            background: #1a0f07;
+            border-radius: 50%;
+            margin: 10%;
+            box-shadow: inset 0 5px 10px rgba(0,0,0,0.8);
+            cursor: crosshair;
+        }
+        .mole {
+            position: absolute;
+            top: 10%; left: 10%; width: 80%; height: 80%;
+            background: #8b5a2b;
+            border-radius: 50% 50% 40% 40%;
             display: flex;
             justify-content: center;
             align-items: center;
+            font-size: 24px;
+            transform: translateY(100%);
+            transition: transform 0.1s ease-out;
+            z-index: 5;
         }
-        .snake-ctrl-btn:active {
-            background: var(--accent);
-            transform: scale(0.95);
+        .mole.active {
+            transform: translateY(0);
+        }
+        .mole::before { content: '🦫'; } /* Эмодзи бобра/крота, можно заменить на свой */
+        
+        .hammer-cursor {
+            position: fixed;
+            width: 60px;
+            height: 60px;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y="80" font-size="80">🔨</text></svg>');
+            background-size: contain;
+            pointer-events: none;
+            z-index: 1000;
+            transform: rotate(-45deg);
+            transition: transform 0.05s;
+            display: none;
+        }
+        .hammer-cursor.strike {
+            transform: rotate(30deg) scale(0.9);
+        }
+
+        /* Специфичные для мобильных настройки */
+        @media (max-width: 600px) {
+            .mole { font-size: 16px; }
+            .hammer-cursor { width: 40px; height: 40px; }
         }
     </style>
 </head>
 <body>
+
+<div class="hammer-cursor" id="hammer"></div>
 
 <div class="container">
     <!-- ГЛАВНОЕ МЕНЮ -->
@@ -319,6 +400,7 @@
             <div class="menu-card" onclick="switchApp('physics')">
                 <div class="menu-icon">⚛️</div>
                 <div class="menu-title">Физика</div>
+                <div class="menu-badge" id="badge-physics">Всего 64</div>
             </div>
             <div class="menu-card" onclick="switchApp('chess')">
                 <div class="menu-icon">♟️</div>
@@ -335,6 +417,12 @@
             <div class="menu-card" onclick="switchApp('snake')">
                 <div class="menu-icon">🐍</div>
                 <div class="menu-title">Змейка</div>
+                <div class="menu-badge" id="badge-snake">Рекорд: 0</div>
+            </div>
+            <div class="menu-card" onclick="switchApp('moles')">
+                <div class="menu-icon">🔨</div>
+                <div class="menu-title">Убей крота</div>
+                <div class="menu-badge" id="badge-moles">Рекорд: 0</div>
             </div>
         </div>
     </div>
@@ -458,18 +546,13 @@
 
         <div id="snake-mode-select">
             <h2 class="animated-title" style="font-size: 22px;">Выберите уровень</h2>
-            <div style="max-width: 400px; margin: 0 auto;">
-                <div class="snake-level-grid" id="snake-level-grid">
-                    <!-- Кнопки уровней -->
-                </div>
-            </div>
+            <div id="snake-levels-container"></div>
         </div>
 
         <div id="snake-game" class="hidden">
             <div class="ttt-status" id="snake-status" style="color: #10b981;">Очки: 0 / 7</div>
             <div class="snake-board" id="snake-board"></div>
             
-            <!-- Кнопки управления для телефона -->
             <div class="snake-controls">
                 <button class="snake-ctrl-btn" onclick="snakeChangeDir(0, -1)">⬆️</button>
                 <div class="snake-controls-row">
@@ -493,23 +576,84 @@
             </div>
         </div>
     </div>
+
+    <!-- ПРИЛОЖЕНИЕ: УБЕЙ КРОТА -->
+    <div id="app-moles" class="hidden">
+        <div class="chess-header">
+            <button class="main-btn secondary-btn" onclick="switchApp('menu')">← Меню</button>
+            <h1 class="animated-title" style="margin: 0; font-size: 28px;">Убей крота</h1>
+            <button class="main-btn" onclick="startMoles(moleLevel)">Заново</button>
+        </div>
+
+        <div id="moles-mode-select">
+            <h2 class="animated-title" style="font-size: 22px;">Выберите уровень</h2>
+            <div id="moles-levels-container"></div>
+        </div>
+
+        <div id="moles-game" class="hidden">
+            <div class="top-bar">
+                <span id="moles-hit">Убито: 0 / 10</span>
+                <span id="moles-miss" style="color: var(--wrong);">Промахи: 0 / 3</span>
+            </div>
+            <div id="moles-grid"></div>
+            
+            <div style="margin-top: 20px; display: flex; justify-content: center; gap: 10px;">
+                <button class="main-btn secondary-btn" onclick="startMoles(moleLevel)">Начать заново</button>
+                <button class="main-btn secondary-btn" onclick="showMolesMenu()">← Выбор уровня</button>
+            </div>
+            
+            <div id="moles-overlay" class="overlay hidden" style="max-width: 500px; margin: 0 auto; aspect-ratio: 1/1; top: 150px;">
+                <h2 id="moles-overlay-text">Уровень пройден!</h2>
+                <div style="display: flex; gap: 10px; margin-top: 15px; flex-wrap: wrap; justify-content: center;">
+                    <button id="moles-next-btn" class="main-btn" style="display:none;" onclick="molesNextLevel()">Следующий уровень</button>
+                    <button id="moles-record-btn" class="main-btn" style="display:none; background: var(--warning);" onclick="startMolesRecord()">Играть на рекорд</button>
+                    <button class="main-btn secondary-btn" onclick="startMoles(moleLevel)">Играть заново</button>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 <script>
     // ==========================================
-    // ЛОГИКА ПЕРЕКЛЮЧЕНИЯ ПРИЛОЖЕНИЙ
+    // ГЛОБАЛЬНЫЕ ДАННЫЕ И ПРОГРЕСС
     // ==========================================
     let currentApp = 'menu';
+    
+    // Загрузка прогресса
+    let progress = JSON.parse(localStorage.getItem('weixtor_progress')) || {
+        snake: { completed: [], record: 0 },
+        moles: { completed: [], record: 0 }
+    };
+
+    function saveProgress() {
+        localStorage.setItem('weixtor_progress', JSON.stringify(progress));
+        updateMenuBadges();
+    }
+
+    function updateMenuBadges() {
+        const snakeBadge = document.getElementById('badge-snake');
+        const molesBadge = document.getElementById('badge-moles');
+        
+        snakeBadge.textContent = `Рекорд: ${progress.snake.record}`;
+        if (progress.snake.completed.length > 0) {
+            snakeBadge.textContent += ` | Пройдено: ${progress.snake.completed.length}/21`;
+            snakeBadge.classList.add('record');
+        }
+
+        molesBadge.textContent = `Рекорд: ${progress.moles.record}`;
+        if (progress.moles.completed.length > 0) {
+            molesBadge.textContent += ` | Пройдено: ${progress.moles.completed.length}/21`;
+            molesBadge.classList.add('record');
+        }
+    }
 
     function switchApp(appName) {
-        if (currentApp === 'snake' && appName !== 'snake') {
-            snakeStopGame();
-        }
+        if (currentApp === 'snake' && appName !== 'snake') snakeStopGame();
+        if (currentApp === 'moles' && appName !== 'moles') molesStopGame();
 
-        const validApps = ['menu', 'physics', 'chess', '2048', 'ttt', 'snake'];
-        if (!validApps.includes(appName)) {
-            appName = 'menu';
-        }
+        const validApps = ['menu', 'physics', 'chess', '2048', 'ttt', 'snake', 'moles'];
+        if (!validApps.includes(appName)) appName = 'menu';
 
         currentApp = appName;
         localStorage.setItem('appMode', appName);
@@ -520,8 +664,10 @@
         document.getElementById('app-2048').classList.add('hidden');
         document.getElementById('app-ttt').classList.add('hidden');
         document.getElementById('app-snake').classList.add('hidden');
+        document.getElementById('app-moles').classList.add('hidden');
 
         if (appName === 'menu') {
+            updateMenuBadges();
             document.getElementById('main-menu').classList.remove('hidden');
         } else if (appName === 'physics') {
             document.getElementById('app-physics').classList.remove('hidden');
@@ -538,6 +684,9 @@
         } else if (appName === 'snake') {
             document.getElementById('app-snake').classList.remove('hidden');
             showSnakeMenu();
+        } else if (appName === 'moles') {
+            document.getElementById('app-moles').classList.remove('hidden');
+            showMolesMenu();
         }
     }
 
@@ -1468,7 +1617,7 @@
     let snakeGameActive = false;
     let snakeInterval = null;
 
-    // Скорость увеличена на 25% (интервалы уменьшены в 1.25 раза)
+    // 21 уровень с короной
     const snakeLevelConfigs = [
         { target: 7, speed: 240 },  // 1
         { target: 7, speed: 240 },  // 2
@@ -1481,7 +1630,8 @@
         { target: 15, speed: 160 }, // 9
         { target: 15, speed: 160 }, // 10
         { target: 20, speed: 137 }, // 11
-        { target: 25, speed: 120 }  // 12
+        { target: 25, speed: 120 }, // 12
+        { target: 35, speed: 60, crown: true } // 21
     ];
 
     function showSnakeMenu() {
@@ -1489,21 +1639,53 @@
         document.getElementById('snake-mode-select').classList.remove('hidden');
         document.getElementById('snake-game').classList.add('hidden');
         
-        const grid = document.getElementById('snake-level-grid');
-        grid.innerHTML = '';
-        for (let i = 1; i <= 12; i++) {
-            const btn = document.createElement('button');
-            btn.className = 'snake-level-btn';
-            btn.textContent = i;
-            btn.onclick = () => startSnake(i);
-            grid.appendChild(btn);
-        }
+        const container = document.getElementById('snake-levels-container');
+        container.innerHTML = '';
+
+        const groups = [
+            { name: "Легкие", levels: [1, 2, 3] },
+            { name: "Средние", levels: [4, 5, 6, 7] },
+            { name: "Сложные", levels: [8, 9, 10] },
+            { name: "Максимальные", levels: [11, 12] },
+            { name: "Королевский", levels: [13] } // 13-й индекс массива = 21 уровень
+        ];
+
+        groups.forEach(group => {
+            const groupDiv = document.createElement('div');
+            groupDiv.className = 'level-group';
+            groupDiv.innerHTML = `<div class="level-group-title">${group.name}</div>`;
+            
+            const gridDiv = document.createElement('div');
+            gridDiv.className = 'level-grid';
+
+            group.levels.forEach(lvlNum => {
+                const btn = document.createElement('button');
+                btn.className = 'level-btn';
+                
+                // Если это 21 уровень
+                if (lvlNum === 13) {
+                    btn.innerHTML = `<span class="crown-icon">👑</span>21`;
+                    btn.style.borderColor = 'gold';
+                } else {
+                    btn.textContent = lvlNum;
+                }
+
+                if (progress.snake.completed.includes(lvlNum === 13 ? 21 : lvlNum)) {
+                    btn.classList.add('completed');
+                }
+
+                btn.onclick = () => startSnake(lvlNum);
+                gridDiv.appendChild(btn);
+            });
+            groupDiv.appendChild(gridDiv);
+            container.appendChild(groupDiv);
+        });
     }
 
-    function startSnake(level) {
+    function startSnake(lvlIndex) {
         snakeStopGame();
-        snakeLevel = level;
-        const config = snakeLevelConfigs[level - 1];
+        snakeLevel = lvlIndex; // 1-12 или 13 (для 21-го)
+        const config = snakeLevelConfigs[snakeLevel - 1];
         snakeTargetScore = config.target;
         snakeGameActive = true;
         
@@ -1557,13 +1739,11 @@
         
         let head = { x: snakeBody[0].x + snakeDir.x, y: snakeBody[0].y + snakeDir.y };
         
-        // Проходимость через края
         if (head.x < 0) head.x = snakeGridSize - 1;
         if (head.x >= snakeGridSize) head.x = 0;
         if (head.y < 0) head.y = snakeGridSize - 1;
         if (head.y >= snakeGridSize) head.y = 0;
 
-        // Проверка столкновения с хвостом (исключая последний элемент)
         for (let i = 0; i < snakeBody.length - 1; i++) {
             if (snakeBody[i].x === head.x && snakeBody[i].y === head.y) {
                 snakeGameOver();
@@ -1577,6 +1757,7 @@
             let pts = snakeFood.type === 'emblem' ? 3 : 1;
             snakeScore += pts;
             updateSnakeHUD();
+            
             if (snakeScore >= snakeTargetScore) {
                 snakeWin();
                 return;
@@ -1598,7 +1779,6 @@
                 const cell = document.createElement('div');
                 cell.className = 'snake-cell';
                 
-                // Еда
                 if (snakeFood.x === x && snakeFood.y === y) {
                     const foodSpan = document.createElement('span');
                     foodSpan.className = 'snake-food';
@@ -1614,21 +1794,18 @@
                     cell.appendChild(foodSpan);
                 }
 
-                // Змейка
                 const segIndex = snakeBody.findIndex(s => s.x === x && s.y === y);
                 if (segIndex !== -1) {
                     const segDiv = document.createElement('div');
                     segDiv.className = segIndex === 0 ? 'snake-head' : 'snake-body';
                     
                     if (segIndex === 0) {
-                        // Голова с чёлкой
                         segDiv.innerHTML = `
                             <svg viewBox="0 0 100 100" style="width:100%; height:100%; position:absolute; top:0; left:0;">
                                 <rect width="100" height="100" fill="#2e4a2e" />
                                 <path d="M 0 0 L 100 0 L 100 45 Q 50 90 0 40 Z" fill="black" />
                             </svg>`;
                     } else {
-                        // Тело с крестом и бликами
                         segDiv.innerHTML = `
                             <svg viewBox="0 0 100 100" style="width:100%; height:100%; position:absolute; top:0; left:0;">
                                 <rect width="100" height="100" fill="#2e4a2e" />
@@ -1650,6 +1827,17 @@
 
     function snakeWin() {
         snakeStopGame();
+        
+        // Запись прогресса
+        const lvlNum = snakeLevel === 13 ? 21 : snakeLevel;
+        if (!progress.snake.completed.includes(lvlNum)) {
+            progress.snake.completed.push(lvlNum);
+        }
+        if (snakeLevel === 13 && snakeScore > progress.snake.record) {
+            progress.snake.record = snakeScore;
+        }
+        saveProgress();
+
         const winWords = ["Молодец", "Красава"];
         document.getElementById('snake-overlay-text').textContent = winWords[Math.floor(Math.random() * winWords.length)];
         document.getElementById('snake-overlay-text').style.color = "var(--correct)";
@@ -1657,6 +1845,9 @@
         const nextBtn = document.getElementById('snake-next-btn');
         if (snakeLevel < 12) {
             nextBtn.style.display = 'inline-block';
+        } else if (snakeLevel === 12) {
+            nextBtn.style.display = 'inline-block';
+            nextBtn.onclick = () => startSnake(13); // Ведет на 21 уровень
         } else {
             nextBtn.style.display = 'none';
             document.getElementById('snake-overlay-text').textContent = "Вы прошли игру!";
@@ -1667,7 +1858,7 @@
 
     function snakeGameOver() {
         snakeStopGame();
-        const loseWords = ["Лох", "Лузер", "Неудачник"];
+        const loseWords = ["Лох", "Лузер", "Неудача"];
         document.getElementById('snake-overlay-text').textContent = loseWords[Math.floor(Math.random() * loseWords.length)];
         document.getElementById('snake-overlay-text').style.color = "var(--wrong)";
         document.getElementById('snake-next-btn').style.display = 'none';
@@ -1680,7 +1871,7 @@
         }
     }
 
-    // Свайпы для змейки (на телефоне)
+    // Свайпы для змейки
     let snakeTouchStartX = 0;
     let snakeTouchStartY = 0;
     const snakeBoardEl = document.getElementById('snake-board');
@@ -1701,11 +1892,304 @@
     }, { passive: false });
 
     // ==========================================
+    // ЛОГИКА ИГРЫ "УБЕЙ КРОТА"
+    // ==========================================
+    let moleLevel = 1;
+    let molesHit = 0;
+    let molesMissed = 0;
+    let moleTarget = 10;
+    let moleGridSize = 3;
+    let moleSpeed = 1300;
+    let moleActiveIndex = -1;
+    let moleTimeout = null;
+    let moleGameActive = false;
+    let isRecordMode = false;
+
+    const moleLevelConfigs = [
+        { grid: 3, target: 10, time: 1300 }, // 1-5
+        { grid: 3, target: 10, time: 1300 },
+        { grid: 3, target: 10, time: 1300 },
+        { grid: 3, target: 10, time: 1300 },
+        { grid: 3, target: 10, time: 1300 },
+        { grid: 4, target: 15, time: 1100 }, // 6-10
+        { grid: 4, target: 15, time: 1100 },
+        { grid: 4, target: 15, time: 1100 },
+        { grid: 4, target: 15, time: 1100 },
+        { grid: 4, target: 15, time: 1100 },
+        { grid: 6, target: 20, time: 900 },  // 11-15
+        { grid: 6, target: 20, time: 900 },
+        { grid: 6, target: 20, time: 900 },
+        { grid: 6, target: 20, time: 900 },
+        { grid: 6, target: 20, time: 900 },
+        { grid: 8, target: 23, time: 700 },  // 16-20
+        { grid: 8, target: 23, time: 700 },
+        { grid: 8, target: 23, time: 700 },
+        { grid: 8, target: 23, time: 700 },
+        { grid: 8, target: 23, time: 700 },
+        { grid: 10, target: 50, time: 500, crown: true } // 21
+    ];
+
+    // Курсор-молот
+    const hammerCursor = document.getElementById('hammer');
+    document.addEventListener('mousemove', (e) => {
+        if (currentApp === 'moles' && moleGameActive) {
+            hammerCursor.style.display = 'block';
+            hammerCursor.style.left = (e.clientX - 30) + 'px';
+            hammerCursor.style.top = (e.clientY - 30) + 'px';
+        } else {
+            hammerCursor.style.display = 'none';
+        }
+    });
+    document.addEventListener('touchmove', (e) => {
+        if (currentApp === 'moles' && moleGameActive) {
+            hammerCursor.style.display = 'block';
+            let touch = e.touches[0];
+            hammerCursor.style.left = (touch.clientX - 30) + 'px';
+            hammerCursor.style.top = (touch.clientY - 30) + 'px';
+        }
+    }, { passive: true });
+
+    function showMolesMenu() {
+        molesStopGame();
+        document.getElementById('moles-mode-select').classList.remove('hidden');
+        document.getElementById('moles-game').classList.add('hidden');
+        hammerCursor.style.display = 'none';
+
+        const container = document.getElementById('moles-levels-container');
+        container.innerHTML = '';
+
+        const groups = [
+            { name: "Легкие", levels: [1, 2, 3, 4, 5] },
+            { name: "Средние", levels: [6, 7, 8, 9, 10] },
+            { name: "Сложные", levels: [11, 12, 13, 14, 15] },
+            { name: "Максимальные", levels: [16, 17, 18, 19, 20] },
+            { name: "Королевский", levels: [21] }
+        ];
+
+        groups.forEach(group => {
+            const groupDiv = document.createElement('div');
+            groupDiv.className = 'level-group';
+            groupDiv.innerHTML = `<div class="level-group-title">${group.name}</div>`;
+            
+            const gridDiv = document.createElement('div');
+            gridDiv.className = 'level-grid';
+
+            group.levels.forEach(lvlNum => {
+                const btn = document.createElement('button');
+                btn.className = 'level-btn';
+                
+                if (lvlNum === 21) {
+                    btn.innerHTML = `<span class="crown-icon">👑</span>21`;
+                    btn.style.borderColor = 'gold';
+                } else {
+                    btn.textContent = lvlNum;
+                }
+
+                if (progress.moles.completed.includes(lvlNum)) {
+                    btn.classList.add('completed');
+                }
+
+                btn.onclick = () => startMoles(lvlNum);
+                gridDiv.appendChild(btn);
+            });
+            groupDiv.appendChild(gridDiv);
+            container.appendChild(groupDiv);
+        });
+    }
+
+    function startMoles(level) {
+        molesStopGame();
+        moleLevel = level;
+        isRecordMode = false;
+        const config = moleLevelConfigs[level - 1];
+        
+        moleGridSize = config.grid;
+        moleTarget = config.target;
+        moleSpeed = config.time;
+        molesHit = 0;
+        molesMissed = 0;
+        moleGameActive = true;
+        moleActiveIndex = -1;
+
+        document.getElementById('moles-mode-select').classList.add('hidden');
+        document.getElementById('moles-game').classList.remove('hidden');
+        document.getElementById('moles-overlay').classList.add('hidden');
+        document.getElementById('moles-next-btn').style.display = 'none';
+        document.getElementById('moles-record-btn').style.display = 'none';
+
+        renderMolesGrid();
+        updateMolesHUD();
+        spawnMole();
+    }
+
+    function startMolesRecord() {
+        isRecordMode = true;
+        molesHit = 0;
+        molesMissed = 0;
+        moleGameActive = true;
+        moleTarget = Infinity;
+        moleSpeed = 500; // Скорость как на 21 уровне
+        moleGridSize = 10; // Поле как на 21 уровне
+
+        document.getElementById('moles-overlay').classList.add('hidden');
+        renderMolesGrid();
+        updateMolesHUD();
+        spawnMole();
+    }
+
+    function molesStopGame() {
+        moleGameActive = false;
+        if (moleTimeout) clearTimeout(moleTimeout);
+    }
+
+    function renderMolesGrid() {
+        const gridEl = document.getElementById('moles-grid');
+        gridEl.innerHTML = '';
+        gridEl.style.gridTemplateColumns = `repeat(${moleGridSize}, 1fr)`;
+        gridEl.style.gridTemplateRows = `repeat(${moleGridSize}, 1fr)`;
+        
+        for (let i = 0; i < moleGridSize * moleGridSize; i++) {
+            const hole = document.createElement('div');
+            hole.className = 'mole-hole';
+            hole.onclick = (e) => { e.stopPropagation(); handleMoleMiss(); };
+
+            const mole = document.createElement('div');
+            mole.className = 'mole';
+            mole.id = `mole-${i}`;
+            hole.appendChild(mole);
+
+            gridEl.appendChild(hole);
+        }
+    }
+
+    function spawnMole() {
+        if (!moleGameActive) return;
+
+        // Прячем всех кротов
+        document.querySelectorAll('.mole').forEach(m => m.classList.remove('active'));
+        
+        // Ищем пустую лунку
+        const totalHoles = moleGridSize * moleGridSize;
+        moleActiveIndex = Math.floor(Math.random() * totalHoles);
+        
+        const activeMole = document.getElementById(`mole-${moleActiveIndex}`);
+        if (activeMole) {
+            activeMole.classList.add('active');
+            activeMole.onclick = (e) => { e.stopPropagation(); handleMoleHit(); };
+        }
+
+        moleTimeout = setTimeout(() => {
+            // Крот убежал
+            if (activeMole) activeMole.classList.remove('active');
+            handleMoleMiss();
+        }, moleSpeed);
+    }
+
+    function handleMoleHit() {
+        if (!moleGameActive) return;
+        
+        clearTimeout(moleTimeout);
+        triggerHammerStrike();
+        molesHit++;
+        updateMolesHUD();
+        
+        document.getElementById(`mole-${moleActiveIndex}`).classList.remove('active');
+
+        if (molesHit >= moleTarget) {
+            molesWin();
+        } else {
+            setTimeout(spawnMole, 100);
+        }
+    }
+
+    function handleMoleMiss() {
+        if (!moleGameActive) return;
+        
+        triggerHammerStrike();
+        molesMissed++;
+        updateMolesHUD();
+
+        if (molesMissed >= 3) {
+            molesGameOver();
+        }
+    }
+
+    function triggerHammerStrike() {
+        hammerCursor.classList.add('strike');
+        setTimeout(() => hammerCursor.classList.remove('strike'), 100);
+    }
+
+    function updateMolesHUD() {
+        if (isRecordMode) {
+            document.getElementById('moles-hit').textContent = `Убито: ${molesHit} (Рекорд: ${progress.moles.record})`;
+        } else {
+            document.getElementById('moles-hit').textContent = `Убито: ${molesHit} / ${moleTarget}`;
+        }
+        document.getElementById('moles-miss').textContent = `Промахи: ${molesMissed} / 3`;
+    }
+
+    function molesWin() {
+        molesStopGame();
+        hammerCursor.style.display = 'none';
+        
+        if (isRecordMode) return; // В режиме рекорда нет победы, только смерть
+
+        // Запись прогресса
+        if (!progress.moles.completed.includes(moleLevel)) {
+            progress.moles.completed.push(moleLevel);
+        }
+        saveProgress();
+
+        const winWords = ["Молодец", "Красава"];
+        document.getElementById('moles-overlay-text').textContent = winWords[Math.floor(Math.random() * winWords.length)];
+        document.getElementById('moles-overlay-text').style.color = "var(--correct)";
+        
+        if (moleLevel === 21) {
+            document.getElementById('moles-overlay-text').textContent = "Вы прошли игру!";
+            document.getElementById('moles-record-btn').style.display = 'inline-block';
+        } else {
+            document.getElementById('moles-next-btn').style.display = 'inline-block';
+        }
+        
+        document.getElementById('moles-overlay').classList.remove('hidden');
+    }
+
+    function molesGameOver() {
+        molesStopGame();
+        hammerCursor.style.display = 'none';
+
+        if (isRecordMode) {
+            if (molesHit > progress.moles.record) {
+                progress.moles.record = molesHit;
+                saveProgress();
+            }
+            document.getElementById('moles-overlay-text').textContent = `Рекорд: ${molesHit}`;
+            document.getElementById('moles-overlay-text').style.color = "var(--warning)";
+            document.getElementById('moles-record-btn').style.display = 'inline-block'; // Позволяем сыграть еще
+        } else {
+            const loseWords = ["Лох", "Лузер", "Неудача"];
+            document.getElementById('moles-overlay-text').textContent = loseWords[Math.floor(Math.random() * loseWords.length)];
+            document.getElementById('moles-overlay-text').style.color = "var(--wrong)";
+        }
+        
+        document.getElementById('moles-next-btn').style.display = 'none';
+        document.getElementById('moles-overlay').classList.remove('hidden');
+    }
+
+    function molesNextLevel() {
+        if (moleLevel < 21) {
+            startMoles(moleLevel + 1);
+        }
+    }
+
+    // ==========================================
     // ИНИЦИАЛИЗАЦИЯ
     // ==========================================
     window.onload = () => {
+        updateMenuBadges();
+        
         const savedApp = localStorage.getItem('appMode');
-        if (savedApp && !['menu', 'physics', 'chess', '2048', 'ttt', 'snake'].includes(savedApp)) {
+        if (savedApp && !['menu', 'physics', 'chess', '2048', 'ttt', 'snake', 'moles'].includes(savedApp)) {
             localStorage.setItem('appMode', 'menu');
         }
 
