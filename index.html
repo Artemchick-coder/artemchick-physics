@@ -216,7 +216,8 @@
             position: relative;
             z-index: 10;
             min-height: 600px;
-            transition: background 0.5s ease;
+            display: flex;
+            flex-direction: column;
         }
 
         /* --- НАСТРОЙКИ --- */
@@ -305,7 +306,7 @@
         .weixtor-subtitle { font-size: 18px; color: var(--text-muted); margin-bottom: 30px; letter-spacing: 1px; }
         .hidden { display: none !important; }
 
-        .menu-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-top: 30px; }
+        .menu-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-top: 30px; flex-grow: 1; align-content: start;}
         @media (max-width: 700px) { .menu-grid { grid-template-columns: repeat(2, 1fr); } }
         @media (max-width: 450px) { .menu-grid { grid-template-columns: 1fr; } }
         
@@ -430,7 +431,7 @@
         .study-formula { font-size: 18px; color: var(--text-main); overflow-x: auto; }
         mjx-container { font-size: 1.1em !important; }
 
-        /* --- ИГРА ПАМЯТЬ (НАЙДИ ПАРУ) --- */
+        /* --- ИГРА ПАМЯТЬ --- */
         .memory-board {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
@@ -573,6 +574,17 @@
         .hammer-cursor.strike { transform: rotate(30deg) scale(0.9); }
         .moles-top-bar { display: flex; justify-content: space-between; align-items: center; font-size: 24px; font-weight: 900; color: var(--text-main); margin-bottom: 20px; background: rgba(0,0,0,0.4); padding: 15px 20px; border-radius: 10px; text-transform: uppercase; letter-spacing: 1px; }
         @media (max-width: 600px) { .moles-top-bar { font-size: 18px; padding: 10px; } .hammer-cursor { width: 40px; height: 40px; } }
+
+        /* --- FOOTER --- */
+        .footer {
+            margin-top: auto;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            color: #ffffff;
+            font-size: 14px;
+            text-align: center;
+            opacity: 0.8;
+        }
     </style>
 </head>
 <body data-theme="classic" class="font-segoe">
@@ -612,7 +624,7 @@
 
 <div class="container">
     <!-- ГЛАВНОЕ МЕНЮ -->
-    <div id="main-menu">
+    <div id="main-menu" class="hidden">
         <h1 class="animated-title weixtor-title">WEIXTOR GAMES</h1>
         <p class="weixtor-subtitle" data-i18n="subtitle">Начинайте Игру. Удачи</p>
         <div class="menu-grid">
@@ -901,6 +913,11 @@
             </div>
         </div>
     </div>
+
+    <!-- ПОДВАЛ -->
+    <div class="footer" id="footer-text" data-i18n="footer_text">
+        Создатель сайта: Артём В. Weixtor-creator 2026 11 WeixtorGames 1.0
+    </div>
 </div>
 
 <script>
@@ -956,7 +973,8 @@
             checkmate_win: "Мат! Вы победили! 🎉",
             checkmate_lose: "Мат! Вы проиграли 😢",
             question: "Вопрос",
-            of: "из"
+            of: "из",
+            footer_text: "Создатель сайта: Артём В. Weixtor-creator 2026 11 WeixtorGames 1.0"
         },
         en: {
             subtitle: "Start the Game. Good luck",
@@ -1006,7 +1024,8 @@
             checkmate_win: "Checkmate! You win! 🎉",
             checkmate_lose: "Checkmate! You lose 😢",
             question: "Question",
-            of: "of"
+            of: "of",
+            footer_text: "Site creator: Artem V. Weixtor-creator 2026 11 WeixtorGames 1.0"
         }
     };
 
@@ -1014,38 +1033,46 @@
     let currentFont = localStorage.getItem('weixtor_font') || 'segoe';
 
     function applyLanguage() {
-        document.querySelectorAll('[data-i18n]').forEach(el => {
-            const key = el.getAttribute('data-i18n');
-            if (i18n[currentLang][key]) {
-                el.textContent = i18n[currentLang][key];
-            }
-        });
-        document.getElementById('lang-ru').classList.toggle('active', currentLang === 'ru');
-        document.getElementById('lang-en').classList.toggle('active', currentLang === 'en');
-        
-        updateMenuBadges();
-        updateChessStatsUI();
-        updateTttStatsUI();
-        
-        // Обновление динамического текста в играх, если они открыты
-        if (currentApp === 'sciences') {
-            if (!document.getElementById('sciences-formulas').classList.contains('hidden')) {
-                if (document.getElementById('test-screen').classList.contains('hidden')) {
-                    if (!document.getElementById('result-screen').classList.contains('hidden')) {
-                        showResults(true);
-                    }
-                } else {
-                    document.getElementById('progress-text').textContent = `${solvedCount} ${i18n[currentLang].of} ${maxScore}`;
+        try {
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (i18n[currentLang] && i18n[currentLang][key]) {
+                    el.textContent = i18n[currentLang][key];
                 }
+            });
+            document.getElementById('lang-ru').classList.toggle('active', currentLang === 'ru');
+            document.getElementById('lang-en').classList.toggle('active', currentLang === 'en');
+            
+            updateMenuBadges();
+            updateChessStatsUI();
+            updateTttStatsUI();
+            
+            // Dynamic text updates
+            if (currentApp === 'sciences') {
+                if (!document.getElementById('sciences-formulas').classList.contains('hidden')) {
+                    if (document.getElementById('test-screen').classList.contains('hidden')) {
+                        if (!document.getElementById('result-screen').classList.contains('hidden')) {
+                            showResults(true);
+                        }
+                    } else {
+                        document.getElementById('progress-text').textContent = `${solvedCount} ${i18n[currentLang].of} ${maxScore}`;
+                    }
+                } else if (!document.getElementById('sciences-memory').classList.contains('hidden')) {
+                    updateMemStats();
+                } else if (!document.getElementById('sciences-chemistry').classList.contains('hidden')) {
+                    if (!document.getElementById('chem-test-screen').classList.contains('hidden')) {
+                        document.getElementById('chem-progress-text').textContent = `${chemSolved} ${i18n[currentLang].of} ${chemMax}`;
+                    }
+                }
+            } else if (currentApp === 'chess') {
+                updateChessStatus();
+            } else if (currentApp === 'snake') {
+                showSnakeMenu();
+            } else if (currentApp === 'moles') {
+                showMolesMenu();
             }
-        } else if (currentApp === 'chess') {
-            updateChessStatus();
-        } else if (currentApp === 'snake') {
-            showSnakeMenu();
-        } else if (currentApp === 'moles') {
-            showMolesMenu();
-        } else if (currentApp === 'sciences' && !document.getElementById('sciences-memory').classList.contains('hidden')) {
-            initMemory(true);
+        } catch (e) {
+            console.error("Error applying language: ", e);
         }
     }
 
@@ -1127,13 +1154,23 @@
     if (!progress.moles.completed) progress.moles.completed = [];
     if (progress.moles.record === undefined) progress.moles.record = 0;
 
-    if (!progress.sciences) progress.sciences = { formulaScore: 0, formulaPlayed: false, chemScore: 0, chemPlayed: false };
-    if (!progress.sciences.formulaScore) progress.sciences.formulaScore = 0;
-    if (!progress.sciences.chemScore) progress.sciences.chemScore = 0;
+    if (!progress.sciences) progress.sciences = {};
+    if (progress.sciences.formulaScore === undefined) progress.sciences.formulaScore = 0;
+    if (progress.sciences.chemScore === undefined) progress.sciences.chemScore = 0;
+    if (progress.sciences.memoryBest === undefined) progress.sciences.memoryBest = 0;
 
     if (!progress.chessStats) progress.chessStats = { w: 0, l: 0, d: 0 };
+    if (progress.chessStats.w === undefined) progress.chessStats.w = 0;
+    if (progress.chessStats.l === undefined) progress.chessStats.l = 0;
+    if (progress.chessStats.d === undefined) progress.chessStats.d = 0;
+
     if (!progress.tttStats) progress.tttStats = { w: 0, l: 0, d: 0 };
+    if (progress.tttStats.w === undefined) progress.tttStats.w = 0;
+    if (progress.tttStats.l === undefined) progress.tttStats.l = 0;
+    if (progress.tttStats.d === undefined) progress.tttStats.d = 0;
+
     if (!progress.game2048) progress.game2048 = { highScore: 0 };
+    if (progress.game2048.highScore === undefined) progress.game2048.highScore = 0;
 
     function saveProgress() {
         localStorage.setItem('weixtor_progress', JSON.stringify(progress));
@@ -1168,93 +1205,108 @@
             const snakeBadge = document.getElementById('badge-snake');
             const molesBadge = document.getElementById('badge-moles');
 
-            let fRank = getFormulaRank(progress.sciences.formulaScore);
-            sciencesBadge.textContent = `${fRank}`;
-
-            chessBadge.textContent = `W: ${progress.chessStats.w} | L: ${progress.chessStats.l}`;
-            tttBadge.textContent = `W: ${progress.tttStats.w} | L: ${progress.tttStats.l}`;
-            game2048Badge.textContent = `Rec: ${progress.game2048.highScore}`;
+            if (sciencesBadge) sciencesBadge.textContent = `${getFormulaRank(progress.sciences.formulaScore)}`;
+            if (chessBadge) chessBadge.textContent = `W: ${progress.chessStats.w} | L: ${progress.chessStats.l}`;
+            if (tttBadge) tttBadge.textContent = `W: ${progress.tttStats.w} | L: ${progress.tttStats.l}`;
+            if (game2048Badge) game2048Badge.textContent = `Rec: ${progress.game2048.highScore}`;
             
-            snakeBadge.textContent = `Rec: ${progress.snake.record}`;
-            if (progress.snake.completed.length > 0) {
-                snakeBadge.textContent += ` | ${progress.snake.completed.length}/13`;
+            if (snakeBadge) {
+                snakeBadge.textContent = `Rec: ${progress.snake.record}`;
+                if (progress.snake.completed.length > 0) {
+                    snakeBadge.textContent += ` | ${progress.snake.completed.length}/13`;
+                }
             }
 
-            molesBadge.textContent = `Rec: ${progress.moles.record}`;
-            if (progress.moles.completed.length > 0) {
-                molesBadge.textContent += ` | ${progress.moles.completed.length}/21`;
+            if (molesBadge) {
+                molesBadge.textContent = `Rec: ${progress.moles.record}`;
+                if (progress.moles.completed.length > 0) {
+                    molesBadge.textContent += ` | ${progress.moles.completed.length}/21`;
+                }
             }
 
-            document.getElementById('sciences-rank-formulas').textContent = `Rank: ${fRank}`;
-            document.getElementById('sciences-rank-memory').textContent = `Best: ${progress.sciences.memoryBest || 0}`;
-            document.getElementById('sciences-rank-chemistry').textContent = `Rank: ${getChemRank(progress.sciences.chemScore)}`;
+            const rankFormulas = document.getElementById('sciences-rank-formulas');
+            if (rankFormulas) rankFormulas.textContent = `Rank: ${getFormulaRank(progress.sciences.formulaScore)}`;
+            
+            const rankMemory = document.getElementById('sciences-rank-memory');
+            if (rankMemory) rankMemory.textContent = `Best: ${progress.sciences.memoryBest || 0}`;
+            
+            const rankChem = document.getElementById('sciences-rank-chemistry');
+            if (rankChem) rankChem.textContent = `Rank: ${getChemRank(progress.sciences.chemScore)}`;
 
         } catch (e) {
-            console.error(e);
+            console.error("Error updating badges: ", e);
         }
     }
 
     function switchApp(appName) {
-        if (currentApp === 'snake' && appName !== 'snake') snakeStopGame();
-        if (currentApp === 'moles' && appName !== 'moles') molesStopGame();
+        try {
+            if (currentApp === 'snake' && appName !== 'snake') snakeStopGame();
+            if (currentApp === 'moles' && appName !== 'moles') molesStopGame();
 
-        const validApps = ['menu', 'sciences', 'chess', '2048', 'ttt', 'snake', 'moles'];
-        if (!validApps.includes(appName)) appName = 'menu';
+            const validApps = ['menu', 'sciences', 'chess', '2048', 'ttt', 'snake', 'moles'];
+            if (!validApps.includes(appName)) appName = 'menu';
 
-        currentApp = appName;
-        localStorage.setItem('appMode', appName);
+            currentApp = appName;
+            localStorage.setItem('appMode', appName);
 
-        document.getElementById('main-menu').classList.add('hidden');
-        document.getElementById('app-sciences').classList.add('hidden');
-        document.getElementById('app-chess').classList.add('hidden');
-        document.getElementById('app-2048').classList.add('hidden');
-        document.getElementById('app-ttt').classList.add('hidden');
-        document.getElementById('app-snake').classList.add('hidden');
-        document.getElementById('app-moles').classList.add('hidden');
+            document.getElementById('main-menu').classList.add('hidden');
+            document.getElementById('app-sciences').classList.add('hidden');
+            document.getElementById('app-chess').classList.add('hidden');
+            document.getElementById('app-2048').classList.add('hidden');
+            document.getElementById('app-ttt').classList.add('hidden');
+            document.getElementById('app-snake').classList.add('hidden');
+            document.getElementById('app-moles').classList.add('hidden');
 
-        if (appName === 'menu') {
-            updateMenuBadges();
-            document.getElementById('main-menu').classList.remove('hidden');
-        } else if (appName === 'sciences') {
-            document.getElementById('app-sciences').classList.remove('hidden');
-            showSciencesGame('menu');
-        } else if (appName === 'chess') {
-            document.getElementById('app-chess').classList.remove('hidden');
-            loadChessState();
-            updateChessStatsUI();
-        } else if (appName === '2048') {
-            document.getElementById('app-2048').classList.remove('hidden');
-            load2048State();
-        } else if (appName === 'ttt') {
-            document.getElementById('app-ttt').classList.remove('hidden');
-            showTttMenu();
-        } else if (appName === 'snake') {
-            document.getElementById('app-snake').classList.remove('hidden');
-            showSnakeMenu();
-        } else if (appName === 'moles') {
-            document.getElementById('app-moles').classList.remove('hidden');
-            showMolesMenu();
+            if (appName === 'menu') {
+                updateMenuBadges();
+                document.getElementById('main-menu').classList.remove('hidden');
+            } else if (appName === 'sciences') {
+                document.getElementById('app-sciences').classList.remove('hidden');
+                showSciencesGame('menu');
+            } else if (appName === 'chess') {
+                document.getElementById('app-chess').classList.remove('hidden');
+                loadChessState();
+                updateChessStatsUI();
+            } else if (appName === '2048') {
+                document.getElementById('app-2048').classList.remove('hidden');
+                load2048State();
+            } else if (appName === 'ttt') {
+                document.getElementById('app-ttt').classList.remove('hidden');
+                showTttMenu();
+            } else if (appName === 'snake') {
+                document.getElementById('app-snake').classList.remove('hidden');
+                showSnakeMenu();
+            } else if (appName === 'moles') {
+                document.getElementById('app-moles').classList.remove('hidden');
+                showMolesMenu();
+            }
+        } catch (e) {
+            console.error("Error switching app: ", e);
         }
     }
 
     function showSciencesGame(subApp) {
-        document.getElementById('sciences-submenu').classList.add('hidden');
-        document.getElementById('sciences-formulas').classList.add('hidden');
-        document.getElementById('sciences-memory').classList.add('hidden');
-        document.getElementById('sciences-chemistry').classList.add('hidden');
+        try {
+            document.getElementById('sciences-submenu').classList.add('hidden');
+            document.getElementById('sciences-formulas').classList.add('hidden');
+            document.getElementById('sciences-memory').classList.add('hidden');
+            document.getElementById('sciences-chemistry').classList.add('hidden');
 
-        if (subApp === 'menu') {
-            updateMenuBadges();
-            document.getElementById('sciences-submenu').classList.remove('hidden');
-        } else if (subApp === 'formulas') {
-            document.getElementById('sciences-formulas').classList.remove('hidden');
-            loadPhysicsState();
-        } else if (subApp === 'memory') {
-            document.getElementById('sciences-memory').classList.remove('hidden');
-            initMemory();
-        } else if (subApp === 'chemistry') {
-            document.getElementById('sciences-chemistry').classList.remove('hidden');
-            loadChemState();
+            if (subApp === 'menu') {
+                updateMenuBadges();
+                document.getElementById('sciences-submenu').classList.remove('hidden');
+            } else if (subApp === 'formulas') {
+                document.getElementById('sciences-formulas').classList.remove('hidden');
+                loadPhysicsState();
+            } else if (subApp === 'memory') {
+                document.getElementById('sciences-memory').classList.remove('hidden');
+                initMemory();
+            } else if (subApp === 'chemistry') {
+                document.getElementById('sciences-chemistry').classList.remove('hidden');
+                loadChemState();
+            }
+        } catch (e) {
+            console.error("Error in showSciencesGame: ", e);
         }
     }
 
@@ -1551,13 +1603,13 @@
         
         let rank = getFormulaRank(totalScore);
         let rankDisplay = "";
-        if (percent >= 93.7) rankDisplay = `${i18n[currentLang].phys_formulas}: ${rank} 🏆`;
-        else if (percent >= 78.1) rankDisplay = `${i18n[currentLang].phys_formulas}: ${rank} 🍎`;
-        else if (percent >= 62.5) rankDisplay = `${i18n[currentLang].phys_formulas}: ${rank} 🛁`;
-        else if (percent >= 46.8) rankDisplay = `${i18n[currentLang].phys_formulas}: ${rank} 🎓`;
-        else if (percent >= 31.2) rankDisplay = `${i18n[currentLang].phys_formulas}: ${rank} 📚`;
-        else if (percent >= 15.6) rankDisplay = `${i18n[currentLang].phys_formulas}: ${rank} 🎒`;
-        else rankDisplay = `${i18n[currentLang].phys_formulas}: ${rank} 📝`;
+        if (percent >= 93.7) rankDisplay = `${rank} 🏆`;
+        else if (percent >= 78.1) rankDisplay = `${rank} 🍎`;
+        else if (percent >= 62.5) rankDisplay = `${rank} 🛁`;
+        else if (percent >= 46.8) rankDisplay = `${rank} 🎓`;
+        else if (percent >= 31.2) rankDisplay = `${rank} 📚`;
+        else if (percent >= 15.6) rankDisplay = `${rank} 🎒`;
+        else rankDisplay = `${rank} 📝`;
         document.getElementById('result-rank').textContent = rankDisplay;
     }
 
@@ -1617,6 +1669,10 @@
     let memLock = false;
 
     function initMemory(isLoading = false) {
+        if (isLoading) {
+            updateMemStats();
+            return;
+        }
         memDeck = [];
         memFlipped = [];
         memMatched = 0;
