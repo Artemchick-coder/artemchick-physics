@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тренажёр формул ОГЭ по физике</title>
+    
+    <!-- Подключение MathJax для красивых формул -->
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        :root {
+            --bg-color: #f4f7f6;
+            --card-bg: #ffffff;
+            --text-main: #2c3e50;
+            --btn-bg: #3498db;
+            --btn-hover: #2980b9;
+            --btn-text: #ffffff;
+            --correct: #2ecc71;
+            --wrong: #e74c3c;
+            --disabled: #bdc3c7;
+            --section-bg: #ecf0f1;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start; /* Изменено для скролла длинных страниц */
+            min-height: 100vh;
+        }
+
+        .container {
+            background: var(--card-bg);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 800px;
+            text-align: center;
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        /* Скрытие экранов */
+        .hidden {
+            display: none !important;
+        }
+
+        /* Экран теста */
+        .progress {
+            font-size: 14px;
+            color: #7f8c8d;
+            margin-bottom: 20px;
+        }
+
+        .question {
+            font-size: 22px;
+            font-weight: bold;
+            margin-bottom: 30px;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        @media (max-width: 600px) {
+            .options-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .option-btn {
+            background-color: var(--btn-bg);
+            color: var(--btn-text);
+            border: none;
+            padding: 15px 20px;
+            font-size: 18px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.1s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 60px;
+        }
+
+        .option-btn:hover:not(:disabled) {
+            background-color: var(--btn-hover);
+            transform: translateY(-2px);
+        }
+
+        .option-btn:disabled {
+            cursor: not-allowed;
+            opacity: 0.8;
+        }
+
+        .correct {
+            background-color: var(--correct) !important;
+            color: white;
+        }
+
+        .wrong {
+            background-color: var(--wrong) !important;
+            color: white;
+        }
+
+        .feedback {
+            margin-top: 20px;
+            font-size: 18px;
+            font-weight: bold;
+            min-height: 25px;
+        }
+
+        /* Экран результатов */
+        .result-title {
+            font-size: 28px;
+            font-weight: bold;
+            color: var(--btn-bg);
+            margin-bottom: 15px;
+        }
+
+        .result-score {
+            font-size: 20px;
+            margin-bottom: 25px;
+        }
+
+        .result-rank {
+            font-size: 32px;
+            font-weight: bold;
+            color: var(--correct);
+            margin-bottom: 40px;
+            text-transform: uppercase;
+        }
+
+        .main-btn {
+            background-color: var(--btn-bg);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 18px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin: 10px;
+            width: 80%;
+            max-width: 300px;
+        }
+
+        .main-btn:hover {
+            background-color: var(--btn-hover);
+        }
+
+        .secondary-btn {
+            background-color: #95a5a6;
+        }
+
+        .secondary-btn:hover {
+            background-color: #7f8c8d;
+        }
+
+        /* Экран изучения формул */
+        .study-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .study-section {
+            background-color: var(--section-bg);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .study-section h3 {
+            margin-top: 0;
+            color: var(--btn-bg);
+            border-bottom: 2px solid var(--btn-bg);
+            padding-bottom: 5px;
+        }
+
+        .study-item {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #dcdde1;
+        }
+
+        .study-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .study-name {
+            font-weight: bold;
+            margin-bottom: 5px;
+            font-size: 16px;
+        }
+
+        .study-formula {
+            font-size: 18px;
+            color: #e74c3c;
+            overflow-x: auto;
+        }
+
+        mjx-container {
+            font-size: 1.2em !important;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <!-- ЭКРАН 1: ТЕСТ -->
+    <div id="test-screen">
+        <h1>Тренажёр формул ОГЭ по физике</h1>
+        <div class="progress" id="progress">Вопрос 1 из 64</div>
+        <div class="question" id="question">...</div>
+        <div class="options-grid" id="options">
+            <!-- Сюда будут вставляться кнопки -->
+        </div>
+        <div class="feedback" id="feedback"></div>
+    </div>
+
+    <!-- ЭКРАН 2: РЕЗУЛЬТАТЫ -->
+    <div id="result-screen" class="hidden">
+        <div class="result-title">Тест завершён!</div>
+        <div class="result-score" id="result-score">Правильных ответов: 0 из 64</div>
+        <div class="result-rank" id="result-rank">Школьник</div>
+        
+        <button class="main-btn" onclick="startNewTest()">Начать тест заново</button>
+        <button class="main-btn secondary-btn" onclick="showStudyScreen()">Изучать формулы</button>
+    </div>
+
+    <!-- ЭКРАН 3: ИЗУЧЕНИЕ ФОРМУЛ -->
+    <div id="study-screen" class="hidden">
+        <div class="study-header">
+            <h2>Все формулы по разделам</h2>
+            <button class="main-btn" style="width: auto; padding: 10px 20px;" onclick="showResultScreen()">Назад</button>
+        </div>
+        <div id="study-content">
+            <!-- Сюда будут генерироваться разделы -->
+        </div>
+    </div>
+</div>
+
+<script>
+    // База всех формул с указанием разделов
+    const allFormulas = [
+        // --- МЕХАНИКА ---
+        { category: "Механика", name: "Проекция скорости при равномерном прямолинейном движении", formula: "v_x = \\frac{s_x}{t}" },
+        { category: "Механика", name: "Средняя путевая скорость", formula: "v_{cp} = \\frac{S_{общ}}{t_{общ}}" },
+        { category: "Механика", name: "Координата при равномерном прямолинейном движении", formula: "x(t) = x_0 + v_x t" },
+        { category: "Механика", name: "Координата при равноускоренном прямолинейном движении", formula: "x(t) = x_0 + v_{0x}t + \\frac{a_x t^2}{2}" },
+        { category: "Механика", name: "Проекция перемещения при равноускоренном движении", formula: "s_x = v_{0x}t + \\frac{a_x t^2}{2}" },
+        { category: "Механика", name: "Проекция скорости при равноускоренном движении", formula: "v_x = v_{0x} + a_x t" },
+        { category: "Механика", name: "Проекция ускорения при равноускоренном движении", formula: "a_x = \\frac{v_x - v_{0x}}{t}" },
+        { category: "Механика", name: "Проекция перемещения без времени", formula: "s_x = \\frac{v_x^2 - v_{0x}^2}{2a_x}" },
+        { category: "Механика", name: "Модуль линейной скорости по окружности", formula: "v = \\frac{2\\pi R}{T}" },
+        { category: "Механика", name: "Модуль центростремительного ускорения", formula: "a_ц = \\frac{v^2}{R}" },
+        { category: "Механика", name: "Плотность вещества", formula: "\\rho = \\frac{m}{V}" },
+        { category: "Механика", name: "Второй закон Ньютона", formula: "\\vec{F} = m\\vec{a}" },
+        { category: "Механика", name: "Третий закон Ньютона", formula: "\\vec{F}_{1\\to2} = -\\vec{F}_{2\\to1}" },
+        { category: "Механика", name: "Сила трения скольжения", formula: "F_{тр} = \\mu N" },
+        { category: "Механика", name: "Модуль силы упругости. Закон Гука", formula: "F_{упр} = k|\\Delta l|" },
+        { category: "Механика", name: "Модуль силы всемирного тяготения", formula: "F = G\\frac{m_1 m_2}{R^2}" },
+        { category: "Механика", name: "Сила тяжести", formula: "F_{тяж} = mg" },
+        { category: "Механика", name: "Импульс тела", formula: "p = mv" },
+        { category: "Механика", name: "Закон сохранения импульса", formula: "p_{10} + p_{20} = p_1 + p_2" },
+        { category: "Механика", name: "Работа постоянной силы", formula: "A = Fs \\cos \\alpha" },
+        { category: "Механика", name: "Механическая мощность", formula: "P = \\frac{A}{t}" },
+        { category: "Механика", name: "Кинетическая энергия тела", formula: "E_к = \\frac{mv^2}{2}" },
+        { category: "Механика", name: "Потенциальная энергия над Землёй", formula: "E_п = mgh" },
+        { category: "Механика", name: "Полная механическая энергия", formula: "E = E_к + E_п" },
+        { category: "Механика", name: "Закон сохранения механической энергии", formula: "E_{нач} = E_{кон}" },
+        { category: "Механика", name: "Момент силы", formula: "M = Fl" },
+        { category: "Механика", name: "Условие равновесия рычага", formula: "M_1 = M_2" },
+        { category: "Механика", name: "КПД простого механизма", formula: "\\eta = \\frac{A_{пол}}{A_{затр}} \\cdot 100\\%" },
+        { category: "Механика", name: "Давление твёрдого тела", formula: "p = \\frac{F}{S}" },
+        { category: "Механика", name: "Давление внутри жидкости", formula: "p = p_{атм} + \\rho gh" },
+        { category: "Механика", name: "Модуль силы Архимеда", formula: "F_A = \\rho_ж g V_{пор}" },
+        
+        // --- КОЛЕБАНИЯ И ВОЛНЫ ---
+        { category: "Колебания и волны", name: "Связь частоты и периода колебаний", formula: "\\nu = \\frac{1}{T}" },
+        { category: "Колебания и волны", name: "Период колебаний математического маятника", formula: "T = 2\\pi \\sqrt{\\frac{l}{g}}" },
+        { category: "Колебания и волны", name: "Период колебаний пружинного маятника", formula: "T = 2\\pi \\sqrt{\\frac{m}{k}}" },
+        { category: "Колебания и волны", name: "Длина волны", formula: "\\lambda = vT" },
+        { category: "Колебания и волны", name: "Скорость распространения волны", formula: "v = \\lambda \\nu" },
+        
+        // --- ТЕПЛОВЫЕ ЯВЛЕНИЯ ---
+        { category: "Тепловые явления", name: "Количество теплоты при нагревании/охлаждении", formula: "Q = cm(t_2 - t_1)" },
+        { category: "Тепловые явления", name: "Закон сохранения энергии (Тепловой баланс)", formula: "Q_{пол} = Q_{отд}" },
+        { category: "Тепловые явления", name: "Количество теплоты при кипении/конденсации", formula: "Q = Lm" },
+        { category: "Тепловые явления", name: "Количество теплоты при плавлении/отвердевании", formula: "Q = \\lambda m" },
+        { category: "Тепловые явления", name: "Количество теплоты при сгорании топлива", formula: "Q = qm" },
+        { category: "Тепловые явления", name: "Первый закон термодинамики", formula: "Q = \\Delta U + A" },
+        { category: "Тепловые явления", name: "Работа газа", formula: "A = p\\Delta V" },
+        { category: "Тепловые явления", name: "КПД теплового двигателя", formula: "\\eta = \\frac{A_{пол}}{Q_{затр}} \\cdot 100\\%" },
+        
+        // --- ЭЛЕКТРОМАГНИТНЫЕ ЯВЛЕНИЯ ---
+        { category: "Электромагнитные явления", name: "Закон Кулона", formula: "F = k\\frac{|q_1 q_2|}{r^2}" },
+        { category: "Электромагнитные явления", name: "Сила тока", formula: "I = \\frac{q}{t}" },
+        { category: "Электромагнитные явления", name: "Напряжение", formula: "U = \\frac{A}{q}" },
+        { category: "Электромагнитные явления", name: "Электрическое сопротивление", formula: "R = \\rho \\frac{l}{S}" },
+        { category: "Электромагнитные явления", name: "Закон Ома для участка цепи", formula: "I = \\frac{U}{R}" },
+        { category: "Электромагнитные явления", name: "Последовательное соединение (R)", formula: "R_{общ} = R_1 + R_2 + ... + R_n" },
+        { category: "Электромагнитные явления", name: "Параллельное соединение (R)", formula: "\\frac{1}{R_{общ}} = \\frac{1}{R_1} + \\frac{1}{R_2} + ..." },
+        { category: "Электромагнитные явления", name: "Работа электрического тока", formula: "A = UIt = I^2Rt = \\frac{U^2}{R}t" },
+        { category: "Электромагнитные явления", name: "Мощность электрического тока", formula: "P = UI = I^2R = \\frac{U^2}{R}" },
+        { category: "Электромагнитные явления", name: "Закон Джоуля — Ленца", formula: "Q = I^2Rt" },
+        { category: "Электромагнитные явления", name: "Сила Ампера", formula: "F_A = BIl \\sin \\alpha" },
+        { category: "Электромагнитные явления", name: "Сила Лоренца", formula: "F_Л = |q|vB \\sin \\alpha" },
+        
+        // --- ОПТИКА ---
+        { category: "Оптика", name: "Оптическая сила линзы", formula: "D = \\frac{1}{F}" },
+        { category: "Оптика", name: "Формула тонкой линзы", formula: "\\frac{1}{F} = \\frac{1}{d} + \\frac{1}{f}" },
+        { category: "Оптика", name: "Увеличение линзы", formula: "\\Gamma = \\frac{H}{h} = \\frac{f}{d}" },
+        { category: "Оптика", name: "Закон отражения света", formula: "\\alpha = \\gamma" },
+        { category: "Оптика", name: "Закон преломления света", formula: "\\frac{\\sin \\alpha}{\\sin \\beta} = n" },
+        
+        // --- КВАНТОВЫЕ ЯВЛЕНИЯ ---
+        { category: "Квантовые явления", name: "Закон альфа-распада", formula: "{}_{Z}^{A}X \\rightarrow {}_{Z-2}^{A-4}Y + {}_{2}^{4}He" },
+        { category: "Квантовые явления", name: "Закон бета-распада", formula: "{}_{Z}^{A}X \\rightarrow {}_{Z+1}^{A}Y + {}_{-1}^{0}e" },
+        { category: "Квантовые явления", name: "Закон гамма-распада", formula: "{}_{Z}^{A}X^* \\rightarrow {}_{Z}^{A}X + \\gamma" }
+    ];
+
+    // Переменные состояния
+    let currentQueue = [];
+    let currentIndex = 0;
+    let correctAnswer = "";
+    let isLocked = false;
+    let correctCount = 0;
+    let totalQuestions = allFormulas.length;
+
+    // DOM Элементы
+    const testScreen = document.getElementById('test-screen');
+    const resultScreen = document.getElementById('result-screen');
+    const studyScreen = document.getElementById('study-screen');
+    
+    const questionEl = document.getElementById('question');
+    const optionsEl = document.getElementById('options');
+    const progressEl = document.getElementById('progress');
+    const feedbackEl = document.getElementById('feedback');
+    
+    const resultScoreEl = document.getElementById('result-score');
+    const resultRankEl = document.getElementById('result-rank');
+    const studyContentEl = document.getElementById('study-content');
+
+    // Перемешивание
+    function shuffle(array) {
+        let currentIndex = array.length, randomIndex;
+        while (currentIndex !== 0) {
+            randomIndex = Math.floor(Math.random() * currentIndex);
+            currentIndex--;
+            [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
+        }
+        return array;
+    }
+
+    // Начать тест заново
+    function startNewTest() {
+        correctCount = 0;
+        currentQueue = shuffle([...allFormulas]);
+        currentIndex = 0;
+        
+        resultScreen.classList.add('hidden');
+        studyScreen.classList.add('hidden');
+        testScreen.classList.remove('hidden');
+        
+        loadNextQuestion();
+    }
+
+    // Загрузка вопроса
+    function loadNextQuestion() {
+        if (currentIndex >= currentQueue.length) {
+            showResults();
+            return;
+        }
+
+        isLocked = false;
+        feedbackEl.textContent = "";
+        const currentItem = currentQueue[currentIndex];
+        correctAnswer = currentItem.formula;
+
+        progressEl.textContent = `Вопрос ${currentIndex + 1} из ${totalQuestions}`;
+        questionEl.textContent = currentItem.name;
+
+        // Подготовка вариантов
+        let options = [correctAnswer];
+        let allOtherFormulas = allFormulas.filter(f => f.formula !== correctAnswer).map(f => f.formula);
+        allOtherFormulas = shuffle(allOtherFormulas);
+
+        for (let i = 0; i < 5; i++) {
+            options.push(allOtherFormulas[i]);
+        }
+
+        options = shuffle(options);
+
+        // Рендер кнопок
+        optionsEl.innerHTML = "";
+        options.forEach(option => {
+            const btn = document.createElement('button');
+            btn.className = 'option-btn';
+            btn.innerHTML = `\\(${option}\\)`;
+            btn.onclick = () => checkAnswer(btn, option);
+            optionsEl.appendChild(btn);
+        });
+
+        if (window.MathJax) {
+            MathJax.typesetPromise([questionEl, optionsEl]).catch(err => console.error(err));
+        }
+    }
+
+    // Проверка ответа
+    function checkAnswer(btn, selectedOption) {
+        if (isLocked) return;
+        isLocked = true;
+
+        const buttons = optionsEl.querySelectorAll('.option-btn');
+
+        if (selectedOption === correctAnswer) {
+            btn.classList.add('correct');
+            feedbackEl.textContent = "Правильно! 🎉";
+            feedbackEl.style.color = "var(--correct)";
+            correctCount++; // Считаем правильные ответы
+            
+            setTimeout(() => {
+                currentIndex++;
+                loadNextQuestion();
+            }, 1000);
+        } else {
+            btn.classList.add('wrong');
+            feedbackEl.textContent = "Неправильно 😢";
+            feedbackEl.style.color = "var(--wrong)";
+            
+            buttons.forEach(b => {
+                if (b.innerHTML.includes(correctAnswer)) {
+                    b.classList.add('correct');
+                }
+            });
+
+            setTimeout(() => {
+                currentIndex++;
+                loadNextQuestion();
+            }, 2000);
+        }
+    }
+
+    // Показать результаты
+    function showResults() {
+        testScreen.classList.add('hidden');
+        studyScreen.classList.add('hidden');
+        resultScreen.classList.remove('hidden');
+
+        resultScoreEl.textContent = `Правильных ответов: ${correctCount} из ${totalQuestions}`;
+
+        // Определение звания
+        let rank = "";
+        if (correctCount >= 60) rank = "Эйнштейн! 🏆";
+        else if (correctCount >= 50) rank = "Ньютон 🍎";
+        else if (correctCount >= 40) rank = "Архимед 🛁";
+        else if (correctCount >= 30) rank = "Профессор 🎓";
+        else if (correctCount >= 20) rank = "Учитель 📚";
+        else if (correctCount >= 10) rank = "Студент 🎒";
+        else rank = "Школьник 📝";
+
+        resultRankEl.textContent = rank;
+    }
+
+    // Переход к экрану результатов (из режима изучения)
+    function showResultScreen() {
+        studyScreen.classList.add('hidden');
+        resultScreen.classList.remove('hidden');
+    }
+
+    // Экран изучения формул
+    function showStudyScreen() {
+        resultScreen.classList.add('hidden');
+        testScreen.classList.add('hidden');
+        studyScreen.classList.remove('hidden');
+
+        // Генерация контента, если еще не сгенерирован
+        if (studyContentEl.innerHTML === "") {
+            // Группировка по категориям
+            const grouped = {};
+            allFormulas.forEach(f => {
+                if (!grouped[f.category]) grouped[f.category] = [];
+                grouped[f.category].push(f);
+            });
+
+            // Построение HTML
+            let html = "";
+            for (const category in grouped) {
+                html += `<div class="study-section">`;
+                html += `<h3>${category}</h3>`;
+                grouped[category].forEach(f => {
+                    html += `
+                        <div class="study-item">
+                            <div class="study-name">${f.name}</div>
+                            <div class="study-formula">\\(${f.formula}\\)</div>
+                        </div>
+                    `;
+                });
+                html += `</div>`;
+            }
+            studyContentEl.innerHTML = html;
+
+            // Отрисовка формул через MathJax
+            if (window.MathJax) {
+                MathJax.typesetPromise([studyContentEl]).catch(err => console.error(err));
+            }
+        }
+    }
+
+    // Инициализация
+    window.onload = () => {
+        setTimeout(startNewTest, 500);
+    };
+</script>
+
+</body>
+</html>
