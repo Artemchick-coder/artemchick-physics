@@ -431,13 +431,13 @@
         .study-formula { font-size: 18px; color: var(--text-main); overflow-x: auto; }
         mjx-container { font-size: 1.1em !important; }
 
-        /* --- ИГРА ПАМЯТЬ --- */
+        /* --- ИГРА WEIXTBIOLOGY --- */
         .memory-board {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
             gap: 10px;
-            max-width: 600px;
+            max-width: 700px;
             margin: 0 auto 20px auto;
+            justify-content: center;
         }
         .mem-card {
             aspect-ratio: 1;
@@ -481,6 +481,7 @@
             font-weight: bold;
             color: white;
             text-align: center;
+            line-height: 1.2;
         }
         .mem-card.matched {
             pointer-events: none;
@@ -578,12 +579,17 @@
         /* --- FOOTER --- */
         .footer {
             margin-top: auto;
-            padding-top: 20px;
-            border-top: 1px solid rgba(255,255,255,0.1);
-            color: #ffffff;
-            font-size: 14px;
+            padding: 15px;
+            background: rgba(0,0,0,0.4); /* Темный фон для контраста */
+            border-radius: 10px;
+            color: #ffffff !important;
+            font-size: 15px;
+            font-weight: bold;
             text-align: center;
-            opacity: 0.8;
+            box-shadow: 0 0 10px rgba(0,0,0,0.5);
+            border: 1px solid rgba(255,255,255,0.1);
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
+            margin-bottom: 10px;
         }
     </style>
 </head>
@@ -673,10 +679,10 @@
                     <div class="physics-card-title" data-i18n="phys_formulas">Формулы Физика (WeixtPhysic)</div>
                     <div class="physics-card-rank" id="sciences-rank-formulas">...</div>
                 </div>
-                <div class="physics-card" onclick="showSciencesGame('memory')">
-                    <div class="bg-icon">🧠</div>
-                    <div class="physics-card-title" data-i18n="phys_memory">Найди пару (WeixtMemory)</div>
-                    <div class="physics-card-rank" id="sciences-rank-memory">...</div>
+                <div class="physics-card" onclick="showSciencesGame('biology')">
+                    <div class="bg-icon">🧬</div>
+                    <div class="physics-card-title" data-i18n="bio_memory">Найди пару (WeixtBiology)</div>
+                    <div class="physics-card-rank" id="sciences-rank-biology">...</div>
                 </div>
                 <div class="physics-card" onclick="showSciencesGame('chemistry')" style="grid-column: 1 / -1;">
                     <div class="bg-icon">🧪</div>
@@ -724,13 +730,21 @@
             </div>
         </div>
 
-        <!-- Физика (Память) -->
-        <div id="sciences-memory" class="hidden">
+        <!-- Биология -->
+        <div id="sciences-biology" class="hidden">
             <button class="main-btn secondary-btn" style="position: absolute; left: 20px; top: 20px; padding: 8px 15px;" onclick="showSciencesGame('menu')" data-i18n="btn_back">← Назад</button>
-            <h1 class="animated-title" style="margin-top: 40px;" data-i18n="phys_memory">Найди пару (WeixtMemory)</h1>
-            <div class="mem-stats" id="mem-stats">Ходы: 0 | Найдено: 0 / 8</div>
-            <div class="memory-board" id="memory-board"></div>
-            <button class="main-btn" onclick="initMemory()" data-i18n="btn_restart">Начать заново</button>
+            
+            <div id="bio-level-select">
+                <h1 class="animated-title" style="margin-top: 40px;" data-i18n="bio_memory">WeixtBiology</h1>
+                <div id="bio-levels-container"></div>
+            </div>
+
+            <div id="bio-game-screen" class="hidden">
+                <h1 class="animated-title" style="margin-top: 40px;" data-i18n="bio_memory">WeixtBiology</h1>
+                <div class="mem-stats" id="bio-stats">Moves: 0 | Found: 0 / 2</div>
+                <div class="memory-board" id="biology-board"></div>
+                <button class="main-btn" onclick="showBioMenu()" data-i18n="btn_back">← Выбор уровня</button>
+            </div>
         </div>
 
         <!-- Химия -->
@@ -957,7 +971,7 @@
             btn_play_more: "Играть ещё",
             theme_classic: "Классическая", theme_light: "Светлая", theme_dark: "Темная", theme_cyberpunk: "Киберпанк", theme_forest: "Лесная", theme_ocean: "Океан", theme_sunset: "Закат",
             phys_formulas: "Формулы Физика (WeixtPhysic)",
-            phys_memory: "Найди пару (WeixtMemory)",
+            bio_memory: "Найди пару (WeixtBiology)",
             chem_mendeleev: "Таблица Менделеева",
             mem_moves: "Ходы",
             mem_found: "Найдено",
@@ -974,7 +988,8 @@
             checkmate_lose: "Мат! Вы проиграли 😢",
             question: "Вопрос",
             of: "из",
-            footer_text: "Создатель сайта: Артём В. Weixtor-creator 2026 11 WeixtorGames 1.0"
+            footer_text: "Создатель сайта: Артём В. Weixtor-creator 2026 11 WeixtorGames 1.0",
+            bio_lvl: "Уровень"
         },
         en: {
             subtitle: "Start the Game. Good luck",
@@ -1008,7 +1023,7 @@
             btn_play_more: "Play More",
             theme_classic: "Classic", theme_light: "Light", theme_dark: "Dark", theme_cyberpunk: "Cyberpunk", theme_forest: "Forest", theme_ocean: "Ocean", theme_sunset: "Sunset",
             phys_formulas: "Physics Formulas (WeixtPhysic)",
-            phys_memory: "Find a Pair (WeixtMemory)",
+            bio_memory: "Find a Pair (WeixtBiology)",
             chem_mendeleev: "Periodic Table",
             mem_moves: "Moves",
             mem_found: "Found",
@@ -1025,7 +1040,8 @@
             checkmate_lose: "Checkmate! You lose 😢",
             question: "Question",
             of: "of",
-            footer_text: "Site creator: Artem V. Weixtor-creator 2026 11 WeixtorGames 1.0"
+            footer_text: "Site creator: Artem V. Weixtor-creator 2026 11 WeixtorGames 1.0",
+            bio_lvl: "Level"
         }
     };
 
@@ -1057,8 +1073,12 @@
                     } else {
                         document.getElementById('progress-text').textContent = `${solvedCount} ${i18n[currentLang].of} ${maxScore}`;
                     }
-                } else if (!document.getElementById('sciences-memory').classList.contains('hidden')) {
-                    updateMemStats();
+                } else if (!document.getElementById('sciences-biology').classList.contains('hidden')) {
+                    if (!document.getElementById('bio-level-select').classList.contains('hidden')) {
+                        showBioMenu();
+                    } else {
+                        updateBioStats();
+                    }
                 } else if (!document.getElementById('sciences-chemistry').classList.contains('hidden')) {
                     if (!document.getElementById('chem-test-screen').classList.contains('hidden')) {
                         document.getElementById('chem-progress-text').textContent = `${chemSolved} ${i18n[currentLang].of} ${chemMax}`;
@@ -1157,7 +1177,7 @@
     if (!progress.sciences) progress.sciences = {};
     if (progress.sciences.formulaScore === undefined) progress.sciences.formulaScore = 0;
     if (progress.sciences.chemScore === undefined) progress.sciences.chemScore = 0;
-    if (progress.sciences.memoryBest === undefined) progress.sciences.memoryBest = 0;
+    if (!progress.sciences.bioLevelsCompleted) progress.sciences.bioLevelsCompleted = [];
 
     if (!progress.chessStats) progress.chessStats = { w: 0, l: 0, d: 0 };
     if (progress.chessStats.w === undefined) progress.chessStats.w = 0;
@@ -1227,8 +1247,8 @@
             const rankFormulas = document.getElementById('sciences-rank-formulas');
             if (rankFormulas) rankFormulas.textContent = `Rank: ${getFormulaRank(progress.sciences.formulaScore)}`;
             
-            const rankMemory = document.getElementById('sciences-rank-memory');
-            if (rankMemory) rankMemory.textContent = `Best: ${progress.sciences.memoryBest || 0}`;
+            const rankBiology = document.getElementById('sciences-rank-biology');
+            if (rankBiology) rankBiology.textContent = `Completed: ${progress.sciences.bioLevelsCompleted.length}/10`;
             
             const rankChem = document.getElementById('sciences-rank-chemistry');
             if (rankChem) rankChem.textContent = `Rank: ${getChemRank(progress.sciences.chemScore)}`;
@@ -1289,7 +1309,7 @@
         try {
             document.getElementById('sciences-submenu').classList.add('hidden');
             document.getElementById('sciences-formulas').classList.add('hidden');
-            document.getElementById('sciences-memory').classList.add('hidden');
+            document.getElementById('sciences-biology').classList.add('hidden');
             document.getElementById('sciences-chemistry').classList.add('hidden');
 
             if (subApp === 'menu') {
@@ -1298,9 +1318,9 @@
             } else if (subApp === 'formulas') {
                 document.getElementById('sciences-formulas').classList.remove('hidden');
                 loadPhysicsState();
-            } else if (subApp === 'memory') {
-                document.getElementById('sciences-memory').classList.remove('hidden');
-                initMemory();
+            } else if (subApp === 'biology') {
+                document.getElementById('sciences-biology').classList.remove('hidden');
+                showBioMenu();
             } else if (subApp === 'chemistry') {
                 document.getElementById('sciences-chemistry').classList.remove('hidden');
                 loadChemState();
@@ -1649,59 +1669,97 @@
     }
 
     // ==========================================
-    // ФИЗИКА (ИГРА ПАМЯТЬ)
+    // БИОЛОГИЯ (ИГРА ПАМЯТЬ)
     // ==========================================
-    const memPairs = [
-        { f: "v = \\frac{s}{t}", n: { ru: "Скорость", en: "Velocity" } },
-        { f: "F = ma", n: { ru: "Второй закон Ньютона", en: "Newton's 2nd Law" } },
-        { f: "\\rho = \\frac{m}{V}", n: { ru: "Плотность", en: "Density" } },
-        { f: "I = \\frac{U}{R}", n: { ru: "Закон Ома", en: "Ohm's Law" } },
-        { f: "E = mc^2", n: { ru: "Энергия покоя", en: "Rest Energy" } },
-        { f: "P = \\frac{A}{t}", n: { ru: "Мощность", en: "Power" } },
-        { f: "Q = cm\\Delta t", n: { ru: "Нагревание", en: "Heating" } },
-        { f: "T = 2\\pi\\sqrt{\\frac{l}{g}}", n: { ru: "Маятник", en: "Pendulum" } }
+    const bioPairs = [
+        { f: "🌻", n: { ru: "Подсолнух", en: "Sunflower" } },
+        { f: "🍄", n: { ru: "Гриб", en: "Mushroom" } },
+        { f: "🦠", n: { ru: "Бактерия", en: "Bacteria" } },
+        { f: "❤️", n: { ru: "Сердце", en: "Heart" } },
+        { f: "🧬", n: { ru: "ДНК", en: "DNA" } },
+        { f: "🧠", n: { ru: "Мозг", en: "Brain" } },
+        { f: "🍃", n: { ru: "Лист", en: "Leaf" } },
+        { f: "🌸", n: { ru: "Цветок", en: "Flower" } },
+        { f: "👁️", n: { ru: "Глаз", en: "Eye" } },
+        { f: "🩸", n: { ru: "Кровь", en: "Blood" } },
+        { f: "🦴", n: { ru: "Кость", en: "Bone" } },
+        { f: "🐘", n: { ru: "Слон", en: "Elephant" } }
     ];
 
-    let memDeck = [];
-    let memFlipped = [];
-    let memMatched = 0;
-    let memMoves = 0;
-    let memLock = false;
+    const bioLevels = [2, 3, 4, 6, 7, 8, 9, 10, 11, 12];
+    let currentBioLvl = 0;
+    let bioDeck = [];
+    let bioFlipped = [];
+    let bioMatched = 0;
+    let bioMoves = 0;
+    let bioLock = false;
+    let bioPairsCount = 0;
 
-    function initMemory(isLoading = false) {
-        if (isLoading) {
-            updateMemStats();
-            return;
-        }
-        memDeck = [];
-        memFlipped = [];
-        memMatched = 0;
-        memMoves = 0;
-        memLock = false;
+    function showBioMenu() {
+        document.getElementById('bio-level-select').classList.remove('hidden');
+        document.getElementById('bio-game-screen').classList.add('hidden');
         
-        // Create pairs
-        memPairs.forEach((pair, index) => {
-            memDeck.push({ id: index, type: 'f', content: pair.f, matchId: index });
-            memDeck.push({ id: index, type: 'n', content: pair.n, matchId: index });
+        const container = document.getElementById('bio-levels-container');
+        container.innerHTML = '';
+        
+        bioLevels.forEach((pairs, idx) => {
+            const btn = document.createElement('button');
+            btn.className = 'level-btn';
+            btn.textContent = idx + 1;
+            if (progress.sciences.bioLevelsCompleted.includes(idx)) {
+                btn.classList.add('completed');
+            }
+            btn.onclick = () => startBioLevel(idx);
+            container.appendChild(btn);
         });
-        
-        memDeck = shuffle(memDeck);
-        renderMemory();
-        updateMemStats();
     }
 
-    function renderMemory() {
-        const boardEl = document.getElementById('memory-board');
+    function startBioLevel(lvlIdx) {
+        currentBioLvl = lvlIdx;
+        bioPairsCount = bioLevels[lvlIdx];
+        
+        document.getElementById('bio-level-select').classList.add('hidden');
+        document.getElementById('bio-game-screen').classList.remove('hidden');
+        
+        initBiology();
+    }
+
+    function initBiology() {
+        bioDeck = [];
+        bioFlipped = [];
+        bioMatched = 0;
+        bioMoves = 0;
+        bioLock = false;
+        
+        let selectedPairs = shuffle([...bioPairs]).slice(0, bioPairsCount);
+        
+        selectedPairs.forEach((pair, index) => {
+            bioDeck.push({ id: index, type: 'f', content: pair.f, matchId: index });
+            bioDeck.push({ id: index, type: 'n', content: pair.n, matchId: index });
+        });
+        
+        bioDeck = shuffle(bioDeck);
+        renderBiology();
+        updateBioStats();
+    }
+
+    function renderBiology() {
+        const boardEl = document.getElementById('biology-board');
         boardEl.innerHTML = '';
         
-        memDeck.forEach((card, index) => {
+        let cols = Math.ceil(Math.sqrt(bioDeck.length));
+        if (cols < 2) cols = 2;
+        if (cols > 6) cols = 6; 
+        boardEl.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
+        
+        bioDeck.forEach((card, index) => {
             const cardEl = document.createElement('div');
             cardEl.className = 'mem-card';
             cardEl.dataset.index = index;
             
             let backContent = "";
             if (card.type === 'f') {
-                backContent = `\\(${card.content}\\)`;
+                backContent = card.content; // Emoji
             } else {
                 backContent = card.content[currentLang];
             }
@@ -1709,70 +1767,64 @@
             cardEl.innerHTML = `
                 <div class="mem-inner">
                     <div class="mem-front">?</div>
-                    <div class="mem-back">${backContent}</div>
+                    <div class="mem-back" style="font-size: ${card.type === 'f' ? '40px' : '16px'}">${backContent}</div>
                 </div>
             `;
             
-            cardEl.onclick = () => flipCard(index);
+            cardEl.onclick = () => flipBioCard(index);
             boardEl.appendChild(cardEl);
         });
-        
-        if (window.MathJax) {
-            MathJax.typesetPromise([boardEl]).catch(err => console.error(err));
-        }
     }
 
-    function updateMemStats() {
-        document.getElementById('mem-stats').textContent = 
-            `${i18n[currentLang].mem_moves}: ${memMoves} | ${i18n[currentLang].mem_found}: ${memMatched} / 8`;
+    function updateBioStats() {
+        document.getElementById('bio-stats').textContent = 
+            `${i18n[currentLang].mem_moves}: ${bioMoves} | ${i18n[currentLang].mem_found}: ${bioMatched} / ${bioPairsCount}`;
     }
 
-    function flipCard(index) {
-        if (memLock) return;
-        const cardEl = document.querySelectorAll('.mem-card')[index];
+    function flipBioCard(index) {
+        if (bioLock) return;
+        const cardEl = document.querySelectorAll('#biology-board .mem-card')[index];
         if (cardEl.classList.contains('flipped') || cardEl.classList.contains('matched')) return;
 
         cardEl.classList.add('flipped');
-        memFlipped.push(index);
+        bioFlipped.push(index);
 
-        if (memFlipped.length === 2) {
-            memMoves++;
-            updateMemStats();
-            memLock = true;
+        if (bioFlipped.length === 2) {
+            bioMoves++;
+            updateBioStats();
+            bioLock = true;
             
-            const idx1 = memFlipped[0];
-            const idx2 = memFlipped[1];
-            const card1 = memDeck[idx1];
-            const card2 = memDeck[idx2];
+            const idx1 = bioFlipped[0];
+            const idx2 = bioFlipped[1];
+            const card1 = bioDeck[idx1];
+            const card2 = bioDeck[idx2];
 
             if (card1.matchId === card2.matchId) {
-                // Match
                 setTimeout(() => {
-                    document.querySelectorAll('.mem-card')[idx1].classList.add('matched');
-                    document.querySelectorAll('.mem-card')[idx2].classList.add('matched');
-                    memMatched++;
-                    memFlipped = [];
-                    memLock = false;
-                    updateMemStats();
+                    document.querySelectorAll('#biology-board .mem-card')[idx1].classList.add('matched');
+                    document.querySelectorAll('#biology-board .mem-card')[idx2].classList.add('matched');
+                    bioMatched++;
+                    bioFlipped = [];
+                    bioLock = false;
+                    updateBioStats();
                     
-                    if (memMatched === 8) {
+                    if (bioMatched === bioPairsCount) {
                         setTimeout(() => {
-                            if (memMoves < (progress.sciences.memoryBest || 999)) {
-                                progress.sciences.memoryBest = memMoves;
+                            if (!progress.sciences.bioLevelsCompleted.includes(currentBioLvl)) {
+                                progress.sciences.bioLevelsCompleted.push(currentBioLvl);
                                 saveProgress();
                             }
-                            alert(i18n[currentLang].mem_win + ` ${memMoves} ${i18n[currentLang].mem_moves}!`);
-                            initMemory();
+                            alert(i18n[currentLang].mem_win + ` ${bioMoves} ${i18n[currentLang].mem_moves}!`);
+                            showBioMenu();
                         }, 500);
                     }
                 }, 500);
             } else {
-                // No match
                 setTimeout(() => {
-                    document.querySelectorAll('.mem-card')[idx1].classList.remove('flipped');
-                    document.querySelectorAll('.mem-card')[idx2].classList.remove('flipped');
-                    memFlipped = [];
-                    memLock = false;
+                    document.querySelectorAll('#biology-board .mem-card')[idx1].classList.remove('flipped');
+                    document.querySelectorAll('#biology-board .mem-card')[idx2].classList.remove('flipped');
+                    bioFlipped = [];
+                    bioLock = false;
                 }, 1000);
             }
         }
