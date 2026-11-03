@@ -29,6 +29,8 @@
             --board-highlight: rgba(255, 255, 51, 0.5);
             --board-check: radial-gradient(circle, #ff6b6b 20%, transparent 80%);
             --board-select: rgba(139, 92, 246, 0.6);
+            --mem-card-front: rgba(51, 65, 85, 0.9);
+            --mem-card-back: rgba(139, 92, 246, 0.8);
         }
 
         [data-theme="light"] {
@@ -49,6 +51,8 @@
             --board-highlight: rgba(255, 255, 0, 0.6);
             --board-check: radial-gradient(circle, #ef4444 20%, transparent 80%);
             --board-select: rgba(99, 102, 241, 0.6);
+            --mem-card-front: #cbd5e1;
+            --mem-card-back: #6366f1;
         }
 
         [data-theme="dark"] {
@@ -69,6 +73,8 @@
             --board-highlight: rgba(255, 0, 85, 0.4);
             --board-check: radial-gradient(circle, #ff0000 20%, transparent 80%);
             --board-select: rgba(255, 0, 85, 0.6);
+            --mem-card-front: #222222;
+            --mem-card-back: #ff0055;
         }
 
         [data-theme="cyberpunk"] {
@@ -89,6 +95,8 @@
             --board-highlight: rgba(0, 255, 204, 0.3);
             --board-check: radial-gradient(circle, #ff00ff 20%, transparent 80%);
             --board-select: rgba(0, 255, 204, 0.5);
+            --mem-card-front: #1b052e;
+            --mem-card-back: #ff00ff;
         }
 
         [data-theme="forest"] {
@@ -109,6 +117,8 @@
             --board-highlight: rgba(216, 243, 220, 0.4);
             --board-check: radial-gradient(circle, #e63946 20%, transparent 80%);
             --board-select: rgba(116, 198, 157, 0.6);
+            --mem-card-front: #2d6a4f;
+            --mem-card-back: #74c69d;
         }
 
         [data-theme="ocean"] {
@@ -129,6 +139,8 @@
             --board-highlight: rgba(14, 165, 233, 0.4);
             --board-check: radial-gradient(circle, #f43f5e 20%, transparent 80%);
             --board-select: rgba(14, 165, 233, 0.6);
+            --mem-card-front: #0369a1;
+            --mem-card-back: #0ea5e9;
         }
 
         [data-theme="sunset"] {
@@ -149,6 +161,8 @@
             --board-highlight: rgba(249, 115, 22, 0.4);
             --board-check: radial-gradient(circle, #ef4444 20%, transparent 80%);
             --board-select: rgba(249, 115, 22, 0.6);
+            --mem-card-front: #764ba2;
+            --mem-card-back: #f97316;
         }
 
         /* --- ШРИФТЫ --- */
@@ -157,6 +171,7 @@
         .font-courier { font-family: 'Courier New', Courier, monospace; }
         .font-georgia { font-family: Georgia, 'Times New Roman', Times, serif; }
         .font-impact { font-family: Impact, 'Arial Black', sans-serif; }
+        .font-times { font-family: 'Times New Roman', Times, serif; }
 
         body {
             background: var(--bg-gradient);
@@ -204,7 +219,7 @@
             transition: background 0.5s ease;
         }
 
-        /* --- НАСТРОЙКИ (ГЛОБАЛЬНЫЕ) --- */
+        /* --- НАСТРОЙКИ --- */
         .settings-btn {
             position: fixed;
             top: 20px;
@@ -275,7 +290,7 @@
         }
         .music-toggle:hover { background: var(--accent-hover); }
 
-        /* --- ОСТАЛЬНЫЕ СТИЛИ --- */
+        /* --- ОСТАЛЬНОЕ --- */
         .animated-title {
             background: linear-gradient(90deg, var(--accent), var(--correct), var(--accent));
             background-size: 300% 100%;
@@ -415,6 +430,66 @@
         .study-formula { font-size: 18px; color: var(--text-main); overflow-x: auto; }
         mjx-container { font-size: 1.1em !important; }
 
+        /* --- ИГРА ПАМЯТЬ (НАЙДИ ПАРУ) --- */
+        .memory-board {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            max-width: 600px;
+            margin: 0 auto 20px auto;
+        }
+        .mem-card {
+            aspect-ratio: 1;
+            perspective: 1000px;
+            cursor: pointer;
+        }
+        .mem-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+        }
+        .mem-card.flipped .mem-inner, .mem-card.matched .mem-inner {
+            transform: rotateY(180deg);
+        }
+        .mem-front, .mem-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+            border-radius: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+        .mem-front {
+            background-color: var(--mem-card-front);
+            border: 2px solid rgba(255,255,255,0.1);
+            font-size: 40px;
+            color: var(--text-muted);
+        }
+        .mem-back {
+            background-color: var(--mem-card-back);
+            transform: rotateY(180deg);
+            font-size: 16px;
+            font-weight: bold;
+            color: white;
+            text-align: center;
+        }
+        .mem-card.matched {
+            pointer-events: none;
+            opacity: 0.6;
+        }
+        .mem-card.matched .mem-back {
+            background-color: var(--correct);
+        }
+        .mem-stats { font-size: 20px; margin-bottom: 20px; font-weight: bold; }
+
         /* --- ШАХМАТЫ --- */
         .chess-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px;}
         .chess-status { font-size: 20px; font-weight: bold; color: var(--accent); margin-bottom: 15px; min-height: 28px; }
@@ -508,14 +583,13 @@
 
 <div class="hammer-cursor" id="hammer"></div>
 
-<!-- ГЛОБАЛЬНЫЕ НАСТРОЙКИ -->
 <button class="settings-btn" onclick="toggleSettings()">⚙️</button>
 <div class="settings-menu hidden" id="settings-menu">
-    <h3 data-i18n="settings_lang">Язык / Language</h3>
+    <h3 data-i18n="settings_lang">Язык</h3>
     <button class="lang-btn active" id="lang-ru" onclick="setLanguage('ru')">🇷🇺 Русский</button>
     <button class="lang-btn" id="lang-en" onclick="setLanguage('en')">🇬🇧 English</button>
 
-    <h3 data-i18n="settings_theme">Тема оформления</h3>
+    <h3 data-i18n="settings_theme">Тема</h3>
     <button class="theme-btn" onclick="setTheme('classic')">🎨 <span data-i18n="theme_classic">Классическая</span></button>
     <button class="theme-btn" onclick="setTheme('light')">☀️ <span data-i18n="theme_light">Светлая</span></button>
     <button class="theme-btn" onclick="setTheme('dark')">🌑 <span data-i18n="theme_dark">Темная</span></button>
@@ -525,8 +599,9 @@
     <button class="theme-btn" onclick="setTheme('sunset')">🌅 <span data-i18n="theme_sunset">Закат</span></button>
 
     <h3 data-i18n="settings_font">Шрифт</h3>
-    <button class="font-btn active" id="font-segoe" onclick="setFont('segoe')">Segoe UI (Default)</button>
+    <button class="font-btn active" id="font-segoe" onclick="setFont('segoe')">Segoe UI</button>
     <button class="font-btn" id="font-arial" onclick="setFont('arial')">Arial</button>
+    <button class="font-btn" id="font-times" onclick="setFont('times')">Times New Roman</button>
     <button class="font-btn" id="font-courier" onclick="setFont('courier')">Courier New</button>
     <button class="font-btn" id="font-georgia" onclick="setFont('georgia')">Georgia</button>
     <button class="font-btn" id="font-impact" onclick="setFont('impact')">Impact</button>
@@ -558,7 +633,7 @@
             </div>
             <div class="menu-card" onclick="switchApp('ttt')">
                 <div class="menu-icon">❌⭕</div>
-                <div class="menu-title">WeixTicTacToE</div>
+                <div class="menu-title">WeixTicTacToe</div>
                 <div class="menu-badge" id="badge-ttt">...</div>
             </div>
             <div class="menu-card" onclick="switchApp('snake')">
@@ -574,7 +649,7 @@
         </div>
     </div>
 
-    <!-- ПРИЛОЖЕНИЕ: НАУКИ -->
+    <!-- НАУКИ -->
     <div id="app-sciences" class="hidden">
         <button class="main-btn secondary-btn" style="position: absolute; left: 20px; top: 20px; padding: 8px 15px;" onclick="switchApp('menu')" data-i18n="btn_back_menu">← Главное меню</button>
         
@@ -583,13 +658,18 @@
             <div class="physics-grid">
                 <div class="physics-card" onclick="showSciencesGame('formulas')">
                     <div class="bg-icon">📐</div>
-                    <div class="physics-card-title">Формулы Физика (WeixtPhysic)</div>
-                    <div class="physics-card-rank" id="sciences-rank-formulas">Звание: Школьник</div>
+                    <div class="physics-card-title" data-i18n="phys_formulas">Формулы Физика (WeixtPhysic)</div>
+                    <div class="physics-card-rank" id="sciences-rank-formulas">...</div>
                 </div>
-                <div class="physics-card" onclick="showSciencesGame('chemistry')">
+                <div class="physics-card" onclick="showSciencesGame('memory')">
+                    <div class="bg-icon">🧠</div>
+                    <div class="physics-card-title" data-i18n="phys_memory">Найди пару (WeixtMemory)</div>
+                    <div class="physics-card-rank" id="sciences-rank-memory">...</div>
+                </div>
+                <div class="physics-card" onclick="showSciencesGame('chemistry')" style="grid-column: 1 / -1;">
                     <div class="bg-icon">🧪</div>
-                    <div class="physics-card-title">Таблица Менделеева (WeixtChemistry)</div>
-                    <div class="physics-card-rank" id="sciences-rank-chemistry">Звание: Школьник</div>
+                    <div class="physics-card-title" data-i18n="chem_mendeleev">Таблица Менделеева (WeixtChemistry)</div>
+                    <div class="physics-card-rank" id="sciences-rank-chemistry">...</div>
                 </div>
             </div>
         </div>
@@ -598,13 +678,13 @@
         <div id="sciences-formulas" class="hidden">
             <button class="main-btn secondary-btn" style="position: absolute; left: 20px; top: 20px; padding: 8px 15px;" onclick="showSciencesGame('menu')" data-i18n="btn_back">← Назад</button>
             <div id="test-screen">
-                <h1 class="animated-title" style="margin-top: 40px;">Формулы Физика (WeixtPhysic)</h1>
+                <h1 class="animated-title" style="margin-top: 40px;" data-i18n="phys_formulas">Формулы Физика (WeixtPhysic)</h1>
                 <div class="top-bar">
                     <span id="hints-display">💡 50/50: 2</span>
                     <div class="progress-bar-container"><div class="progress-bar" id="progress-bar"></div></div>
-                    <span id="progress-text">Вопрос 1</span>
+                    <span id="progress-text">1 / 64</span>
                 </div>
-                <div class="question" id="question">Загрузка...</div>
+                <div class="question" id="question">...</div>
                 <div class="options-grid" id="options"></div>
                 <div class="controls">
                     <button class="control-btn hint-btn" id="hint-btn" onclick="useHint()">💡 50/50</button>
@@ -614,9 +694,9 @@
             </div>
             <div id="result-screen" class="hidden">
                 <h1 class="animated-title" data-i18n="test_finished">Тест завершён!</h1>
-                <div class="result-score" id="result-score">Баллы: 0 из 64</div>
+                <div class="result-score" id="result-score">0 / 64</div>
                 <div class="result-percent" id="result-percent">0%</div>
-                <div class="result-rank" id="result-rank">Школьник</div>
+                <div class="result-rank" id="result-rank">...</div>
                 <button class="main-btn" onclick="startNewTest()" data-i18n="btn_restart">Начать заново</button>
                 <button class="main-btn secondary-btn" onclick="showStudyScreen()" data-i18n="btn_study">Изучать формулы</button>
             </div>
@@ -632,16 +712,24 @@
             </div>
         </div>
 
+        <!-- Физика (Память) -->
+        <div id="sciences-memory" class="hidden">
+            <button class="main-btn secondary-btn" style="position: absolute; left: 20px; top: 20px; padding: 8px 15px;" onclick="showSciencesGame('menu')" data-i18n="btn_back">← Назад</button>
+            <h1 class="animated-title" style="margin-top: 40px;" data-i18n="phys_memory">Найди пару (WeixtMemory)</h1>
+            <div class="mem-stats" id="mem-stats">Ходы: 0 | Найдено: 0 / 8</div>
+            <div class="memory-board" id="memory-board"></div>
+            <button class="main-btn" onclick="initMemory()" data-i18n="btn_restart">Начать заново</button>
+        </div>
+
         <!-- Химия -->
         <div id="sciences-chemistry" class="hidden">
             <button class="main-btn secondary-btn" style="position: absolute; left: 20px; top: 20px; padding: 8px 15px;" onclick="showSciencesGame('menu')" data-i18n="btn_back">← Назад</button>
-            
             <div id="chem-test-screen">
-                <h1 class="animated-title" style="margin-top: 40px;">Таблица Менделеева (WeixtChemistry)</h1>
+                <h1 class="animated-title" style="margin-top: 40px;" data-i18n="chem_mendeleev">Таблица Менделеева</h1>
                 <div class="top-bar">
                     <span id="chem-hints-display">💡 50/50: 2</span>
                     <div class="progress-bar-container"><div class="progress-bar" id="chem-progress-bar"></div></div>
-                    <span id="chem-progress-text">Вопрос 1</span>
+                    <span id="chem-progress-text">1 / 118</span>
                 </div>
                 <div class="question" id="chem-question">H</div>
                 <div class="options-grid" id="chem-options"></div>
@@ -651,16 +739,14 @@
                 </div>
                 <div class="feedback" id="chem-feedback"></div>
             </div>
-
             <div id="chem-result-screen" class="hidden">
                 <h1 class="animated-title" data-i18n="test_finished">Тест завершён!</h1>
-                <div class="result-score" id="chem-result-score">Баллы: 0 из 118</div>
+                <div class="result-score" id="chem-result-score">0 / 118</div>
                 <div class="result-percent" id="chem-result-percent">0%</div>
-                <div class="result-rank" id="chem-result-rank">Школьник</div>
+                <div class="result-rank" id="chem-result-rank">...</div>
                 <button class="main-btn" onclick="startNewChemTest()" data-i18n="btn_restart">Начать заново</button>
                 <button class="main-btn secondary-btn" onclick="showChemStudyScreen()" data-i18n="btn_study_chem">Изучать химию</button>
             </div>
-
             <div id="chem-study-screen" class="hidden">
                 <div class="study-header">
                     <h2 class="animated-title" style="margin-bottom: 0;" data-i18n="btn_study_chem">Изучать химию</h2>
@@ -701,7 +787,7 @@
             <div class="score-box"><span data-i18n="score">Счёт</span>: <span id="score-2048">0</span> | <span data-i18n="record">Рекорд</span>: <span id="highscore-2048">0</span></div>
             <div class="grid-2048" id="grid-2048"></div>
             <div id="overlay-2048" class="overlay hidden">
-                <h2 id="overlay-2048-text">Вы победили!</h2>
+                <h2 id="overlay-2048-text">...</h2>
                 <button class="main-btn" onclick="init2048()" data-i18n="btn_play_more">Играть ещё</button>
             </div>
         </div>
@@ -852,7 +938,25 @@
             btn_next_lvl: "Следующий",
             btn_record_mode: "Играть на рекорд",
             btn_play_more: "Играть ещё",
-            theme_classic: "Классическая", theme_light: "Светлая", theme_dark: "Темная", theme_cyberpunk: "Киберпанк", theme_forest: "Лесная", theme_ocean: "Океан", theme_sunset: "Закат"
+            theme_classic: "Классическая", theme_light: "Светлая", theme_dark: "Темная", theme_cyberpunk: "Киберпанк", theme_forest: "Лесная", theme_ocean: "Океан", theme_sunset: "Закат",
+            phys_formulas: "Формулы Физика (WeixtPhysic)",
+            phys_memory: "Найди пару (WeixtMemory)",
+            chem_mendeleev: "Таблица Менделеева",
+            mem_moves: "Ходы",
+            mem_found: "Найдено",
+            mem_win: "Вы выиграли!",
+            correct: "Правильно!",
+            wrong: "Ошибка!",
+            win: "Победа!",
+            lose: "Поражение",
+            draw: "Ничья",
+            your_turn: "Ваш ход",
+            bot_thinks: "Бот думает...",
+            check: "Вам шах!",
+            checkmate_win: "Мат! Вы победили! 🎉",
+            checkmate_lose: "Мат! Вы проиграли 😢",
+            question: "Вопрос",
+            of: "из"
         },
         en: {
             subtitle: "Start the Game. Good luck",
@@ -876,7 +980,7 @@
             record: "Record",
             controls_2048: "Controls: Arrows or swipes",
             ttt_select_diff: "Select Difficulty",
-            ttt_easy: "Easy", ttt_easy_desc: "(Bot always loses)",
+            ttt_easy: "Easy", ttt_easy_desc: "(Bot loses)",
             ttt_med: "Medium", ttt_med_desc: "(50/50 chance)",
             ttt_hard: "Impossible", ttt_hard_desc: "(For geniuses)",
             ttt_friend: "With Friend", ttt_friend_desc: "(Same PC)",
@@ -884,7 +988,25 @@
             btn_next_lvl: "Next",
             btn_record_mode: "Play for Record",
             btn_play_more: "Play More",
-            theme_classic: "Classic", theme_light: "Light", theme_dark: "Dark", theme_cyberpunk: "Cyberpunk", theme_forest: "Forest", theme_ocean: "Ocean", theme_sunset: "Sunset"
+            theme_classic: "Classic", theme_light: "Light", theme_dark: "Dark", theme_cyberpunk: "Cyberpunk", theme_forest: "Forest", theme_ocean: "Ocean", theme_sunset: "Sunset",
+            phys_formulas: "Physics Formulas (WeixtPhysic)",
+            phys_memory: "Find a Pair (WeixtMemory)",
+            chem_mendeleev: "Periodic Table",
+            mem_moves: "Moves",
+            mem_found: "Found",
+            mem_win: "You Win!",
+            correct: "Correct!",
+            wrong: "Wrong!",
+            win: "Victory!",
+            lose: "Defeat",
+            draw: "Draw",
+            your_turn: "Your turn",
+            bot_thinks: "Bot is thinking...",
+            check: "Check!",
+            checkmate_win: "Checkmate! You win! 🎉",
+            checkmate_lose: "Checkmate! You lose 😢",
+            question: "Question",
+            of: "of"
         }
     };
 
@@ -900,7 +1022,31 @@
         });
         document.getElementById('lang-ru').classList.toggle('active', currentLang === 'ru');
         document.getElementById('lang-en').classList.toggle('active', currentLang === 'en');
-        updateMenuBadges(); // Update dynamic text
+        
+        updateMenuBadges();
+        updateChessStatsUI();
+        updateTttStatsUI();
+        
+        // Обновление динамического текста в играх, если они открыты
+        if (currentApp === 'sciences') {
+            if (!document.getElementById('sciences-formulas').classList.contains('hidden')) {
+                if (document.getElementById('test-screen').classList.contains('hidden')) {
+                    if (!document.getElementById('result-screen').classList.contains('hidden')) {
+                        showResults(true);
+                    }
+                } else {
+                    document.getElementById('progress-text').textContent = `${solvedCount} ${i18n[currentLang].of} ${maxScore}`;
+                }
+            }
+        } else if (currentApp === 'chess') {
+            updateChessStatus();
+        } else if (currentApp === 'snake') {
+            showSnakeMenu();
+        } else if (currentApp === 'moles') {
+            showMolesMenu();
+        } else if (currentApp === 'sciences' && !document.getElementById('sciences-memory').classList.contains('hidden')) {
+            initMemory(true);
+        }
     }
 
     function setLanguage(lang) {
@@ -917,7 +1063,6 @@
         document.getElementById(`font-${fontName}`).classList.add('active');
     }
 
-    // Инициализация шрифта и языка
     document.body.className = `font-${currentFont}`;
     applyLanguage();
 
@@ -996,22 +1141,22 @@
     }
 
     function getFormulaRank(score) {
-        if (score >= 60) return "Эйнштейн";
-        if (score >= 50) return "Ньютон";
-        if (score >= 40) return "Архимед";
-        if (score >= 30) return "Профессор";
-        if (score >= 20) return "Учитель";
-        if (score >= 10) return "Студент";
-        return "Школьник";
+        if (score >= 60) return currentLang === 'ru' ? "Эйнштейн" : "Einstein";
+        if (score >= 50) return currentLang === 'ru' ? "Ньютон" : "Newton";
+        if (score >= 40) return currentLang === 'ru' ? "Архимед" : "Archimedes";
+        if (score >= 30) return currentLang === 'ru' ? "Профессор" : "Professor";
+        if (score >= 20) return currentLang === 'ru' ? "Учитель" : "Teacher";
+        if (score >= 10) return currentLang === 'ru' ? "Студент" : "Student";
+        return currentLang === 'ru' ? "Школьник" : "Schoolkid";
     }
 
     function getChemRank(score) {
-        if (score >= 100) return "Менделеев";
-        if (score >= 85) return "Ломоносов";
-        if (score >= 65) return "Бутлеров";
-        if (score >= 46) return "Мария Кюри";
-        if (score >= 20) return "Валя Будейко";
-        return "Школьник";
+        if (score >= 100) return currentLang === 'ru' ? "Менделеев" : "Mendeleev";
+        if (score >= 85) return currentLang === 'ru' ? "Ломоносов" : "Lomonosov";
+        if (score >= 65) return currentLang === 'ru' ? "Бутлеров" : "Butlerov";
+        if (score >= 46) return currentLang === 'ru' ? "Мария Кюри" : "Marie Curie";
+        if (score >= 20) return currentLang === 'ru' ? "Валя Будейко" : "Valya Budeyko";
+        return currentLang === 'ru' ? "Школьник" : "Schoolkid";
     }
 
     function updateMenuBadges() {
@@ -1024,7 +1169,7 @@
             const molesBadge = document.getElementById('badge-moles');
 
             let fRank = getFormulaRank(progress.sciences.formulaScore);
-            sciencesBadge.textContent = `Phys: ${fRank}`;
+            sciencesBadge.textContent = `${fRank}`;
 
             chessBadge.textContent = `W: ${progress.chessStats.w} | L: ${progress.chessStats.l}`;
             tttBadge.textContent = `W: ${progress.tttStats.w} | L: ${progress.tttStats.l}`;
@@ -1040,8 +1185,9 @@
                 molesBadge.textContent += ` | ${progress.moles.completed.length}/21`;
             }
 
-            document.getElementById('sciences-rank-formulas').textContent = `Звание: ${fRank}`;
-            document.getElementById('sciences-rank-chemistry').textContent = `Звание: ${getChemRank(progress.sciences.chemScore)}`;
+            document.getElementById('sciences-rank-formulas').textContent = `Rank: ${fRank}`;
+            document.getElementById('sciences-rank-memory').textContent = `Best: ${progress.sciences.memoryBest || 0}`;
+            document.getElementById('sciences-rank-chemistry').textContent = `Rank: ${getChemRank(progress.sciences.chemScore)}`;
 
         } catch (e) {
             console.error(e);
@@ -1094,6 +1240,7 @@
     function showSciencesGame(subApp) {
         document.getElementById('sciences-submenu').classList.add('hidden');
         document.getElementById('sciences-formulas').classList.add('hidden');
+        document.getElementById('sciences-memory').classList.add('hidden');
         document.getElementById('sciences-chemistry').classList.add('hidden');
 
         if (subApp === 'menu') {
@@ -1102,6 +1249,9 @@
         } else if (subApp === 'formulas') {
             document.getElementById('sciences-formulas').classList.remove('hidden');
             loadPhysicsState();
+        } else if (subApp === 'memory') {
+            document.getElementById('sciences-memory').classList.remove('hidden');
+            initMemory();
         } else if (subApp === 'chemistry') {
             document.getElementById('sciences-chemistry').classList.remove('hidden');
             loadChemState();
@@ -1277,7 +1427,7 @@
 
         const progressPercent = (solvedCount / maxScore) * 100;
         document.getElementById('progress-bar').style.width = `${progressPercent}%`;
-        document.getElementById('progress-text').textContent = `${solvedCount} / ${maxScore}`;
+        document.getElementById('progress-text').textContent = `${solvedCount} ${i18n[currentLang].of} ${maxScore}`;
         document.getElementById('question').textContent = currentItem.name;
 
         let options = [currentItem.formula];
@@ -1353,7 +1503,7 @@
         queue.push(currentItem);
         currentIndex++;
         const feedbackEl = document.getElementById('feedback');
-        feedbackEl.textContent = "Skip";
+        feedbackEl.textContent = i18n[currentLang].btn_skip;
         feedbackEl.style.color = "var(--text-muted)";
         isLocked = true;
         disableAllButtons();
@@ -1401,13 +1551,13 @@
         
         let rank = getFormulaRank(totalScore);
         let rankDisplay = "";
-        if (percent >= 93.7) rankDisplay = "Эйнштейн! 🏆";
-        else if (percent >= 78.1) rankDisplay = "Ньютон 🍎";
-        else if (percent >= 62.5) rankDisplay = "Архимед 🛁";
-        else if (percent >= 46.8) rankDisplay = "Профессор 🎓";
-        else if (percent >= 31.2) rankDisplay = "Учитель 📚";
-        else if (percent >= 15.6) rankDisplay = "Студент 🎒";
-        else rankDisplay = "Школьник 📝";
+        if (percent >= 93.7) rankDisplay = `${i18n[currentLang].phys_formulas}: ${rank} 🏆`;
+        else if (percent >= 78.1) rankDisplay = `${i18n[currentLang].phys_formulas}: ${rank} 🍎`;
+        else if (percent >= 62.5) rankDisplay = `${i18n[currentLang].phys_formulas}: ${rank} 🛁`;
+        else if (percent >= 46.8) rankDisplay = `${i18n[currentLang].phys_formulas}: ${rank} 🎓`;
+        else if (percent >= 31.2) rankDisplay = `${i18n[currentLang].phys_formulas}: ${rank} 📚`;
+        else if (percent >= 15.6) rankDisplay = `${i18n[currentLang].phys_formulas}: ${rank} 🎒`;
+        else rankDisplay = `${i18n[currentLang].phys_formulas}: ${rank} 📝`;
         document.getElementById('result-rank').textContent = rankDisplay;
     }
 
@@ -1444,6 +1594,132 @@
         document.getElementById('test-screen').classList.add('hidden');
         document.getElementById('result-screen').classList.remove('hidden');
         showResults(true);
+    }
+
+    // ==========================================
+    // ФИЗИКА (ИГРА ПАМЯТЬ)
+    // ==========================================
+    const memPairs = [
+        { f: "v = \\frac{s}{t}", n: { ru: "Скорость", en: "Velocity" } },
+        { f: "F = ma", n: { ru: "Второй закон Ньютона", en: "Newton's 2nd Law" } },
+        { f: "\\rho = \\frac{m}{V}", n: { ru: "Плотность", en: "Density" } },
+        { f: "I = \\frac{U}{R}", n: { ru: "Закон Ома", en: "Ohm's Law" } },
+        { f: "E = mc^2", n: { ru: "Энергия покоя", en: "Rest Energy" } },
+        { f: "P = \\frac{A}{t}", n: { ru: "Мощность", en: "Power" } },
+        { f: "Q = cm\\Delta t", n: { ru: "Нагревание", en: "Heating" } },
+        { f: "T = 2\\pi\\sqrt{\\frac{l}{g}}", n: { ru: "Маятник", en: "Pendulum" } }
+    ];
+
+    let memDeck = [];
+    let memFlipped = [];
+    let memMatched = 0;
+    let memMoves = 0;
+    let memLock = false;
+
+    function initMemory(isLoading = false) {
+        memDeck = [];
+        memFlipped = [];
+        memMatched = 0;
+        memMoves = 0;
+        memLock = false;
+        
+        // Create pairs
+        memPairs.forEach((pair, index) => {
+            memDeck.push({ id: index, type: 'f', content: pair.f, matchId: index });
+            memDeck.push({ id: index, type: 'n', content: pair.n, matchId: index });
+        });
+        
+        memDeck = shuffle(memDeck);
+        renderMemory();
+        updateMemStats();
+    }
+
+    function renderMemory() {
+        const boardEl = document.getElementById('memory-board');
+        boardEl.innerHTML = '';
+        
+        memDeck.forEach((card, index) => {
+            const cardEl = document.createElement('div');
+            cardEl.className = 'mem-card';
+            cardEl.dataset.index = index;
+            
+            let backContent = "";
+            if (card.type === 'f') {
+                backContent = `\\(${card.content}\\)`;
+            } else {
+                backContent = card.content[currentLang];
+            }
+            
+            cardEl.innerHTML = `
+                <div class="mem-inner">
+                    <div class="mem-front">?</div>
+                    <div class="mem-back">${backContent}</div>
+                </div>
+            `;
+            
+            cardEl.onclick = () => flipCard(index);
+            boardEl.appendChild(cardEl);
+        });
+        
+        if (window.MathJax) {
+            MathJax.typesetPromise([boardEl]).catch(err => console.error(err));
+        }
+    }
+
+    function updateMemStats() {
+        document.getElementById('mem-stats').textContent = 
+            `${i18n[currentLang].mem_moves}: ${memMoves} | ${i18n[currentLang].mem_found}: ${memMatched} / 8`;
+    }
+
+    function flipCard(index) {
+        if (memLock) return;
+        const cardEl = document.querySelectorAll('.mem-card')[index];
+        if (cardEl.classList.contains('flipped') || cardEl.classList.contains('matched')) return;
+
+        cardEl.classList.add('flipped');
+        memFlipped.push(index);
+
+        if (memFlipped.length === 2) {
+            memMoves++;
+            updateMemStats();
+            memLock = true;
+            
+            const idx1 = memFlipped[0];
+            const idx2 = memFlipped[1];
+            const card1 = memDeck[idx1];
+            const card2 = memDeck[idx2];
+
+            if (card1.matchId === card2.matchId) {
+                // Match
+                setTimeout(() => {
+                    document.querySelectorAll('.mem-card')[idx1].classList.add('matched');
+                    document.querySelectorAll('.mem-card')[idx2].classList.add('matched');
+                    memMatched++;
+                    memFlipped = [];
+                    memLock = false;
+                    updateMemStats();
+                    
+                    if (memMatched === 8) {
+                        setTimeout(() => {
+                            if (memMoves < (progress.sciences.memoryBest || 999)) {
+                                progress.sciences.memoryBest = memMoves;
+                                saveProgress();
+                            }
+                            alert(i18n[currentLang].mem_win + ` ${memMoves} ${i18n[currentLang].mem_moves}!`);
+                            initMemory();
+                        }, 500);
+                    }
+                }, 500);
+            } else {
+                // No match
+                setTimeout(() => {
+                    document.querySelectorAll('.mem-card')[idx1].classList.remove('flipped');
+                    document.querySelectorAll('.mem-card')[idx2].classList.remove('flipped');
+                    memFlipped = [];
+                    memLock = false;
+                }, 1000);
+            }
+        }
     }
 
     // ==========================================
@@ -1561,7 +1837,7 @@
 
         const progressPercent = (chemSolved / chemMax) * 100;
         document.getElementById('chem-progress-bar').style.width = `${progressPercent}%`;
-        document.getElementById('chem-progress-text').textContent = `${chemSolved} / ${chemMax}`;
+        document.getElementById('chem-progress-text').textContent = `${chemSolved} ${i18n[currentLang].of} ${chemMax}`;
         document.getElementById('chem-question').textContent = chemCurrentItem.s;
 
         let options = [chemCurrentItem.n];
@@ -1636,7 +1912,7 @@
         chemQueue.push(chemCurrentItem);
         chemIndex++;
         const feedbackEl = document.getElementById('chem-feedback');
-        feedbackEl.textContent = "Skip";
+        feedbackEl.textContent = i18n[currentLang].btn_skip;
         feedbackEl.style.color = "var(--text-muted)";
         chemLocked = true;
         disableAllChemButtons();
@@ -1736,7 +2012,7 @@
         validMoves = [];
         isAiThinking = false;
         lastMove = null;
-        document.getElementById('player-color').textContent = playerColor === 'w' ? 'Белые' : 'Чёрные';
+        document.getElementById('player-color').textContent = playerColor === 'w' ? (currentLang === 'ru' ? 'Белые' : 'White') : (currentLang === 'ru' ? 'Чёрные' : 'Black');
         saveChessState();
         renderBoard();
         updateChessStatus();
@@ -1756,7 +2032,7 @@
             playerColor = state.playerColor;
             const history = game.history({ verbose: true });
             lastMove = history.length > 0 ? history[history.length - 1] : null;
-            document.getElementById('player-color').textContent = playerColor === 'w' ? 'Белые' : 'Чёрные';
+            document.getElementById('player-color').textContent = playerColor === 'w' ? (currentLang === 'ru' ? 'Белые' : 'White') : (currentLang === 'ru' ? 'Чёрные' : 'Black');
             renderBoard();
             updateChessStatus();
             if (game.turn() !== playerColor && !game.game_over()) { makeAiMove(); }
@@ -1838,7 +2114,7 @@
     function updateChessStatus() {
         const statusEl = document.getElementById('chess-status');
         if (game.in_checkmate()) {
-            statusEl.textContent = game.turn() === playerColor ? "Мат! Вы проиграли 😢" : "Мат! Вы победили! 🎉";
+            statusEl.textContent = game.turn() === playerColor ? i18n[currentLang].checkmate_lose : i18n[currentLang].checkmate_win;
             statusEl.style.color = game.turn() === playerColor ? "var(--wrong)" : "var(--correct)";
             
             if (game.turn() === playerColor) {
@@ -1850,7 +2126,7 @@
             updateChessStatsUI();
             
         } else if (game.in_draw()) {
-            statusEl.textContent = "Ничья! 🤝";
+            statusEl.textContent = i18n[currentLang].draw;
             statusEl.style.color = "var(--warning)";
             
             progress.chessStats.d++;
@@ -1858,10 +2134,10 @@
             updateChessStatsUI();
             
         } else if (game.in_check()) {
-            statusEl.textContent = game.turn() === playerColor ? "Вам шах! ⚠️" : "Шах боту! 🔥";
+            statusEl.textContent = i18n[currentLang].check;
             statusEl.style.color = game.turn() === playerColor ? "var(--wrong)" : "var(--correct)";
         } else {
-            statusEl.textContent = isAiThinking ? "Бот думает..." : "Ваш ход";
+            statusEl.textContent = isAiThinking ? i18n[currentLang].bot_thinks : i18n[currentLang].your_turn;
             statusEl.style.color = "var(--accent)";
         }
     }
@@ -2197,13 +2473,13 @@
         if (winner) {
             tttGameActive = false;
             if (winner === 'X') {
-                updateTttStatus("Вы победили! 🎉");
+                updateTttStatus(i18n[currentLang].win);
                 progress.tttStats.w++;
             } else if (winner === 'O') {
-                updateTttStatus(currentTttMode === 'friend' ? "Победили Нолики! 🎉" : "Бот победил! 🤖");
+                updateTttStatus(i18n[currentLang].lose);
                 progress.tttStats.l++;
             } else if (winner === 'Draw') {
-                updateTttStatus("Ничья! 🤝");
+                updateTttStatus(i18n[currentLang].draw);
                 progress.tttStats.d++;
             }
             saveProgress();
@@ -2223,7 +2499,7 @@
             if (currentTttMode === 'friend') {
                 statusEl.textContent = `Ход: ${tttCurrentPlayer}`;
             } else {
-                statusEl.textContent = tttCurrentPlayer === 'X' ? "Ваш ход (X)" : "Бот думает...";
+                statusEl.textContent = tttCurrentPlayer === 'X' ? i18n[currentLang].your_turn : i18n[currentLang].bot_thinks;
             }
         }
     }
@@ -2373,11 +2649,11 @@
         container.innerHTML = '';
 
         const groups = [
-            { name: "Easy", levels: [1, 2, 3] },
-            { name: "Medium", levels: [4, 5, 6, 7] },
-            { name: "Hard", levels: [8, 9, 10] },
-            { name: "Max", levels: [11, 12] },
-            { name: "Royal", levels: [13] }
+            { name: currentLang === 'ru' ? "Легкие" : "Easy", levels: [1, 2, 3] },
+            { name: currentLang === 'ru' ? "Средние" : "Medium", levels: [4, 5, 6, 7] },
+            { name: currentLang === 'ru' ? "Сложные" : "Hard", levels: [8, 9, 10] },
+            { name: currentLang === 'ru' ? "Максимальные" : "Max", levels: [11, 12] },
+            { name: currentLang === 'ru' ? "Королевский" : "Royal", levels: [13] }
         ];
 
         groups.forEach(group => {
@@ -2565,7 +2841,7 @@
         }
         saveProgress();
 
-        const winWords = ["Молодец", "Красава"];
+        const winWords = currentLang === 'ru' ? ["Молодец", "Красава"] : ["Good job", "Awesome"];
         document.getElementById('snake-overlay-text').textContent = winWords[Math.floor(Math.random() * winWords.length)];
         document.getElementById('snake-overlay-text').style.color = "var(--correct)";
         
@@ -2577,7 +2853,7 @@
             nextBtn.onclick = () => startSnake(13);
         } else {
             nextBtn.style.display = 'none';
-            document.getElementById('snake-overlay-text').textContent = "Вы прошли игру!";
+            document.getElementById('snake-overlay-text').textContent = i18n[currentLang].win;
         }
         
         document.getElementById('snake-overlay').classList.remove('hidden');
@@ -2585,7 +2861,7 @@
 
     function snakeGameOver() {
         snakeStopGame();
-        const loseWords = ["Лох", "Лузер", "Неудача"];
+        const loseWords = currentLang === 'ru' ? ["Лох", "Лузер", "Неудача"] : ["Loser", "Fail", "Noob"];
         document.getElementById('snake-overlay-text').textContent = loseWords[Math.floor(Math.random() * loseWords.length)];
         document.getElementById('snake-overlay-text').style.color = "var(--wrong)";
         document.getElementById('snake-next-btn').style.display = 'none';
@@ -2684,11 +2960,11 @@
         container.innerHTML = '';
 
         const groups = [
-            { name: "Easy", levels: [1, 2, 3, 4, 5] },
-            { name: "Medium", levels: [6, 7, 8, 9, 10] },
-            { name: "Hard", levels: [11, 12, 13, 14, 15] },
-            { name: "Max", levels: [16, 17, 18, 19, 20] },
-            { name: "Royal", levels: [21] }
+            { name: currentLang === 'ru' ? "Легкие" : "Easy", levels: [1, 2, 3, 4, 5] },
+            { name: currentLang === 'ru' ? "Средние" : "Medium", levels: [6, 7, 8, 9, 10] },
+            { name: currentLang === 'ru' ? "Сложные" : "Hard", levels: [11, 12, 13, 14, 15] },
+            { name: currentLang === 'ru' ? "Максимальные" : "Max", levels: [16, 17, 18, 19, 20] },
+            { name: currentLang === 'ru' ? "Королевский" : "Royal", levels: [21] }
         ];
 
         groups.forEach(group => {
@@ -2888,12 +3164,12 @@
         }
         saveProgress();
 
-        const winWords = ["Молодец", "Красава"];
+        const winWords = currentLang === 'ru' ? ["Молодец", "Красава"] : ["Good job", "Awesome"];
         document.getElementById('moles-overlay-text').textContent = winWords[Math.floor(Math.random() * winWords.length)];
         document.getElementById('moles-overlay-text').style.color = "var(--correct)";
         
         if (moleLevel === 21) {
-            document.getElementById('moles-overlay-text').textContent = "Вы прошли игру!";
+            document.getElementById('moles-overlay-text').textContent = i18n[currentLang].win;
             document.getElementById('moles-record-btn').style.display = 'inline-block';
         } else {
             document.getElementById('moles-next-btn').style.display = 'inline-block';
@@ -2914,7 +3190,7 @@
             document.getElementById('moles-overlay-text').style.color = "var(--warning)";
             document.getElementById('moles-record-btn').style.display = 'inline-block';
         } else {
-            const loseWords = ["Лох", "Лузер", "Неудача"];
+            const loseWords = currentLang === 'ru' ? ["Лох", "Лузер", "Неудача"] : ["Loser", "Fail", "Noob"];
             document.getElementById('moles-overlay-text').textContent = loseWords[Math.floor(Math.random() * loseWords.length)];
             document.getElementById('moles-overlay-text').style.color = "var(--wrong)";
         }
