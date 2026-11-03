@@ -112,7 +112,7 @@
         }
         .hidden { display: none !important; }
 
-        /* --- МЕНЮ (3 В РЯД) --- */
+        /* --- МЕНЮ (МАКСИМУМ 3 В РЯД) --- */
         .menu-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -252,7 +252,7 @@
             margin: 0 auto;
             border: 4px solid rgba(255,255,255,0.2);
             border-radius: 4px;
-            background: #1a2e1a; /* Болотный темно-зеленый */
+            background: #1a2e1a;
             overflow: hidden;
             box-shadow: 0 15px 35px rgba(0,0,0,0.6);
         }
@@ -266,7 +266,7 @@
         .snake-head, .snake-body {
             position: absolute;
             top: 0; left: 0; width: 100%; height: 100%;
-            background-color: #2e4a2e; /* Чуть светлее для контраста */
+            background-color: #2e4a2e;
             z-index: 2;
         }
         .snake-food {
@@ -457,6 +457,12 @@
     function switchApp(appName) {
         if (currentApp === 'snake' && appName !== 'snake') {
             snakeStopGame();
+        }
+
+        // Защита от невалидных состояний (например, если в кэше остался старый 'birds')
+        const validApps = ['menu', 'physics', 'chess', '2048', 'ttt', 'snake'];
+        if (!validApps.includes(appName)) {
+            appName = 'menu';
         }
 
         currentApp = appName;
@@ -1168,12 +1174,13 @@
                 if (e.key === 'ArrowDown') move2048(3);
             }
         } else if (currentApp === 'snake') {
-            if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'w', 'a', 's', 'd'].includes(e.key.toLowerCase())) {
+            if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'w', 'a', 's', 'd', 'ц', 'ф', 'ы', 'в'].includes(e.key.toLowerCase())) {
                 e.preventDefault();
-                if (e.key === 'ArrowLeft' || e.key.toLowerCase() === 'a') snakeChangeDir(-1, 0);
-                if (e.key === 'ArrowRight' || e.key.toLowerCase() === 'd') snakeChangeDir(1, 0);
-                if (e.key === 'ArrowUp' || e.key.toLowerCase() === 'w') snakeChangeDir(0, -1);
-                if (e.key === 'ArrowDown' || e.key.toLowerCase() === 's') snakeChangeDir(0, 1);
+                const key = e.key.toLowerCase();
+                if (key === 'arrowleft' || key === 'a' || key === 'ф') snakeChangeDir(-1, 0);
+                if (key === 'arrowright' || key === 'd' || key === 'в') snakeChangeDir(1, 0);
+                if (key === 'arrowup' || key === 'w' || key === 'ц') snakeChangeDir(0, -1);
+                if (key === 'arrowdown' || key === 's' || key === 'ы') snakeChangeDir(0, 1);
             }
         }
     });
@@ -1634,9 +1641,14 @@
     // ИНИЦИАЛИЗАЦИЯ
     // ==========================================
     window.onload = () => {
+        // Принудительно очищаем неверные состояния
+        const savedApp = localStorage.getItem('appMode');
+        if (savedApp && !['menu', 'physics', 'chess', '2048', 'ttt', 'snake'].includes(savedApp)) {
+            localStorage.setItem('appMode', 'menu');
+        }
+
         document.querySelectorAll('.container > div').forEach(el => el.classList.add('hidden'));
-        const savedApp = localStorage.getItem('appMode') || 'menu';
-        switchApp(savedApp);
+        switchApp(localStorage.getItem('appMode') || 'menu');
     };
 </script>
 
