@@ -642,7 +642,7 @@
                 <div class="chess-header">
                     <button class="main-btn secondary-btn" onclick="showHangmanLevels()">← Уровни</button>
                     <h1 class="animated-title" style="margin: 0; font-size: 24px;">Виселица</h1>
-                    <button class="main-btn" onclick="initHangman()">Заново</button>
+                    <button class="main-btn" onclick="startHangmanLevel(hangmanState.currentLevel)">Заново</button>
                 </div>
                 
                 <div class="hangman-info">
@@ -823,25 +823,40 @@
 
 <script>
     // ==========================================
-    // ГЛОБАЛЬНЫЕ ДАННЫЕ И ПРОГРЕСС
+    // ГЛОБАЛЬНЫЕ ДАННЫЕ И ПРОГРЕСС (БРОНЕБОЙНАЯ ЗАЩИТА)
     // ==========================================
     let currentApp = 'menu';
     
-    let progress = JSON.parse(localStorage.getItem('weixtor_progress')) || {
-        snake: { completed: [], record: 0 },
-        moles: { completed: [], record: 0 },
-        physics: { score: 0, played: false },
-        hangman: { score: 0, rank: "", completed: false, currentLevel: 0 },
-        chessStats: { w: 0, l: 0, d: 0 },
-        tttStats: { w: 0, l: 0, d: 0 },
-        game2048: { highScore: 0 }
-    };
+    let progress = JSON.parse(localStorage.getItem('weixtor_progress')) || {};
 
-    // Инициализация отсутствующих полей (для старых сохранений)
-    if (!progress.chessStats) progress.chessStats = { w: 0, l: 0, d: 0 };
-    if (!progress.tttStats) progress.tttStats = { w: 0, l: 0, d: 0 };
-    if (!progress.game2048) progress.game2048 = { highScore: 0 };
+    // Безопасная инициализация всех полей
+    if (!progress.snake) progress.snake = { completed: [], record: 0 };
+    if (!progress.snake.completed) progress.snake.completed = [];
+    if (progress.snake.record === undefined) progress.snake.record = 0;
+
+    if (!progress.moles) progress.moles = { completed: [], record: 0 };
+    if (!progress.moles.completed) progress.moles.completed = [];
+    if (progress.moles.record === undefined) progress.moles.record = 0;
+
+    if (!progress.physics) progress.physics = { score: 0, played: false };
+    if (progress.physics.score === undefined) progress.physics.score = 0;
+
     if (!progress.hangman) progress.hangman = { score: 0, rank: "", completed: false, currentLevel: 0 };
+    if (progress.hangman.score === undefined) progress.hangman.score = 0;
+    if (progress.hangman.currentLevel === undefined) progress.hangman.currentLevel = 0;
+
+    if (!progress.chessStats) progress.chessStats = { w: 0, l: 0, d: 0 };
+    if (progress.chessStats.w === undefined) progress.chessStats.w = 0;
+    if (progress.chessStats.l === undefined) progress.chessStats.l = 0;
+    if (progress.chessStats.d === undefined) progress.chessStats.d = 0;
+
+    if (!progress.tttStats) progress.tttStats = { w: 0, l: 0, d: 0 };
+    if (progress.tttStats.w === undefined) progress.tttStats.w = 0;
+    if (progress.tttStats.l === undefined) progress.tttStats.l = 0;
+    if (progress.tttStats.d === undefined) progress.tttStats.d = 0;
+
+    if (!progress.game2048) progress.game2048 = { highScore: 0 };
+    if (progress.game2048.highScore === undefined) progress.game2048.highScore = 0;
 
     function saveProgress() {
         localStorage.setItem('weixtor_progress', JSON.stringify(progress));
@@ -875,41 +890,45 @@
     }
 
     function updateMenuBadges() {
-        const snakeBadge = document.getElementById('badge-snake');
-        const molesBadge = document.getElementById('badge-moles');
-        const physicsBadge = document.getElementById('badge-physics');
-        const chessBadge = document.getElementById('badge-chess');
-        const tttBadge = document.getElementById('badge-ttt');
-        const game2048Badge = document.getElementById('badge-2048');
-        
-        snakeBadge.textContent = `Рекорд: ${progress.snake.record}`;
-        if (progress.snake.completed.length > 0) {
-            snakeBadge.textContent += ` | Пройдено: ${progress.snake.completed.length}/13`;
-            snakeBadge.classList.add('record');
-        }
+        try {
+            const snakeBadge = document.getElementById('badge-snake');
+            const molesBadge = document.getElementById('badge-moles');
+            const physicsBadge = document.getElementById('badge-physics');
+            const chessBadge = document.getElementById('badge-chess');
+            const tttBadge = document.getElementById('badge-ttt');
+            const game2048Badge = document.getElementById('badge-2048');
+            
+            snakeBadge.textContent = `Рекорд: ${progress.snake.record}`;
+            if (progress.snake.completed.length > 0) {
+                snakeBadge.textContent += ` | Пройдено: ${progress.snake.completed.length}/13`;
+                snakeBadge.classList.add('record');
+            }
 
-        molesBadge.textContent = `Рекорд: ${progress.moles.record}`;
-        if (progress.moles.completed.length > 0) {
-            molesBadge.textContent += ` | Пройдено: ${progress.moles.completed.length}/21`;
-            molesBadge.classList.add('record');
-        }
+            molesBadge.textContent = `Рекорд: ${progress.moles.record}`;
+            if (progress.moles.completed.length > 0) {
+                molesBadge.textContent += ` | Пройдено: ${progress.moles.completed.length}/21`;
+                molesBadge.classList.add('record');
+            }
 
-        chessBadge.textContent = `В: ${progress.chessStats.w} | П: ${progress.chessStats.l}`;
-        tttBadge.textContent = `В: ${progress.tttStats.w} | П: ${progress.tttStats.l}`;
-        game2048Badge.textContent = `Рекорд: ${progress.game2048.highScore}`;
+            chessBadge.textContent = `В: ${progress.chessStats.w} | П: ${progress.chessStats.l}`;
+            tttBadge.textContent = `В: ${progress.tttStats.w} | П: ${progress.tttStats.l}`;
+            game2048Badge.textContent = `Рекорд: ${progress.game2048.highScore}`;
 
-        let fRank = getFormulaRank(progress.physics.score);
-        let hRank = getHangmanRank(progress.hangman.score);
+            let fRank = getFormulaRank(progress.physics.score);
+            let hRank = getHangmanRank(progress.hangman.score);
 
-        document.getElementById('physics-rank-formulas').textContent = `Звание: ${fRank.name}`;
-        document.getElementById('physics-rank-hangman').textContent = `Звание: ${hRank.name}`;
+            document.getElementById('physics-rank-formulas').textContent = `Звание: ${fRank.name}`;
+            document.getElementById('physics-rank-hangman').textContent = `Звание: ${hRank.name}`;
 
-        if (fRank.val > hRank.val) {
-            physicsBadge.textContent = `Лучшее: ${fRank.name}`;
-        } else if (hRank.val > fRank.val) {
-            physicsBadge.textContent = `Лучшее: ${hRank.name}`;
-        } else {
-            physicsBadge.textContent = `Умнее ${genitiveRanks[fRank.name]}`;
+            if (fRank.val > hRank.val) {
+                physicsBadge.textContent = `Лучшее: ${fRank.name}`;
+            } else if (hRank.val > fRank.val) {
+                physicsBadge.textContent = `Лучшее: ${hRank.name}`;
+            } else {
+                physicsBadge.textContent = `Умнее ${genitiveRanks[fRank.name]}`;
+            }
+        } catch (e) {
+            console.error("Ошибка при обновлении бейджей:", e);
         }
     }
 
@@ -1254,7 +1273,6 @@
             savePhysicsState();
         }
         
-        if (!progress.physics) progress.physics = { score: 0, played: false };
         if (totalScore > progress.physics.score) {
             progress.physics.score = totalScore;
             progress.physics.played = true;
@@ -1319,13 +1337,12 @@
         ["УСКОРЕНИЕ", "ТРАЕКТОРИЯ", "ПЕРЕМЕЩЕНИЕ", "ОТНОСИТЕЛЬНОСТЬ", "РАВНОМЕРНОЕ", "УСКОРЕННОЕ", "ЦЕНТРОСТРЕМИТЕЛЬНОЕ", "ИМПУЛЬС", "РЕАКТИВНОЕ", "ВСЕМИРНОЕ", "ТЯГОТЕНИЕ", "НЕВЕСОМОСТЬ", "ОРБИТА", "СПУТНИК", "РАКЕТА", "КОСМОНАВТ", "ЛИНЗА", "ФОКУС", "ДИОПТРИЯ", "МИКРОСКОП", "ТЕЛЕСКОП", "ДИСПЕРСИЯ", "СПЕКТР", "ИНТЕРФЕРЕНЦИЯ", "ДИФРАКЦИЯ", "ПОЛЯРИЗАЦИЯ", "ФОТОН", "КВАНТ", "ПЛАНК", "БОР", "РЕЗЕРФОРД", "РАДИОАКТИВНОСТЬ", "ИЗОТОП", "НЕЙТРОН", "ПРОТОН", "ЭЛЕКТРОН", "ЯДРО", "РАСПАД", "ГАММА", "БЕТА", "АЛЬФА", "АТОМ", "ИОН", "ПЛАЗМА", "ВАККУУМ", "АНТИЧАСТИЦА", "ПОЗИТРОН", "НЕЙТРИНО", "ГРАВИТОН", "КВАЗАР"]
     ];
 
-    let hangmanState = JSON.parse(localStorage.getItem('hangmanState')) || {
-        currentLevel: 0, // 0 to 149
-        score: 0,
-        hintsLeft: 5,
-        completed: false,
-        rank: ""
-    };
+    let hangmanState = JSON.parse(localStorage.getItem('hangmanState')) || {};
+    if (hangmanState.currentLevel === undefined) hangmanState.currentLevel = 0;
+    if (hangmanState.score === undefined) hangmanState.score = 0;
+    if (hangmanState.hintsLeft === undefined) hangmanState.hintsLeft = 5;
+    if (hangmanState.completed === undefined) hangmanState.completed = false;
+    if (hangmanState.rank === undefined) hangmanState.rank = "";
 
     let currentHangmanWord = "";
     let guessedLetters = [];
@@ -1359,13 +1376,9 @@
                 btn.className = 'level-btn';
                 btn.textContent = i + 1;
                 
-                // В текущей реализации нельзя перепрыгивать уровни, но можно добавить логику разблокировки.
-                // Для простоты разрешим играть любой уровень.
-                // Но если уровень пройден (i < hangmanState.currentLevel), подсветим.
                 if (i < hangmanState.currentLevel) {
                     btn.classList.add('completed');
                 }
-                // Если это текущий уровень, выделим его
                 if (i === hangmanState.currentLevel) {
                     btn.style.borderColor = 'var(--warning)';
                 }
@@ -1397,7 +1410,6 @@
         
         hangmanState.maxMistakes = maxMistakes;
 
-        // Сброс подсказок при переходе на новую группу (1, 51, 101 уровень)
         if (levelIndex === 0 || levelIndex === 50 || levelIndex === 100) {
             hangmanState.hintsLeft = 5;
         }
@@ -1736,7 +1748,6 @@
             statusEl.textContent = game.turn() === playerColor ? "Мат! Вы проиграли 😢" : "Мат! Вы победили! 🎉";
             statusEl.style.color = game.turn() === playerColor ? "var(--wrong)" : "var(--correct)";
             
-            // Обновление статистики
             if (game.turn() === playerColor) {
                 progress.chessStats.l++;
             } else {
