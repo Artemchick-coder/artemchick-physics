@@ -169,16 +169,21 @@
             flex-wrap: wrap;
             gap: 10px;
             justify-content: center;
+            max-height: 300px;
+            overflow-y: auto;
+            padding: 10px;
+            background: rgba(0,0,0,0.2);
+            border-radius: 10px;
         }
         
         .level-btn {
             background: rgba(255,255,255,0.1);
             border: 2px solid rgba(255,255,255,0.2);
             color: white;
-            width: 60px;
-            height: 60px;
-            border-radius: 12px;
-            font-size: 22px;
+            width: 45px;
+            height: 45px;
+            border-radius: 8px;
+            font-size: 16px;
             font-weight: bold;
             cursor: pointer;
             transition: all 0.2s;
@@ -195,6 +200,59 @@
             top: -15px;
             font-size: 20px;
             filter: drop-shadow(0 0 5px gold);
+        }
+
+        /* --- ФИЗИКА (ПОДМЕНЮ) --- */
+        .physics-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 30px;
+        }
+        @media (max-width: 600px) { .physics-grid { grid-template-columns: 1fr; } }
+        
+        .physics-card {
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(16, 185, 129, 0.2));
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 40px 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 250px;
+            position: relative;
+            overflow: hidden;
+        }
+        .physics-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            border-color: var(--accent);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+        }
+        .physics-card .bg-icon {
+            font-size: 100px;
+            opacity: 0.1;
+            position: absolute;
+            bottom: -10px;
+            right: -10px;
+            z-index: 0;
+        }
+        .physics-card-title {
+            font-size: 28px;
+            font-weight: 900;
+            z-index: 1;
+            margin-bottom: 15px;
+        }
+        .physics-card-rank {
+            font-size: 16px;
+            color: var(--warning);
+            font-weight: bold;
+            z-index: 1;
+            background: rgba(0,0,0,0.5);
+            padding: 5px 15px;
+            border-radius: 15px;
         }
 
         /* --- ФИЗИКА (ФОРМУЛЫ) --- */
@@ -230,7 +288,7 @@
             font-size: 32px;
             font-weight: 900;
             letter-spacing: 5px;
-            margin: 30px 0;
+            margin: 20px 0;
             color: var(--accent);
             text-transform: uppercase;
             word-break: break-all;
@@ -238,36 +296,43 @@
         .hangman-info {
             display: flex;
             justify-content: space-between;
-            font-size: 18px;
+            font-size: 16px;
             margin-bottom: 20px;
             color: var(--text-muted);
+            background: rgba(0,0,0,0.3);
+            padding: 10px;
+            border-radius: 10px;
         }
         .keyboard {
             display: flex;
             flex-direction: column;
-            gap: 8px;
-            margin-top: 20px;
+            gap: 5px;
+            margin-top: 10px;
+            background: rgba(0,0,0,0.2);
+            padding: 10px;
+            border-radius: 10px;
         }
         .keyboard-row {
             display: flex;
             justify-content: center;
-            gap: 5px;
+            gap: 3px;
         }
         .key-btn {
             background: #334155;
             border: 1px solid #475569;
             color: white;
-            font-size: 16px;
+            font-size: 14px;
             font-weight: bold;
-            width: 38px;
-            height: 45px;
-            border-radius: 6px;
+            width: 32px;
+            height: 38px;
+            border-radius: 5px;
             cursor: pointer;
             transition: background 0.2s;
             display: flex;
             justify-content: center;
             align-items: center;
             text-transform: uppercase;
+            padding: 0;
         }
         .key-btn:hover:not(:disabled) { background: #475569; }
         .key-btn:disabled { cursor: not-allowed; opacity: 0.3; }
@@ -276,11 +341,11 @@
         
         @media (max-width: 600px) {
             .hangman-word { font-size: 24px; letter-spacing: 3px; }
-            .key-btn { width: 30px; height: 38px; font-size: 14px; }
+            .key-btn { width: 26px; height: 32px; font-size: 12px; }
         }
 
         /* --- ШАХМАТЫ --- */
-        .chess-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .chess-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px;}
         .chess-status { font-size: 20px; font-weight: bold; color: var(--accent); margin-bottom: 15px; min-height: 28px; }
         .board-container { display: grid; grid-template-columns: repeat(8, 1fr); grid-template-rows: repeat(8, 1fr); width: 100%; max-width: 500px; aspect-ratio: 1 / 1; margin: 0 auto; border: 4px solid rgba(255,255,255,0.2); border-radius: 4px; overflow: hidden; box-shadow: 0 15px 35px rgba(0,0,0,0.6); }
         .square { display: flex; justify-content: center; align-items: center; position: relative; cursor: pointer; user-select: none; }
@@ -296,6 +361,8 @@
         .square:hover .piece { transform: scale(1.05); transition: transform 0.2s; }
         .piece.white { color: #ffffff; text-shadow: 0 2px 3px rgba(0,0,0,0.4), 0 0 1px #000; }
         .piece.black { color: #1a1a1a; text-shadow: 0 2px 3px rgba(255,255,255,0.2), 0 0 1px #fff; }
+        
+        .stats-container { font-size: 14px; color: var(--text-muted); background: rgba(0,0,0,0.3); padding: 8px 15px; border-radius: 10px; display: inline-block; margin-bottom: 15px; }
 
         /* --- 2048 --- */
         .game-2048-container { position: relative; max-width: 400px; margin: 0 auto; }
@@ -466,20 +533,23 @@
         <div class="menu-grid">
             <div class="menu-card" onclick="switchApp('physics')">
                 <div class="menu-icon">⚛️</div>
-                <div class="menu-title">Физика</div>
-                <div class="menu-badge" id="badge-physics">Формулы и Виселица</div>
+                <div class="menu-title">Формулы и Виселица</div>
+                <div class="menu-badge" id="badge-physics">Играть</div>
             </div>
             <div class="menu-card" onclick="switchApp('chess')">
                 <div class="menu-icon">♟️</div>
                 <div class="menu-title">Шахматы</div>
+                <div class="menu-badge" id="badge-chess">0 В / 0 П</div>
             </div>
             <div class="menu-card" onclick="switchApp('2048')">
                 <div class="menu-icon">🔢</div>
                 <div class="menu-title">2048</div>
+                <div class="menu-badge" id="badge-2048">Рекорд: 0</div>
             </div>
             <div class="menu-card" onclick="switchApp('ttt')">
                 <div class="menu-icon">❌⭕</div>
                 <div class="menu-title">Крестики-нолики</div>
+                <div class="menu-badge" id="badge-ttt">0 В / 0 П</div>
             </div>
             <div class="menu-card" onclick="switchApp('snake')">
                 <div class="menu-icon">🐍</div>
@@ -501,9 +571,19 @@
         <!-- Подменю физики -->
         <div id="physics-submenu">
             <h1 class="animated-title" style="margin-top: 40px;">Раздел Физики</h1>
-            <div style="display: flex; flex-direction: column; gap: 15px; max-width: 300px; margin: 30px auto;">
-                <button class="main-btn" onclick="showPhysicsGame('formulas')" style="padding: 20px; font-size: 20px;">Тренажёр Формул</button>
-                <button class="main-btn" onclick="showPhysicsGame('hangman')" style="padding: 20px; font-size: 20px; background: #059669;">Виселица</button>
+            <div class="physics-grid">
+                <!-- Карточка Формулы -->
+                <div class="physics-card" onclick="showPhysicsGame('formulas')">
+                    <div class="bg-icon">📐</div>
+                    <div class="physics-card-title">Формулы</div>
+                    <div class="physics-card-rank" id="physics-rank-formulas">Звание: Школьник</div>
+                </div>
+                <!-- Карточка Виселица -->
+                <div class="physics-card" onclick="showPhysicsGame('hangman')">
+                    <div class="bg-icon">🔤</div>
+                    <div class="physics-card-title">Виселица</div>
+                    <div class="physics-card-rank" id="physics-rank-hangman">Звание: Тупица</div>
+                </div>
             </div>
         </div>
 
@@ -547,21 +627,39 @@
 
         <!-- Виселица -->
         <div id="physics-hangman" class="hidden">
-            <button class="main-btn secondary-btn" style="position: absolute; left: 20px; top: 20px; padding: 8px 15px;" onclick="showPhysicsGame('menu')">← Назад</button>
-            
-            <div id="hangman-game-screen">
-                <h1 class="animated-title" style="margin-top: 40px;">Виселица</h1>
+            <!-- Меню выбора уровней Виселицы -->
+            <div id="hangman-level-screen">
+                <div class="chess-header">
+                    <button class="main-btn secondary-btn" onclick="showPhysicsGame('menu')">← Назад</button>
+                    <h1 class="animated-title" style="margin: 0; font-size: 28px;">Виселица</h1>
+                    <div style="width: 100px;"></div>
+                </div>
+                <div id="hangman-levels-container"></div>
+            </div>
+
+            <!-- Игровой экран Виселицы -->
+            <div id="hangman-game-screen" class="hidden">
+                <div class="chess-header">
+                    <button class="main-btn secondary-btn" onclick="showHangmanLevels()">← Уровни</button>
+                    <h1 class="animated-title" style="margin: 0; font-size: 24px;">Виселица</h1>
+                    <button class="main-btn" onclick="initHangman()">Заново</button>
+                </div>
+                
                 <div class="hangman-info">
                     <span id="hangman-group">Группа: 1</span>
                     <span id="hangman-mistakes" style="color: var(--wrong);">Ошибки: 0 / 3</span>
                 </div>
+                
                 <div class="hangman-word" id="hangman-word">_ _ _ _ _</div>
-                <div style="display: flex; justify-content: center; gap: 10px; margin-bottom: 20px;">
+                
+                <div style="display: flex; justify-content: center; gap: 10px; margin-bottom: 10px;">
                     <button class="main-btn" id="hangman-hint-btn" onclick="useHangmanHint()" style="background: var(--warning);">Подсказка (Осталось: 5)</button>
                 </div>
+                
                 <div class="keyboard" id="keyboard"></div>
             </div>
 
+            <!-- Экран результатов Виселицы -->
             <div id="hangman-result-screen" class="hidden">
                 <h1 class="animated-title">Игра пройдена!</h1>
                 <div class="result-title" style="font-size: 28px; margin-bottom: 20px;">Ваше звание:</div>
@@ -579,6 +677,7 @@
             <h1 class="animated-title" style="margin: 0; font-size: 28px;">Шахматы</h1>
             <button class="main-btn" onclick="startChess()">Заново</button>
         </div>
+        <div class="stats-container" id="chess-stats">Победы: 0 | Поражения: 0 | Ничьи: 0</div>
         <div class="chess-status" id="chess-status">Загрузка...</div>
         <div class="board-container" id="chess-board"></div>
         <div style="margin-top: 15px; font-size: 14px; color: var(--text-muted);">
@@ -595,7 +694,7 @@
         </div>
         
         <div class="game-2048-container">
-            <div class="score-box">Счёт: <span id="score-2048">0</span></div>
+            <div class="score-box">Счёт: <span id="score-2048">0</span> | Рекорд: <span id="highscore-2048">0</span></div>
             <div class="grid-2048" id="grid-2048"></div>
             <div id="overlay-2048" class="overlay hidden">
                 <h2 id="overlay-2048-text">Вы победили!</h2>
@@ -617,6 +716,7 @@
 
         <div id="ttt-mode-select">
             <h2 class="animated-title" style="font-size: 22px;">Выберите сложность</h2>
+            <div class="stats-container" id="ttt-stats" style="margin-bottom: 20px;">Победы: 0 | Поражения: 0 | Ничьи: 0</div>
             <div class="ttt-menu">
                 <button class="ttt-menu-btn" onclick="startTTT('easy')">
                     Легкий <span>Для нубов (бот всегда проигрывает)</span>
@@ -731,8 +831,17 @@
         snake: { completed: [], record: 0 },
         moles: { completed: [], record: 0 },
         physics: { score: 0, played: false },
-        hangman: { score: 0, rank: "", completed: false }
+        hangman: { score: 0, rank: "", completed: false, currentLevel: 0 },
+        chessStats: { w: 0, l: 0, d: 0 },
+        tttStats: { w: 0, l: 0, d: 0 },
+        game2048: { highScore: 0 }
     };
+
+    // Инициализация отсутствующих полей (для старых сохранений)
+    if (!progress.chessStats) progress.chessStats = { w: 0, l: 0, d: 0 };
+    if (!progress.tttStats) progress.tttStats = { w: 0, l: 0, d: 0 };
+    if (!progress.game2048) progress.game2048 = { highScore: 0 };
+    if (!progress.hangman) progress.hangman = { score: 0, rank: "", completed: false, currentLevel: 0 };
 
     function saveProgress() {
         localStorage.setItem('weixtor_progress', JSON.stringify(progress));
@@ -740,18 +849,9 @@
     }
 
     const genitiveRanks = {
-        "Эйнштейн": "Эйнштейна",
-        "Ньютон": "Ньютона",
-        "Галилей": "Галилея",
-        "Герц": "Герца",
-        "Архимед": "Архимеда",
-        "Профессор": "Профессора",
-        "Учитель": "Учителя",
-        "Ученик": "Ученика",
-        "Студент": "Студента",
-        "Школьник": "Школьника",
-        "Ребенок": "Ребенка",
-        "Тупица": "Тупицы"
+        "Эйнштейн": "Эйнштейна", "Ньютон": "Ньютона", "Галилей": "Галилея", "Герц": "Герца",
+        "Архимед": "Архимеда", "Профессор": "Профессора", "Учитель": "Учителя", "Ученик": "Ученика",
+        "Студент": "Студента", "Школьник": "Школьника", "Ребенок": "Ребенка", "Тупица": "Тупицы"
     };
 
     function getFormulaRank(score) {
@@ -778,6 +878,9 @@
         const snakeBadge = document.getElementById('badge-snake');
         const molesBadge = document.getElementById('badge-moles');
         const physicsBadge = document.getElementById('badge-physics');
+        const chessBadge = document.getElementById('badge-chess');
+        const tttBadge = document.getElementById('badge-ttt');
+        const game2048Badge = document.getElementById('badge-2048');
         
         snakeBadge.textContent = `Рекорд: ${progress.snake.record}`;
         if (progress.snake.completed.length > 0) {
@@ -791,32 +894,23 @@
             molesBadge.classList.add('record');
         }
 
-        let fRank = null, hRank = null;
-        let p = progress.physics || { score: 0, played: false };
-        let h = progress.hangman || { score: 0, completed: false };
+        chessBadge.textContent = `В: ${progress.chessStats.w} | П: ${progress.chessStats.l}`;
+        tttBadge.textContent = `В: ${progress.tttStats.w} | П: ${progress.tttStats.l}`;
+        game2048Badge.textContent = `Рекорд: ${progress.game2048.highScore}`;
 
-        if (p.played) fRank = getFormulaRank(p.score);
-        if (h.completed) hRank = getHangmanRank(h.score);
+        let fRank = getFormulaRank(progress.physics.score);
+        let hRank = getHangmanRank(progress.hangman.score);
 
-        let badgeText = "Формулы и Виселица";
-        if (fRank && !hRank) {
-            badgeText = `Формулы: ${fRank.name}`;
-        } else if (!fRank && hRank) {
-            badgeText = `Виселица: ${hRank.name}`;
-        } else if (fRank && hRank) {
-            if (fRank.name === hRank.name) {
-                badgeText = `Умнее ${genitiveRanks[fRank.name]}`;
-            } else {
-                badgeText = `Ф: ${fRank.name} | В: ${hRank.name}`;
-            }
+        document.getElementById('physics-rank-formulas').textContent = `Звание: ${fRank.name}`;
+        document.getElementById('physics-rank-hangman').textContent = `Звание: ${hRank.name}`;
+
+        if (fRank.val > hRank.val) {
+            physicsBadge.textContent = `Лучшее: ${fRank.name}`;
+        } else if (hRank.val > fRank.val) {
+            physicsBadge.textContent = `Лучшее: ${hRank.name}`;
+        } else {
+            physicsBadge.textContent = `Умнее ${genitiveRanks[fRank.name]}`;
         }
-        
-        // Prevent overflow
-        if (badgeText.length > 25 && fRank && hRank) {
-            badgeText = `Ф: ${fRank.name} | В: ${hRank.name}`;
-        }
-        
-        physicsBadge.textContent = badgeText;
     }
 
     function switchApp(appName) {
@@ -846,6 +940,7 @@
         } else if (appName === 'chess') {
             document.getElementById('app-chess').classList.remove('hidden');
             loadChessState();
+            updateChessStatsUI();
         } else if (appName === '2048') {
             document.getElementById('app-2048').classList.remove('hidden');
             load2048State();
@@ -867,13 +962,14 @@
         document.getElementById('physics-hangman').classList.add('hidden');
 
         if (subApp === 'menu') {
+            updateMenuBadges();
             document.getElementById('physics-submenu').classList.remove('hidden');
         } else if (subApp === 'formulas') {
             document.getElementById('physics-formulas').classList.remove('hidden');
             loadPhysicsState();
         } else if (subApp === 'hangman') {
             document.getElementById('physics-hangman').classList.remove('hidden');
-            initHangman();
+            showHangmanLevels();
         }
     }
 
@@ -1158,7 +1254,6 @@
             savePhysicsState();
         }
         
-        // Сохраняем рекорд формул
         if (!progress.physics) progress.physics = { score: 0, played: false };
         if (totalScore > progress.physics.score) {
             progress.physics.score = totalScore;
@@ -1225,11 +1320,9 @@
     ];
 
     let hangmanState = JSON.parse(localStorage.getItem('hangmanState')) || {
-        currentGroup: 0,
-        currentWordIndex: 0,
+        currentLevel: 0, // 0 to 149
         score: 0,
         hintsLeft: 5,
-        maxMistakes: 3,
         completed: false,
         rank: ""
     };
@@ -1239,35 +1332,73 @@
     let mistakes = 0;
     let isHangmanActive = false;
 
-    function initHangman() {
-        if (progress.hangman.completed) {
-            showHangmanResult(progress.hangman.score);
-            return;
-        }
+    function showHangmanLevels() {
+        document.getElementById('hangman-level-screen').classList.remove('hidden');
+        document.getElementById('hangman-game-screen').classList.add('hidden');
+        document.getElementById('hangman-result-screen').classList.add('hidden');
 
+        const container = document.getElementById('hangman-levels-container');
+        container.innerHTML = '';
+
+        const groups = [
+            { name: "Группа 1 (Легкие)", start: 0, end: 49 },
+            { name: "Группа 2 (Средние)", start: 50, end: 99 },
+            { name: "Группа 3 (Сложные)", start: 100, end: 149 }
+        ];
+
+        groups.forEach((group, gIdx) => {
+            const groupDiv = document.createElement('div');
+            groupDiv.className = 'level-group';
+            groupDiv.innerHTML = `<div class="level-group-title">${group.name}</div>`;
+            
+            const gridDiv = document.createElement('div');
+            gridDiv.className = 'level-grid';
+
+            for (let i = group.start; i <= group.end; i++) {
+                const btn = document.createElement('button');
+                btn.className = 'level-btn';
+                btn.textContent = i + 1;
+                
+                // В текущей реализации нельзя перепрыгивать уровни, но можно добавить логику разблокировки.
+                // Для простоты разрешим играть любой уровень.
+                // Но если уровень пройден (i < hangmanState.currentLevel), подсветим.
+                if (i < hangmanState.currentLevel) {
+                    btn.classList.add('completed');
+                }
+                // Если это текущий уровень, выделим его
+                if (i === hangmanState.currentLevel) {
+                    btn.style.borderColor = 'var(--warning)';
+                }
+
+                btn.onclick = () => startHangmanLevel(i);
+                gridDiv.appendChild(btn);
+            }
+            groupDiv.appendChild(gridDiv);
+            container.appendChild(groupDiv);
+        });
+    }
+
+    function startHangmanLevel(levelIndex) {
+        document.getElementById('hangman-level-screen').classList.add('hidden');
         document.getElementById('hangman-game-screen').classList.remove('hidden');
         document.getElementById('hangman-result-screen').classList.add('hidden');
-        
-        hangmanState.score = progress.hangman.score;
-        
-        if (hangmanState.currentGroup >= 3) {
-            finishHangman();
-            return;
-        }
 
-        currentHangmanWord = hangmanWords[hangmanState.currentGroup][hangmanState.currentWordIndex];
+        hangmanState.currentLevel = levelIndex;
+        saveHangmanState();
+        
+        currentHangmanWord = hangmanWords[Math.floor(levelIndex / 50)][levelIndex % 50];
         guessedLetters = [];
         mistakes = 0;
         isHangmanActive = true;
 
-        if (hangmanState.currentGroup === 0) hangmanState.maxMistakes = 3;
-        else if (hangmanState.currentGroup === 1) hangmanState.maxMistakes = 4;
-        else hangmanState.maxMistakes = 5;
+        let maxMistakes = 3;
+        if (levelIndex >= 50 && levelIndex < 100) maxMistakes = 4;
+        else if (levelIndex >= 100) maxMistakes = 5;
+        
+        hangmanState.maxMistakes = maxMistakes;
 
-        if (hangmanState.currentWordIndex === 0 && hangmanState.currentGroup === 0) {
-            if(hangmanState.score === 0) hangmanState.hintsLeft = 5;
-        }
-        if (hangmanState.currentWordIndex === 0 && hangmanState.currentGroup > 0) {
+        // Сброс подсказок при переходе на новую группу (1, 51, 101 уровень)
+        if (levelIndex === 0 || levelIndex === 50 || levelIndex === 100) {
             hangmanState.hintsLeft = 5;
         }
 
@@ -1332,11 +1463,11 @@
 
     function updateHangmanInfo() {
         let groupName = "";
-        if (hangmanState.currentGroup === 0) groupName = "1 (Легкие)";
-        if (hangmanState.currentGroup === 1) groupName = "2 (Средние)";
-        if (hangmanState.currentGroup === 2) groupName = "3 (Сложные)";
+        if (hangmanState.currentLevel < 50) groupName = "1 (Легкие)";
+        else if (hangmanState.currentLevel < 100) groupName = "2 (Средние)";
+        else groupName = "3 (Сложные)";
         
-        document.getElementById('hangman-group').textContent = `Группа: ${groupName}`;
+        document.getElementById('hangman-group').textContent = `Уровень: ${hangmanState.currentLevel + 1} | Группа: ${groupName}`;
         document.getElementById('hangman-mistakes').textContent = `Ошибки: ${mistakes} / ${hangmanState.maxMistakes}`;
         
         const hintBtn = document.getElementById('hangman-hint-btn');
@@ -1381,10 +1512,22 @@
             isHangmanActive = false;
             hangmanState.score++;
             progress.hangman.score = hangmanState.score;
+            hangmanState.currentLevel++;
+            
+            if (hangmanState.currentLevel >= 150) {
+                hangmanState.completed = true;
+            }
+
             saveHangmanState();
             saveProgress();
             
-            setTimeout(nextHangmanWord, 1000);
+            setTimeout(() => {
+                if (hangmanState.currentLevel >= 150) {
+                    finishHangman();
+                } else {
+                    showHangmanLevels();
+                }
+            }, 1000);
         }
     }
 
@@ -1394,7 +1537,9 @@
         renderHangmanWord();
         renderKeyboard();
         
-        setTimeout(nextHangmanWord, 2000);
+        setTimeout(() => {
+            showHangmanLevels();
+        }, 2000);
     }
 
     function useHangmanHint() {
@@ -1413,26 +1558,6 @@
             let randomChar = hiddenChars[Math.floor(Math.random() * hiddenChars.length)];
             handleHangmanGuess(randomChar);
         }
-    }
-
-    function nextHangmanWord() {
-        hangmanState.currentWordIndex++;
-        
-        if (hangmanState.currentGroup === 0 && hangmanState.currentWordIndex >= 50) {
-            hangmanState.currentGroup = 1;
-            hangmanState.currentWordIndex = 0;
-            hangmanState.hintsLeft = 5;
-        } else if (hangmanState.currentGroup === 1 && hangmanState.currentWordIndex >= 50) {
-            hangmanState.currentGroup = 2;
-            hangmanState.currentWordIndex = 0;
-            hangmanState.hintsLeft = 5;
-        } else if (hangmanState.currentGroup === 2 && hangmanState.currentWordIndex >= 50) {
-            finishHangman();
-            return;
-        }
-
-        saveHangmanState();
-        initHangman();
     }
 
     function finishHangman() {
@@ -1455,21 +1580,9 @@
         progress.hangman.score = score;
         saveProgress();
 
-        showHangmanResult(score);
-    }
-
-    function showHangmanResult(score) {
+        document.getElementById('hangman-level-screen').classList.add('hidden');
         document.getElementById('hangman-game-screen').classList.add('hidden');
         document.getElementById('hangman-result-screen').classList.remove('hidden');
-        
-        let rank = "";
-        if (score >= 130) rank = "Альберт Эйнштейн";
-        else if (score >= 100) rank = "Исаак Ньютон";
-        else if (score >= 80) rank = "Галилео Галилей";
-        else if (score >= 60) rank = "Генрих Герц";
-        else if (score >= 40) rank = "Ученик";
-        else if (score >= 20) rank = "Ребенок";
-        else rank = "Тупица";
 
         document.getElementById('hangman-rank').textContent = `Вы: ${rank}`;
         document.getElementById('hangman-score').textContent = `Баллы: ${score}/150`;
@@ -1482,8 +1595,7 @@
     function resetHangman() {
         if (confirm("Вы уверены, что хотите сбросить прогресс Виселицы?")) {
             hangmanState = {
-                currentGroup: 0,
-                currentWordIndex: 0,
+                currentLevel: 0,
                 score: 0,
                 hintsLeft: 5,
                 maxMistakes: 3,
@@ -1493,7 +1605,7 @@
             progress.hangman = { score: 0, rank: "", completed: false };
             saveHangmanState();
             saveProgress();
-            initHangman();
+            showHangmanLevels();
         }
     }
 
@@ -1623,9 +1735,24 @@
         if (game.in_checkmate()) {
             statusEl.textContent = game.turn() === playerColor ? "Мат! Вы проиграли 😢" : "Мат! Вы победили! 🎉";
             statusEl.style.color = game.turn() === playerColor ? "var(--wrong)" : "var(--correct)";
+            
+            // Обновление статистики
+            if (game.turn() === playerColor) {
+                progress.chessStats.l++;
+            } else {
+                progress.chessStats.w++;
+            }
+            saveProgress();
+            updateChessStatsUI();
+            
         } else if (game.in_draw()) {
             statusEl.textContent = "Ничья! 🤝";
             statusEl.style.color = "var(--warning)";
+            
+            progress.chessStats.d++;
+            saveProgress();
+            updateChessStatsUI();
+            
         } else if (game.in_check()) {
             statusEl.textContent = game.turn() === playerColor ? "Вам шах! ⚠️" : "Шах боту! 🔥";
             statusEl.style.color = game.turn() === playerColor ? "var(--wrong)" : "var(--correct)";
@@ -1633,6 +1760,11 @@
             statusEl.textContent = isAiThinking ? "Бот думает..." : "Ваш ход";
             statusEl.style.color = "var(--accent)";
         }
+    }
+
+    function updateChessStatsUI() {
+        document.getElementById('chess-stats').textContent = 
+            `Победы: ${progress.chessStats.w} | Поражения: ${progress.chessStats.l} | Ничьи: ${progress.chessStats.d}`;
     }
 
     function makeAiMove() {
@@ -1739,6 +1871,13 @@
     function update2048UI(isInit = false) {
         const tiles = document.getElementById('grid-2048').children;
         document.getElementById('score-2048').textContent = score2048;
+        
+        if (score2048 > progress.game2048.highScore) {
+            progress.game2048.highScore = score2048;
+            saveProgress();
+        }
+        document.getElementById('highscore-2048').textContent = progress.game2048.highScore;
+
         for (let i = 0; i < 16; i++) {
             const val = board2048[i];
             const tile = tiles[i];
@@ -1890,6 +2029,12 @@
         document.getElementById('ttt-mode-select').classList.remove('hidden');
         document.getElementById('ttt-game').classList.add('hidden');
         if (tttBotTimeout) clearTimeout(tttBotTimeout);
+        updateTttStatsUI();
+    }
+
+    function updateTttStatsUI() {
+        document.getElementById('ttt-stats').textContent = 
+            `Победы: ${progress.tttStats.w} | Поражения: ${progress.tttStats.l} | Ничьи: ${progress.tttStats.d}`;
     }
 
     function startTTT(mode) {
@@ -1949,11 +2094,15 @@
             tttGameActive = false;
             if (winner === 'X') {
                 updateTttStatus("Вы победили! 🎉");
+                progress.tttStats.w++;
             } else if (winner === 'O') {
                 updateTttStatus(currentTttMode === 'friend' ? "Победили Нолики! 🎉" : "Бот победил! 🤖");
+                progress.tttStats.l++;
             } else if (winner === 'Draw') {
                 updateTttStatus("Ничья! 🤝");
+                progress.tttStats.d++;
             }
+            saveProgress();
             renderTttBoard();
             return;
         }
