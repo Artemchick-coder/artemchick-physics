@@ -5,27 +5,29 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Тренажёр формул ОГЭ по физике</title>
     
-    <!-- Подключение MathJax для красивых формул -->
+    <!-- MathJax -->
     <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 
     <style>
         :root {
-            --bg-color: #f4f7f6;
-            --card-bg: #ffffff;
-            --text-main: #2c3e50;
-            --btn-bg: #3498db;
-            --btn-hover: #2980b9;
-            --btn-text: #ffffff;
-            --correct: #2ecc71;
-            --wrong: #e74c3c;
-            --disabled: #bdc3c7;
-            --section-bg: #ecf0f1;
+            --bg-gradient: radial-gradient(circle at top right, #1e1b4b, #0f172a, #020617);
+            --card-bg: rgba(30, 41, 59, 0.7);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --btn-bg: rgba(51, 65, 85, 0.8);
+            --btn-hover: rgba(71, 85, 105, 0.9);
+            --btn-text: #f8fafc;
+            --correct: #10b981;
+            --wrong: #ef4444;
+            --accent: #8b5cf6;
+            --accent-hover: #7c3aed;
+            --warning: #f59e0b;
         }
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg-color);
+            background: var(--bg-gradient);
             color: var(--text-main);
             margin: 0;
             padding: 20px;
@@ -33,52 +35,99 @@
             justify-content: center;
             align-items: flex-start;
             min-height: 100vh;
+            background-attachment: fixed;
+            box-sizing: border-box;
+        }
+
+        /* Красивый физический узор на фоне */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-image: 
+                radial-gradient(circle at 15% 50%, rgba(139, 92, 246, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 85% 30%, rgba(16, 185, 129, 0.1) 0%, transparent 50%);
+            z-index: -1;
+            pointer-events: none;
         }
 
         .container {
             background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
             padding: 30px;
-            border-radius: 15px;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            border-radius: 20px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
             width: 100%;
-            max-width: 800px;
+            max-width: 850px;
             text-align: center;
             margin-top: 20px;
             margin-bottom: 20px;
+            position: relative;
         }
 
         h1 {
-            font-size: 24px;
-            margin-bottom: 10px;
+            font-size: 26px;
+            margin-bottom: 15px;
+            background: linear-gradient(90deg, #a78bfa, #34d399);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 800;
         }
 
         .hidden {
             display: none !important;
         }
 
-        .progress {
+        /* Верхняя панель статуса */
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             font-size: 14px;
-            color: #7f8c8d;
+            color: var(--text-muted);
             margin-bottom: 20px;
+            background: rgba(0,0,0,0.2);
+            padding: 10px 15px;
+            border-radius: 10px;
+        }
+
+        .progress-bar-container {
+            flex-grow: 1;
+            margin: 0 15px;
+            background: rgba(255,255,255,0.1);
+            height: 8px;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #8b5cf6, #10b981);
+            width: 0%;
+            transition: width 0.3s ease;
         }
 
         .question {
             font-size: 22px;
             font-weight: bold;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
             min-height: 60px;
             display: flex;
             align-items: center;
             justify-content: center;
+            line-height: 1.4;
         }
 
         .options-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 15px;
+            gap: 12px;
+            margin-bottom: 20px;
         }
 
-        @media (max-width: 600px) {
+        @media (max-width: 650px) {
             .options-grid {
                 grid-template-columns: 1fr;
             }
@@ -87,175 +136,179 @@
         .option-btn {
             background-color: var(--btn-bg);
             color: var(--btn-text);
-            border: none;
-            padding: 15px 20px;
+            border: 1px solid rgba(255,255,255,0.05);
+            padding: 15px 10px;
             font-size: 18px;
-            border-radius: 8px;
+            border-radius: 10px;
             cursor: pointer;
-            transition: background-color 0.3s, transform 0.1s;
+            transition: all 0.2s;
             display: flex;
             align-items: center;
             justify-content: center;
             min-height: 60px;
+            user-select: none;
         }
 
         .option-btn:hover:not(:disabled) {
             background-color: var(--btn-hover);
             transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            border-color: rgba(255,255,255,0.2);
         }
 
         .option-btn:disabled {
             cursor: not-allowed;
-            opacity: 0.8;
+            opacity: 0.3;
+            transform: scale(0.98);
         }
 
         .correct {
             background-color: var(--correct) !important;
-            color: white;
+            color: white !important;
+            border-color: transparent !important;
+            box-shadow: 0 0 15px rgba(16, 185, 129, 0.4) !important;
         }
 
         .wrong {
             background-color: var(--wrong) !important;
-            color: white;
+            color: white !important;
+            border-color: transparent !important;
+        }
+
+        /* Кнопки управления */
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .control-btn {
+            background: transparent;
+            color: var(--text-muted);
+            border: 1px solid var(--text-muted);
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .control-btn:hover:not(:disabled) {
+            background: rgba(255,255,255,0.05);
+            color: var(--text-main);
+            border-color: var(--text-main);
+        }
+
+        .control-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .hint-btn {
+            color: var(--warning);
+            border-color: var(--warning);
+        }
+
+        .hint-btn:hover:not(:disabled) {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--warning);
+            border-color: var(--warning);
         }
 
         .feedback {
-            margin-top: 20px;
             font-size: 18px;
             font-weight: bold;
             min-height: 25px;
+            margin-bottom: 10px;
         }
 
-        .result-title {
-            font-size: 28px;
-            font-weight: bold;
-            color: var(--btn-bg);
-            margin-bottom: 15px;
-        }
-
-        .result-score {
-            font-size: 20px;
-            margin-bottom: 25px;
-        }
-
-        .result-rank {
-            font-size: 32px;
-            font-weight: bold;
-            color: var(--correct);
-            margin-bottom: 40px;
-            text-transform: uppercase;
-        }
+        /* Экран результатов */
+        .result-title { font-size: 28px; font-weight: bold; margin-bottom: 20px; }
+        .result-score { font-size: 22px; margin-bottom: 10px; }
+        .result-percent { font-size: 36px; font-weight: bold; color: var(--accent); margin-bottom: 20px; }
+        .result-rank { font-size: 32px; font-weight: 800; color: var(--correct); margin-bottom: 40px; text-transform: uppercase; letter-spacing: 2px; }
 
         .main-btn {
-            background-color: var(--btn-bg);
+            background: var(--accent);
             color: white;
             border: none;
             padding: 15px 30px;
             font-size: 18px;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-            margin: 10px;
-            width: 80%;
-            max-width: 300px;
-        }
-
-        .main-btn:hover {
-            background-color: var(--btn-hover);
-        }
-
-        .secondary-btn {
-            background-color: #95a5a6;
-        }
-
-        .secondary-btn:hover {
-            background-color: #7f8c8d;
-        }
-
-        .study-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-
-        .study-section {
-            background-color: var(--section-bg);
             border-radius: 10px;
-            padding: 15px;
-            margin-bottom: 20px;
-            text-align: left;
-        }
-
-        .study-section h3 {
-            margin-top: 0;
-            color: var(--btn-bg);
-            border-bottom: 2px solid var(--btn-bg);
-            padding-bottom: 5px;
-        }
-
-        .study-item {
-            display: flex;
-            flex-direction: column;
-            margin-bottom: 15px;
-            padding-bottom: 10px;
-            border-bottom: 1px solid #dcdde1;
-        }
-
-        .study-item:last-child {
-            border-bottom: none;
-            margin-bottom: 0;
-            padding-bottom: 0;
-        }
-
-        .study-name {
+            cursor: pointer;
+            transition: background 0.3s;
+            margin: 10px;
+            width: 100%;
+            max-width: 320px;
             font-weight: bold;
-            margin-bottom: 5px;
-            font-size: 16px;
         }
 
-        .study-formula {
-            font-size: 18px;
-            color: #e74c3c;
-            overflow-x: auto;
-        }
+        .main-btn:hover { background: var(--accent-hover); }
+        .secondary-btn { background: #475569; }
+        .secondary-btn:hover { background: #334155; }
 
-        mjx-container {
-            font-size: 1.2em !important;
-        }
+        /* Экран изучения */
+        .study-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .study-section { background: rgba(0,0,0,0.2); border-radius: 12px; padding: 20px; margin-bottom: 20px; text-align: left; border: 1px solid rgba(255,255,255,0.05); }
+        .study-section h3 { margin-top: 0; color: var(--accent); border-bottom: 1px solid rgba(139, 92, 246, 0.3); padding-bottom: 10px; }
+        .study-item { display: flex; flex-direction: column; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .study-item:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+        .study-name { font-weight: 600; margin-bottom: 5px; font-size: 16px; color: #cbd5e1; }
+        .study-formula { font-size: 18px; color: #f8fafc; overflow-x: auto; }
+        
+        mjx-container { font-size: 1.1em !important; }
     </style>
 </head>
 <body>
 
 <div class="container">
+    <!-- ЭКРАН ТЕСТА -->
     <div id="test-screen">
-        <h1>Тренажёр формул ОГЭ по физике</h1>
-        <div class="progress" id="progress">Вопрос 1 из 64</div>
-        <div class="question" id="question">...</div>
+        <div class="top-bar">
+            <span id="hints-display">💡 50/50: 2</span>
+            <div class="progress-bar-container"><div class="progress-bar" id="progress-bar"></div></div>
+            <span id="progress-text">Вопрос 1</span>
+        </div>
+        
+        <div class="question" id="question">Загрузка...</div>
+        
         <div class="options-grid" id="options"></div>
+        
+        <div class="controls">
+            <button class="control-btn hint-btn" id="hint-btn" onclick="useHint()">💡 50/50</button>
+            <button class="control-btn" id="skip-btn" onclick="skipQuestion()">⏭ Пропустить</button>
+        </div>
+
         <div class="feedback" id="feedback"></div>
     </div>
 
+    <!-- ЭКРАН РЕЗУЛЬТАТОВ -->
     <div id="result-screen" class="hidden">
         <div class="result-title">Тест завершён!</div>
-        <div class="result-score" id="result-score">Правильных ответов: 0 из 64</div>
+        <div class="result-score" id="result-score">Баллы: 0 из 64</div>
+        <div class="result-percent" id="result-percent">0%</div>
         <div class="result-rank" id="result-rank">Школьник</div>
-        <button class="main-btn" onclick="startNewTest()">Начать тест заново</button>
+        <button class="main-btn" onclick="startNewTest()">Начать заново</button>
         <button class="main-btn secondary-btn" onclick="showStudyScreen()">Изучать формулы</button>
     </div>
 
+    <!-- ЭКРАН ИЗУЧЕНИЯ -->
     <div id="study-screen" class="hidden">
         <div class="study-header">
             <h2>Все формулы по разделам</h2>
-            <button class="main-btn" style="width: auto; padding: 10px 20px;" onclick="showResultScreen()">Назад</button>
+            <button class="main-btn" style="width: auto; padding: 10px 20px; margin: 0;" onclick="showResultScreen()">Назад</button>
         </div>
-        <!-- Убрал комментарий отсюда, чтобы скрипт не путался -->
         <div id="study-content"></div>
     </div>
 </div>
 
 <script>
-    const allFormulas = [
+    // --- БАЗА ОСНОВНЫХ ФОРМУЛ (Для теста и изучения) ---
+    const mainFormulas = [
         { category: "Механика", name: "Проекция скорости при равномерном прямолинейном движении", formula: "v_x = \\frac{s_x}{t}" },
         { category: "Механика", name: "Средняя путевая скорость", formula: "v_{cp} = \\frac{S_{общ}}{t_{общ}}" },
         { category: "Механика", name: "Координата при равномерном прямолинейном движении", formula: "x(t) = x_0 + v_x t" },
@@ -327,25 +380,42 @@
         { category: "Квантовые явления", name: "Закон гамма-распада", formula: "{}_{Z}^{A}X^* \\rightarrow {}_{Z}^{A}X + \\gamma" }
     ];
 
-    let currentQueue = [];
-    let currentIndex = 0;
-    let correctAnswer = "";
-    let isLocked = false;
-    let correctCount = 0;
-    let totalQuestions = allFormulas.length;
-    let isStudyRendered = false; // Новый флаг для правильной отрисовки
+    // --- ФОРМУЛЫ-ОБМАНКИ (Только для вариантов ответа) ---
+    const distractors = [
+        "pV = \\frac{m}{M}RT", "E = mc^2", "\\Phi = BS \\cos \\alpha", "\\mathcal{E} = -\\frac{\\Delta \\Phi}{\\Delta t}",
+        "E = h\\nu", "h\\nu = A_{вых} + \\frac{mv^2}{2}", "I = \\frac{\\mathcal{E}}{R+r}", "C = \\frac{q}{U}",
+        "W = \\frac{CU^2}{2}", "\\Phi = LI", "W = \\frac{LI^2}{2}", "\\eta = \\frac{T_1 - T_2}{T_1}",
+        "x = A \\cos(\\omega t)", "v = \\omega R", "a = \\omega^2 R", "\\omega = 2\\pi\\nu",
+        "p = nkT", "U = \\frac{3}{2}\\nu RT", "A = \\nu RT", "Q = \\Delta U + A",
+        "\\frac{p_1}{T_1} = \\frac{p_2}{T_2}", "\\frac{V_1}{T_1} = \\frac{V_2}{T_2}", "p_1 V_1 = p_2 V_2", "E = \\frac{kq}{r^2}",
+        "\\varphi = \\frac{W}{q}", "\\lambda = \\frac{h}{p}", "E_{св} = \\Delta m c^2", "N = N_0 2^{-t/T}",
+        "F = k\\frac{|q_1 q_2|}{\\varepsilon r^2}", "U = A + \\frac{mv^2}{2}"
+    ];
 
+    let queue = [];
+    let currentIndex = 0;
+    let solvedCount = 0;
+    let totalScore = 0;
+    const maxScore = mainFormulas.length;
+    
+    let currentItem = null;
+    let currentAttempt = 1;
+    let isLocked = false;
+    let hintsLeft = 2;
+    let isStudyRendered = false;
+
+    // DOM
+    const questionEl = document.getElementById('question');
+    const optionsEl = document.getElementById('options');
+    const feedbackEl = document.getElementById('feedback');
+    const progressBarEl = document.getElementById('progress-bar');
+    const progressTextEl = document.getElementById('progress-text');
+    const hintsDisplayEl = document.getElementById('hints-display');
+    const hintBtn = document.getElementById('hint-btn');
+    const skipBtn = document.getElementById('skip-btn');
     const testScreen = document.getElementById('test-screen');
     const resultScreen = document.getElementById('result-screen');
     const studyScreen = document.getElementById('study-screen');
-    
-    const questionEl = document.getElementById('question');
-    const optionsEl = document.getElementById('options');
-    const progressEl = document.getElementById('progress');
-    const feedbackEl = document.getElementById('feedback');
-    
-    const resultScoreEl = document.getElementById('result-score');
-    const resultRankEl = document.getElementById('result-rank');
     const studyContentEl = document.getElementById('study-content');
 
     function shuffle(array) {
@@ -359,37 +429,52 @@
     }
 
     function startNewTest() {
-        correctCount = 0;
-        currentQueue = shuffle([...allFormulas]);
+        queue = shuffle([...mainFormulas]);
         currentIndex = 0;
+        solvedCount = 0;
+        totalScore = 0;
+        hintsLeft = 2;
         
         resultScreen.classList.add('hidden');
         studyScreen.classList.add('hidden');
         testScreen.classList.remove('hidden');
         
+        updateHintsUI();
         loadNextQuestion();
     }
 
     function loadNextQuestion() {
-        if (currentIndex >= currentQueue.length) {
+        if (currentIndex >= queue.length) {
             showResults();
             return;
         }
 
+        currentItem = queue[currentIndex];
+        currentAttempt = 1;
         isLocked = false;
+        
         feedbackEl.textContent = "";
-        const currentItem = currentQueue[currentIndex];
-        correctAnswer = currentItem.formula;
+        feedbackEl.style.color = "transparent";
+        skipBtn.disabled = false;
+        hintBtn.disabled = hintsLeft === 0;
 
-        progressEl.textContent = `Вопрос ${currentIndex + 1} из ${totalQuestions}`;
+        // Обновление прогресса
+        const progressPercent = (solvedCount / maxScore) * 100;
+        progressBarEl.style.width = `${progressPercent}%`;
+        progressTextEl.textContent = `${solvedCount} из ${maxScore}`;
+
         questionEl.textContent = currentItem.name;
 
-        let options = [correctAnswer];
-        let allOtherFormulas = allFormulas.filter(f => f.formula !== correctAnswer).map(f => f.formula);
-        allOtherFormulas = shuffle(allOtherFormulas);
+        // Генерация 8 вариантов (1 правильный + 7 неправильных)
+        let options = [currentItem.formula];
+        
+        // Берем неправильные из других основных формул и из базы дистракторов
+        let allWrongPool = mainFormulas.filter(f => f.formula !== currentItem.formula).map(f => f.formula);
+        allWrongPool = allWrongPool.concat(distractors);
+        allWrongPool = shuffle(allWrongPool);
 
-        for (let i = 0; i < 5; i++) {
-            options.push(allOtherFormulas[i]);
+        for (let i = 0; i < 7; i++) {
+            options.push(allWrongPool[i]);
         }
 
         options = shuffle(options);
@@ -410,60 +495,142 @@
 
     function checkAnswer(btn, selectedOption) {
         if (isLocked) return;
-        isLocked = true;
-
-        const buttons = optionsEl.querySelectorAll('.option-btn');
-
-        if (selectedOption === correctAnswer) {
+        
+        if (selectedOption === currentItem.formula) {
+            // ПРАВИЛЬНЫЙ ОТВЕТ
+            isLocked = true;
             btn.classList.add('correct');
-            feedbackEl.textContent = "Правильно! 🎉";
+            
+            // Начисление баллов
+            let points = 0;
+            if (currentAttempt === 1) points = 1.0;
+            else if (currentAttempt === 2) points = 0.5;
+            else if (currentAttempt === 3) points = 0.25;
+            
+            totalScore += points;
+            solvedCount++;
+            
+            feedbackEl.textContent = `Правильно! +${points} балл(а)`;
             feedbackEl.style.color = "var(--correct)";
-            correctCount++;
             
+            disableAllButtons();
             setTimeout(() => {
                 currentIndex++;
                 loadNextQuestion();
-            }, 1000);
+            }, 400); // Ускоренный переход
+            
         } else {
+            // НЕПРАВИЛЬНЫЙ ОТВЕТ
             btn.classList.add('wrong');
-            feedbackEl.textContent = "Неправильно 😢";
-            feedbackEl.style.color = "var(--wrong)";
-            
-            buttons.forEach(b => {
-                if (b.innerHTML.includes(correctAnswer)) {
-                    b.classList.add('correct');
-                }
-            });
+            btn.disabled = true;
+            currentAttempt++;
 
-            setTimeout(() => {
-                currentIndex++;
-                loadNextQuestion();
-            }, 2000);
+            if (currentAttempt > 3) {
+                // ЗАКОНЧИЛИСЬ ПОПЫТКИ
+                isLocked = true;
+                solvedCount++; // Считаем как пройденный, но 0 баллов
+                
+                feedbackEl.textContent = "Попытки закончились 😢 Правильный ответ подсвечен.";
+                feedbackEl.style.color = "var(--wrong)";
+                
+                revealCorrectAnswer();
+                disableAllButtons();
+                
+                setTimeout(() => {
+                    currentIndex++;
+                    loadNextQuestion();
+                }, 1000);
+            } else {
+                // ЕСТЬ ЕЩЕ ПОПЫТКИ
+                feedbackEl.textContent = `Ошибка! У вас осталось ${3 - currentAttempt + 1} попытки.`;
+                feedbackEl.style.color = "var(--warning)";
+            }
         }
+    }
+
+    function revealCorrectAnswer() {
+        const buttons = optionsEl.querySelectorAll('.option-btn');
+        buttons.forEach(b => {
+            if (b.innerHTML.includes(currentItem.formula)) {
+                b.classList.add('correct');
+            }
+        });
+    }
+
+    function disableAllButtons() {
+        const buttons = optionsEl.querySelectorAll('.option-btn');
+        buttons.forEach(b => b.disabled = true);
+        skipBtn.disabled = true;
+        hintBtn.disabled = true;
+    }
+
+    function skipQuestion() {
+        if (isLocked) return;
+        
+        // Перемещаем текущий вопрос в конец очереди
+        queue.push(currentItem);
+        
+        // Переходим к следующему
+        currentIndex++;
+        
+        feedbackEl.textContent = "Вопрос отложен на конец.";
+        feedbackEl.style.color = "var(--text-muted)";
+        
+        isLocked = true;
+        disableAllButtons();
+        
+        setTimeout(() => {
+            loadNextQuestion();
+        }, 500);
+    }
+
+    function useHint() {
+        if (hintsLeft <= 0 || isLocked) return;
+        
+        hintsLeft--;
+        updateHintsUI();
+        
+        // Находим все неправильные кнопки
+        const buttons = Array.from(optionsEl.querySelectorAll('.option-btn'));
+        const wrongButtons = buttons.filter(b => !b.innerHTML.includes(currentItem.formula));
+        
+        // Убираем 6 неправильных, оставляя 1 правильный и 1 неправильный
+        shuffle(wrongButtons);
+        for (let i = 0; i < 6; i++) {
+            if (wrongButtons[i]) {
+                wrongButtons[i].disabled = true;
+                wrongButtons[i].style.opacity = '0.1';
+            }
+        }
+        
+        if (hintsLeft === 0) hintBtn.disabled = true;
+    }
+
+    function updateHintsUI() {
+        hintsDisplayEl.textContent = `💡 50/50: ${hintsLeft}`;
+        hintBtn.textContent = `💡 50/50`;
+        if (hintsLeft === 0) hintBtn.disabled = true;
     }
 
     function showResults() {
         testScreen.classList.add('hidden');
-        studyScreen.classList.add('hidden');
         resultScreen.classList.remove('hidden');
 
-        resultScoreEl.textContent = `Правильных ответов: ${correctCount} из ${totalQuestions}`;
+        const percent = (totalScore / maxScore) * 100;
+        
+        document.getElementById('result-score').textContent = `Баллы: ${totalScore.toFixed(2)} из ${maxScore}`;
+        document.getElementById('result-percent').textContent = `${percent.toFixed(1)}%`;
 
         let rank = "";
-        if (correctCount >= 60) rank = "Эйнштейн! 🏆";
-        else if (correctCount >= 50) rank = "Ньютон 🍎";
-        else if (correctCount >= 40) rank = "Архимед 🛁";
-        else if (correctCount >= 30) rank = "Профессор 🎓";
-        else if (correctCount >= 20) rank = "Учитель 📚";
-        else if (correctCount >= 10) rank = "Студент 🎒";
+        if (percent >= 93.7) rank = "Эйнштейн! 🏆";
+        else if (percent >= 78.1) rank = "Ньютон 🍎";
+        else if (percent >= 62.5) rank = "Архимед 🛁";
+        else if (percent >= 46.8) rank = "Профессор 🎓";
+        else if (percent >= 31.2) rank = "Учитель 📚";
+        else if (percent >= 15.6) rank = "Студент 🎒";
         else rank = "Школьник 📝";
 
-        resultRankEl.textContent = rank;
-    }
-
-    function showResultScreen() {
-        studyScreen.classList.add('hidden');
-        resultScreen.classList.remove('hidden');
+        document.getElementById('result-rank').textContent = rank;
     }
 
     function showStudyScreen() {
@@ -471,10 +638,9 @@
         testScreen.classList.add('hidden');
         studyScreen.classList.remove('hidden');
 
-        // Теперь проверяем не текст в блоке, а специальный флаг
         if (!isStudyRendered) {
             const grouped = {};
-            allFormulas.forEach(f => {
+            mainFormulas.forEach(f => {
                 if (!grouped[f.category]) grouped[f.category] = [];
                 grouped[f.category].push(f);
             });
@@ -494,7 +660,7 @@
                 html += `</div>`;
             }
             studyContentEl.innerHTML = html;
-            isStudyRendered = true; // Отмечаем, что мы создали контент
+            isStudyRendered = true;
 
             if (window.MathJax) {
                 MathJax.typesetPromise([studyContentEl]).catch(err => console.error(err));
