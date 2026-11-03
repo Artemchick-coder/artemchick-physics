@@ -151,8 +151,14 @@
             --board-select: rgba(249, 115, 22, 0.6);
         }
 
+        /* --- ШРИФТЫ --- */
+        .font-segoe { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        .font-arial { font-family: Arial, Helvetica, sans-serif; }
+        .font-courier { font-family: 'Courier New', Courier, monospace; }
+        .font-georgia { font-family: Georgia, 'Times New Roman', Times, serif; }
+        .font-impact { font-family: Impact, 'Arial Black', sans-serif; }
+
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: var(--bg-gradient);
             color: var(--text-main);
             margin: 0;
@@ -198,49 +204,50 @@
             transition: background 0.5s ease;
         }
 
-        /* --- НАСТРОЙКИ (ШЕСТЕРЕНКА) --- */
+        /* --- НАСТРОЙКИ (ГЛОБАЛЬНЫЕ) --- */
         .settings-btn {
-            position: absolute;
+            position: fixed;
             top: 20px;
             right: 20px;
-            width: 45px;
-            height: 45px;
+            width: 50px;
+            height: 50px;
             border-radius: 50%;
             background: var(--btn-bg);
-            border: 1px solid rgba(255,255,255,0.1);
+            border: 2px solid var(--accent);
             color: var(--text-main);
             font-size: 24px;
             cursor: pointer;
-            z-index: 20;
+            z-index: 9999;
             display: flex;
             justify-content: center;
             align-items: center;
             transition: transform 0.3s ease, background 0.3s;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
         }
         .settings-btn:hover { transform: rotate(90deg); background: var(--btn-hover); }
         
         .settings-menu {
-            position: absolute;
-            top: 75px;
+            position: fixed;
+            top: 80px;
             right: 20px;
             background: var(--card-bg);
-            backdrop-filter: blur(15px);
+            backdrop-filter: blur(20px);
             border: 1px solid rgba(255,255,255,0.2);
             border-radius: 15px;
-            padding: 15px;
-            z-index: 20;
+            padding: 20px;
+            z-index: 9998;
             display: flex;
             flex-direction: column;
             gap: 10px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            width: 200px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+            width: 250px;
             text-align: left;
             max-height: 80vh;
             overflow-y: auto;
         }
-        .settings-menu h3 { margin: 0 0 5px 0; font-size: 14px; color: var(--text-muted); text-transform: uppercase; }
+        .settings-menu h3 { margin: 5px 0; font-size: 14px; color: var(--text-muted); text-transform: uppercase; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 5px;}
         
-        .theme-btn {
+        .theme-btn, .font-btn, .lang-btn {
             background: transparent;
             color: var(--text-main);
             border: 1px solid rgba(255,255,255,0.1);
@@ -251,7 +258,9 @@
             transition: background 0.2s;
             font-size: 14px;
         }
-        .theme-btn:hover { background: rgba(255,255,255,0.1); }
+        .theme-btn:hover, .font-btn:hover, .lang-btn:hover { background: rgba(255,255,255,0.1); }
+        .lang-btn.active { background: var(--accent); color: white; font-weight: bold; border-color: transparent; }
+        .font-btn.active { background: var(--accent); color: white; font-weight: bold; border-color: transparent; }
         
         .music-toggle {
             background: var(--accent);
@@ -266,7 +275,7 @@
         }
         .music-toggle:hover { background: var(--accent-hover); }
 
-        /* --- ОСТАЛЬНЫЕ СТИЛИ (с использованием переменных) --- */
+        /* --- ОСТАЛЬНЫЕ СТИЛИ --- */
         .animated-title {
             background: linear-gradient(90deg, var(--accent), var(--correct), var(--accent));
             background-size: 300% 100%;
@@ -359,13 +368,7 @@
         }
         .level-btn:hover { background: var(--accent); transform: scale(1.05); }
         .level-btn.completed { border-color: var(--correct); box-shadow: 0 0 10px rgba(16, 185, 129, 0.5); color: var(--correct); }
-        .level-btn.current { border-color: var(--warning); box-shadow: 0 0 10px rgba(245, 158, 11, 0.5); animation: pulse-border 2s infinite; }
         
-        @keyframes pulse-border {
-            0% { box-shadow: 0 0 5px rgba(245, 158, 11, 0.5); }
-            50% { box-shadow: 0 0 15px rgba(245, 158, 11, 0.9); }
-            100% { box-shadow: 0 0 5px rgba(245, 158, 11, 0.5); }
-        }
         .crown-icon { position: absolute; top: -15px; font-size: 24px; filter: drop-shadow(0 0 5px gold); }
 
         /* --- НАУКИ (ПОДМЕНЮ) --- */
@@ -384,7 +387,7 @@
         .physics-card-title { font-size: 24px; font-weight: 900; z-index: 1; margin-bottom: 15px; color: var(--text-main); }
         .physics-card-rank { font-size: 16px; color: var(--warning); font-weight: bold; z-index: 1; background: rgba(0,0,0,0.3); padding: 5px 15px; border-radius: 15px; }
 
-        /* --- ФОРМУЛЫ --- */
+        /* --- ФОРМУЛЫ И ХИМИЯ --- */
         .top-bar { display: flex; justify-content: space-between; align-items: center; font-size: 14px; color: var(--text-muted); margin-bottom: 20px; background: rgba(0,0,0,0.2); padding: 10px 15px; border-radius: 10px; }
         .progress-bar-container { flex-grow: 1; margin: 0 15px; background: rgba(255,255,255,0.1); height: 8px; border-radius: 4px; overflow: hidden; }
         .progress-bar { height: 100%; background: linear-gradient(90deg, var(--accent), var(--correct)); width: 0%; transition: width 0.3s ease; }
@@ -411,24 +414,6 @@
         .study-name { font-weight: 600; margin-bottom: 5px; color: var(--text-muted); }
         .study-formula { font-size: 18px; color: var(--text-main); overflow-x: auto; }
         mjx-container { font-size: 1.1em !important; }
-
-        /* --- ХИМИЯ --- */
-        .chem-score { font-size: 24px; font-weight: bold; color: var(--warning); margin-bottom: 20px; }
-        .chem-element-box {
-            width: 150px; height: 150px; background: rgba(255, 255, 255, 0.05);
-            border: 4px solid var(--accent); border-radius: 15px;
-            display: flex; justify-content: center; align-items: center;
-            font-size: 64px; font-weight: 900; color: var(--text-main);
-            margin: 0 auto 30px auto; box-shadow: 0 0 30px rgba(139, 92, 246, 0.5);
-            text-shadow: 0 0 10px var(--accent);
-        }
-        .chem-options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; max-width: 600px; margin: 0 auto 20px auto; }
-        @media (max-width: 600px) { .chem-options-grid { grid-template-columns: 1fr; } }
-        .chem-btn { background: var(--btn-bg); color: var(--text-main); border: 2px solid rgba(255,255,255,0.1); padding: 15px; font-size: 16px; font-weight: bold; border-radius: 10px; cursor: pointer; transition: all 0.2s; }
-        .chem-btn:hover:not(:disabled) { background: var(--btn-hover); transform: translateY(-2px); }
-        .chem-btn:disabled { cursor: not-allowed; opacity: 0.5; }
-        .chem-btn.correct { background: var(--correct) !important; border-color: var(--correct); color: white;}
-        .chem-btn.wrong { background: var(--wrong) !important; border-color: var(--wrong); color: white;}
 
         /* --- ШАХМАТЫ --- */
         .chess-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px;}
@@ -515,75 +500,86 @@
         @media (max-width: 600px) { .moles-top-bar { font-size: 18px; padding: 10px; } .hammer-cursor { width: 40px; height: 40px; } }
     </style>
 </head>
-<body data-theme="classic">
+<body data-theme="classic" class="font-segoe">
 
 <audio id="bg-music" loop>
-    <!-- Замени ссылку на свой аудиофайл (mp3 или ogg) -->
     <source src="https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=lofi-study-112191.mp3" type="audio/mpeg">
 </audio>
 
 <div class="hammer-cursor" id="hammer"></div>
 
-<div class="container">
-    <!-- Настройки -->
-    <button class="settings-btn" onclick="toggleSettings()">⚙️</button>
-    <div class="settings-menu hidden" id="settings-menu">
-        <h3>Тема оформления</h3>
-        <button class="theme-btn" onclick="setTheme('classic')">🎨 Классическая</button>
-        <button class="theme-btn" onclick="setTheme('light')">☀️ Светлая</button>
-        <button class="theme-btn" onclick="setTheme('dark')">🌑 Темная</button>
-        <button class="theme-btn" onclick="setTheme('cyberpunk')">👾 Киберпанк</button>
-        <button class="theme-btn" onclick="setTheme('forest')">🌲 Лесная</button>
-        <button class="theme-btn" onclick="setTheme('ocean')">🌊 Океан</button>
-        <button class="theme-btn" onclick="setTheme('sunset')">🌅 Закат</button>
-        <h3 style="margin-top:10px;">Музыка</h3>
-        <button class="music-toggle" id="music-btn" onclick="toggleMusic()">▶️ Включить</button>
-    </div>
+<!-- ГЛОБАЛЬНЫЕ НАСТРОЙКИ -->
+<button class="settings-btn" onclick="toggleSettings()">⚙️</button>
+<div class="settings-menu hidden" id="settings-menu">
+    <h3 data-i18n="settings_lang">Язык / Language</h3>
+    <button class="lang-btn active" id="lang-ru" onclick="setLanguage('ru')">🇷🇺 Русский</button>
+    <button class="lang-btn" id="lang-en" onclick="setLanguage('en')">🇬🇧 English</button>
 
+    <h3 data-i18n="settings_theme">Тема оформления</h3>
+    <button class="theme-btn" onclick="setTheme('classic')">🎨 <span data-i18n="theme_classic">Классическая</span></button>
+    <button class="theme-btn" onclick="setTheme('light')">☀️ <span data-i18n="theme_light">Светлая</span></button>
+    <button class="theme-btn" onclick="setTheme('dark')">🌑 <span data-i18n="theme_dark">Темная</span></button>
+    <button class="theme-btn" onclick="setTheme('cyberpunk')">👾 <span data-i18n="theme_cyberpunk">Киберпанк</span></button>
+    <button class="theme-btn" onclick="setTheme('forest')">🌲 <span data-i18n="theme_forest">Лесная</span></button>
+    <button class="theme-btn" onclick="setTheme('ocean')">🌊 <span data-i18n="theme_ocean">Океан</span></button>
+    <button class="theme-btn" onclick="setTheme('sunset')">🌅 <span data-i18n="theme_sunset">Закат</span></button>
+
+    <h3 data-i18n="settings_font">Шрифт</h3>
+    <button class="font-btn active" id="font-segoe" onclick="setFont('segoe')">Segoe UI (Default)</button>
+    <button class="font-btn" id="font-arial" onclick="setFont('arial')">Arial</button>
+    <button class="font-btn" id="font-courier" onclick="setFont('courier')">Courier New</button>
+    <button class="font-btn" id="font-georgia" onclick="setFont('georgia')">Georgia</button>
+    <button class="font-btn" id="font-impact" onclick="setFont('impact')">Impact</button>
+
+    <h3 data-i18n="settings_music">Музыка</h3>
+    <button class="music-toggle" id="music-btn" onclick="toggleMusic()">▶️ <span data-i18n="music_on">Включить</span></button>
+</div>
+
+<div class="container">
     <!-- ГЛАВНОЕ МЕНЮ -->
     <div id="main-menu">
         <h1 class="animated-title weixtor-title">WEIXTOR GAMES</h1>
-        <p class="weixtor-subtitle">Начинайте Игру. Удачи</p>
+        <p class="weixtor-subtitle" data-i18n="subtitle">Начинайте Игру. Удачи</p>
         <div class="menu-grid">
             <div class="menu-card" onclick="switchApp('sciences')">
                 <div class="menu-icon">⚛️</div>
-                <div class="menu-title">Науки</div>
-                <div class="menu-badge" id="badge-sciences">Играть</div>
+                <div class="menu-title" data-i18n="menu_sciences">Науки</div>
+                <div class="menu-badge" id="badge-sciences">...</div>
             </div>
             <div class="menu-card" onclick="switchApp('chess')">
                 <div class="menu-icon">♟️</div>
                 <div class="menu-title">WeixtChess</div>
-                <div class="menu-badge" id="badge-chess">0 В / 0 П</div>
+                <div class="menu-badge" id="badge-chess">...</div>
             </div>
             <div class="menu-card" onclick="switchApp('2048')">
                 <div class="menu-icon">🔢</div>
                 <div class="menu-title">Weixt2048</div>
-                <div class="menu-badge" id="badge-2048">Рекорд: 0</div>
+                <div class="menu-badge" id="badge-2048">...</div>
             </div>
             <div class="menu-card" onclick="switchApp('ttt')">
                 <div class="menu-icon">❌⭕</div>
                 <div class="menu-title">WeixTicTacToE</div>
-                <div class="menu-badge" id="badge-ttt">0 В / 0 П</div>
+                <div class="menu-badge" id="badge-ttt">...</div>
             </div>
             <div class="menu-card" onclick="switchApp('snake')">
                 <div class="menu-icon">🐍</div>
                 <div class="menu-title">SlitherWeixt</div>
-                <div class="menu-badge" id="badge-snake">Рекорд: 0</div>
+                <div class="menu-badge" id="badge-snake">...</div>
             </div>
             <div class="menu-card" onclick="switchApp('moles')">
                 <div class="menu-icon">🔨</div>
                 <div class="menu-title">Weixt Kill The Mole</div>
-                <div class="menu-badge" id="badge-moles">Рекорд: 0</div>
+                <div class="menu-badge" id="badge-moles">...</div>
             </div>
         </div>
     </div>
 
     <!-- ПРИЛОЖЕНИЕ: НАУКИ -->
     <div id="app-sciences" class="hidden">
-        <button class="main-btn secondary-btn" style="position: absolute; left: 20px; top: 20px; padding: 8px 15px;" onclick="switchApp('menu')">← Главное меню</button>
+        <button class="main-btn secondary-btn" style="position: absolute; left: 20px; top: 20px; padding: 8px 15px;" onclick="switchApp('menu')" data-i18n="btn_back_menu">← Главное меню</button>
         
         <div id="sciences-submenu">
-            <h1 class="animated-title" style="margin-top: 40px;">Науки</h1>
+            <h1 class="animated-title" style="margin-top: 40px;" data-i18n="menu_sciences">Науки</h1>
             <div class="physics-grid">
                 <div class="physics-card" onclick="showSciencesGame('formulas')">
                     <div class="bg-icon">📐</div>
@@ -593,14 +589,14 @@
                 <div class="physics-card" onclick="showSciencesGame('chemistry')">
                     <div class="bg-icon">🧪</div>
                     <div class="physics-card-title">Таблица Менделеева (WeixtChemistry)</div>
-                    <div class="physics-card-rank" id="sciences-rank-chemistry">Рекорд: 0</div>
+                    <div class="physics-card-rank" id="sciences-rank-chemistry">Звание: Школьник</div>
                 </div>
             </div>
         </div>
 
-        <!-- Формулы -->
+        <!-- Физика (Формулы) -->
         <div id="sciences-formulas" class="hidden">
-            <button class="main-btn secondary-btn" style="position: absolute; left: 20px; top: 20px; padding: 8px 15px;" onclick="showSciencesGame('menu')">← Назад</button>
+            <button class="main-btn secondary-btn" style="position: absolute; left: 20px; top: 20px; padding: 8px 15px;" onclick="showSciencesGame('menu')" data-i18n="btn_back">← Назад</button>
             <div id="test-screen">
                 <h1 class="animated-title" style="margin-top: 40px;">Формулы Физика (WeixtPhysic)</h1>
                 <div class="top-bar">
@@ -612,24 +608,24 @@
                 <div class="options-grid" id="options"></div>
                 <div class="controls">
                     <button class="control-btn hint-btn" id="hint-btn" onclick="useHint()">💡 50/50</button>
-                    <button class="control-btn" id="skip-btn" onclick="skipQuestion()">⏭ Пропустить</button>
+                    <button class="control-btn" id="skip-btn" onclick="skipQuestion()">⏭ <span data-i18n="btn_skip">Пропустить</span></button>
                 </div>
                 <div class="feedback" id="feedback"></div>
             </div>
             <div id="result-screen" class="hidden">
-                <h1 class="animated-title">Тест завершён!</h1>
+                <h1 class="animated-title" data-i18n="test_finished">Тест завершён!</h1>
                 <div class="result-score" id="result-score">Баллы: 0 из 64</div>
                 <div class="result-percent" id="result-percent">0%</div>
                 <div class="result-rank" id="result-rank">Школьник</div>
-                <button class="main-btn" onclick="startNewTest()">Начать заново</button>
-                <button class="main-btn secondary-btn" onclick="showStudyScreen()">Изучать формулы</button>
+                <button class="main-btn" onclick="startNewTest()" data-i18n="btn_restart">Начать заново</button>
+                <button class="main-btn secondary-btn" onclick="showStudyScreen()" data-i18n="btn_study">Изучать формулы</button>
             </div>
             <div id="study-screen" class="hidden">
                 <div class="study-header">
-                    <h2 class="animated-title" style="margin-bottom: 0;">Все формулы</h2>
+                    <h2 class="animated-title" style="margin-bottom: 0;" data-i18n="btn_study">Изучать формулы</h2>
                     <div style="display: flex; gap: 10px;">
-                        <button class="main-btn" onclick="startNewTest()">Начать тест</button>
-                        <button class="main-btn secondary-btn" onclick="returnToResults()">Назад</button>
+                        <button class="main-btn" onclick="startNewTest()" data-i18n="btn_start_test">Начать тест</button>
+                        <button class="main-btn secondary-btn" onclick="returnToResults()" data-i18n="btn_back">Назад</button>
                     </div>
                 </div>
                 <div id="study-content"></div>
@@ -638,95 +634,126 @@
 
         <!-- Химия -->
         <div id="sciences-chemistry" class="hidden">
-            <button class="main-btn secondary-btn" style="position: absolute; left: 20px; top: 20px; padding: 8px 15px;" onclick="showSciencesGame('menu')">← Назад</button>
-            <h1 class="animated-title" style="margin-top: 40px;">Таблица Менделеева (WeixtChemistry)</h1>
-            <div class="chem-score">Правильно: <span id="chem-score-val">0</span></div>
-            <div class="chem-element-box" id="chem-element">H</div>
-            <div class="chem-options-grid" id="chem-options"></div>
-            <div class="feedback" id="chem-feedback"></div>
+            <button class="main-btn secondary-btn" style="position: absolute; left: 20px; top: 20px; padding: 8px 15px;" onclick="showSciencesGame('menu')" data-i18n="btn_back">← Назад</button>
+            
+            <div id="chem-test-screen">
+                <h1 class="animated-title" style="margin-top: 40px;">Таблица Менделеева (WeixtChemistry)</h1>
+                <div class="top-bar">
+                    <span id="chem-hints-display">💡 50/50: 2</span>
+                    <div class="progress-bar-container"><div class="progress-bar" id="chem-progress-bar"></div></div>
+                    <span id="chem-progress-text">Вопрос 1</span>
+                </div>
+                <div class="question" id="chem-question">H</div>
+                <div class="options-grid" id="chem-options"></div>
+                <div class="controls">
+                    <button class="control-btn hint-btn" id="chem-hint-btn" onclick="useChemHint()">💡 50/50</button>
+                    <button class="control-btn" id="chem-skip-btn" onclick="skipChemQuestion()">⏭ <span data-i18n="btn_skip">Пропустить</span></button>
+                </div>
+                <div class="feedback" id="chem-feedback"></div>
+            </div>
+
+            <div id="chem-result-screen" class="hidden">
+                <h1 class="animated-title" data-i18n="test_finished">Тест завершён!</h1>
+                <div class="result-score" id="chem-result-score">Баллы: 0 из 118</div>
+                <div class="result-percent" id="chem-result-percent">0%</div>
+                <div class="result-rank" id="chem-result-rank">Школьник</div>
+                <button class="main-btn" onclick="startNewChemTest()" data-i18n="btn_restart">Начать заново</button>
+                <button class="main-btn secondary-btn" onclick="showChemStudyScreen()" data-i18n="btn_study_chem">Изучать химию</button>
+            </div>
+
+            <div id="chem-study-screen" class="hidden">
+                <div class="study-header">
+                    <h2 class="animated-title" style="margin-bottom: 0;" data-i18n="btn_study_chem">Изучать химию</h2>
+                    <div style="display: flex; gap: 10px;">
+                        <button class="main-btn" onclick="startNewChemTest()" data-i18n="btn_start_test">Начать тест</button>
+                        <button class="main-btn secondary-btn" onclick="returnToChemResults()" data-i18n="btn_back">Назад</button>
+                    </div>
+                </div>
+                <div id="chem-study-content" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 10px; text-align: left;"></div>
+            </div>
         </div>
     </div>
 
-    <!-- ПРИЛОЖЕНИЕ: ШАХМАТЫ -->
+    <!-- ШАХМАТЫ -->
     <div id="app-chess" class="hidden">
         <div class="chess-header">
-            <button class="main-btn secondary-btn" onclick="switchApp('menu')">← Меню</button>
+            <button class="main-btn secondary-btn" onclick="switchApp('menu')" data-i18n="btn_back_menu">← Меню</button>
             <h1 class="animated-title" style="margin: 0; font-size: 28px;">WeixtChess</h1>
-            <button class="main-btn" onclick="startChess()">Заново</button>
+            <button class="main-btn" onclick="startChess()" data-i18n="btn_restart">Заново</button>
         </div>
-        <div class="stats-container" id="chess-stats">Победы: 0 | Поражения: 0 | Ничьи: 0</div>
-        <div class="chess-status" id="chess-status">Загрузка...</div>
+        <div class="stats-container" id="chess-stats">...</div>
+        <div class="chess-status" id="chess-status">...</div>
         <div class="board-container" id="chess-board"></div>
         <div style="margin-top: 15px; font-size: 14px; color: var(--text-muted);">
-            Вы играете: <span id="player-color" style="font-weight:bold; color: var(--accent);"></span>
+            <span data-i18n="chess_you_play">Вы играете:</span> <span id="player-color" style="font-weight:bold; color: var(--accent);"></span>
         </div>
     </div>
 
-    <!-- ПРИЛОЖЕНИЕ: 2048 -->
+    <!-- 2048 -->
     <div id="app-2048" class="hidden">
         <div class="chess-header">
-            <button class="main-btn secondary-btn" onclick="switchApp('menu')">← Меню</button>
+            <button class="main-btn secondary-btn" onclick="switchApp('menu')" data-i18n="btn_back_menu">← Меню</button>
             <h1 class="animated-title" style="margin: 0; font-size: 28px;">Weixt2048</h1>
-            <button class="main-btn" onclick="init2048()">Заново</button>
+            <button class="main-btn" onclick="init2048()" data-i18n="btn_restart">Заново</button>
         </div>
         
         <div class="game-2048-container">
-            <div class="score-box">Счёт: <span id="score-2048">0</span> | Рекорд: <span id="highscore-2048">0</span></div>
+            <div class="score-box"><span data-i18n="score">Счёт</span>: <span id="score-2048">0</span> | <span data-i18n="record">Рекорд</span>: <span id="highscore-2048">0</span></div>
             <div class="grid-2048" id="grid-2048"></div>
             <div id="overlay-2048" class="overlay hidden">
                 <h2 id="overlay-2048-text">Вы победили!</h2>
-                <button class="main-btn" onclick="init2048()">Играть ещё</button>
+                <button class="main-btn" onclick="init2048()" data-i18n="btn_play_more">Играть ещё</button>
             </div>
         </div>
-        <div style="margin-top: 20px; color: var(--text-muted);">
+        <div style="margin-top: 20px; color: var(--text-muted);" data-i18n="controls_2048">
             Управление: Стрелки или свайпы
         </div>
     </div>
 
-    <!-- ПРИЛОЖЕНИЕ: КРЕСТИКИ-НОЛИКИ -->
+    <!-- КРЕСТИКИ-НОЛИКИ -->
     <div id="app-ttt" class="hidden">
         <div class="ttt-header">
-            <button class="main-btn secondary-btn" onclick="switchApp('menu')">← Меню</button>
-            <h1 class="animated-title">WeixTicTacToE</h1>
+            <button class="main-btn secondary-btn" onclick="switchApp('menu')" data-i18n="btn_back_menu">← Меню</button>
+            <h1 class="animated-title">WeixTicTacToe</h1>
             <div style="width: 100px;"></div>
         </div>
 
         <div id="ttt-mode-select">
-            <h2 class="animated-title" style="font-size: 22px;">Выберите сложность</h2>
-            <div class="stats-container" id="ttt-stats" style="margin-bottom: 20px;">Победы: 0 | Поражения: 0 | Ничьи: 0</div>
+            <h2 class="animated-title" style="font-size: 22px;" data-i18n="ttt_select_diff">Выберите сложность</h2>
+            <div class="stats-container" id="ttt-stats" style="margin-bottom: 20px;">...</div>
             <div class="ttt-menu">
-                <button class="ttt-menu-btn" onclick="startTTT('easy')">Легкий <span>Для нубов (бот всегда проигрывает)</span></button>
-                <button class="ttt-menu-btn" onclick="startTTT('medium')">Средний <span>Для обычных челов (как повезет)</span></button>
-                <button class="ttt-menu-btn" onclick="startTTT('hard')">Невозможно <span>(только гений справится)</span></button>
-                <button class="ttt-menu-btn" onclick="startTTT('friend')">Играть с другом <span>На одном ПК по очереди</span></button>
+                <button class="ttt-menu-btn" onclick="startTTT('easy')"><span data-i18n="ttt_easy">Легкий</span> <span data-i18n="ttt_easy_desc">(Бот проигрывает)</span></button>
+                <button class="ttt-menu-btn" onclick="startTTT('medium')"><span data-i18n="ttt_med">Средний</span> <span data-i18n="ttt_med_desc">(Как повезет)</span></button>
+                <button class="ttt-menu-btn" onclick="startTTT('hard')"><span data-i18n="ttt_hard">Невозможно</span> <span data-i18n="ttt_hard_desc">(Для гениев)</span></button>
+                <button class="ttt-menu-btn" onclick="startTTT('friend')"><span data-i18n="ttt_friend">С другом</span> <span data-i18n="ttt_friend_desc">(На одном ПК)</span></button>
             </div>
         </div>
 
         <div id="ttt-game" class="hidden">
-            <div class="ttt-status" id="ttt-status">Ваш ход (X)</div>
+            <div class="ttt-status" id="ttt-status">...</div>
             <div class="ttt-board" id="ttt-board"></div>
             <div style="margin-top: 20px; display: flex; justify-content: center; gap: 10px;">
-                <button class="main-btn secondary-btn" onclick="startTTT(currentTttMode)">Начать заново</button>
-                <button class="main-btn secondary-btn" onclick="showTttMenu()">← Выбор сложности</button>
+                <button class="main-btn secondary-btn" onclick="startTTT(currentTttMode)" data-i18n="btn_restart">Заново</button>
+                <button class="main-btn secondary-btn" onclick="showTttMenu()" data-i18n="btn_back">← Назад</button>
             </div>
         </div>
     </div>
 
-    <!-- ПРИЛОЖЕНИЕ: ЗМЕЙКА -->
+    <!-- ЗМЕЙКА -->
     <div id="app-snake" class="hidden">
         <div class="chess-header">
-            <button class="main-btn secondary-btn" onclick="switchApp('menu')">← Меню</button>
+            <button class="main-btn secondary-btn" onclick="switchApp('menu')" data-i18n="btn_back_menu">← Меню</button>
             <h1 class="animated-title" style="margin: 0; font-size: 28px;">SlitherWeixt</h1>
-            <button class="main-btn" onclick="startSnake(snakeLevel)">Заново</button>
+            <button class="main-btn" onclick="startSnake(snakeLevel)" data-i18n="btn_restart">Заново</button>
         </div>
 
         <div id="snake-mode-select">
-            <h2 class="animated-title" style="font-size: 22px;">Выберите уровень</h2>
+            <h2 class="animated-title" style="font-size: 22px;" data-i18n="snake_select_lvl">Выберите уровень</h2>
             <div id="snake-levels-container"></div>
         </div>
 
         <div id="snake-game" class="hidden">
-            <div class="ttt-status" id="snake-status" style="color: var(--correct);">Очки: 0 / 7</div>
+            <div class="ttt-status" id="snake-status" style="color: var(--correct);">...</div>
             <div class="snake-board" id="snake-board"></div>
             
             <div class="snake-controls">
@@ -739,51 +766,51 @@
             </div>
 
             <div style="margin-top: 20px; display: flex; justify-content: center; gap: 10px;">
-                <button class="main-btn secondary-btn" onclick="startSnake(snakeLevel)">Начать заново</button>
-                <button class="main-btn secondary-btn" onclick="showSnakeMenu()">← Выбор уровня</button>
+                <button class="main-btn secondary-btn" onclick="startSnake(snakeLevel)" data-i18n="btn_restart">Заново</button>
+                <button class="main-btn secondary-btn" onclick="showSnakeMenu()" data-i18n="btn_back">← Назад</button>
             </div>
             
             <div id="snake-overlay" class="overlay hidden" style="max-width: 500px; margin: 0 auto; aspect-ratio: 1/1; top: 110px;">
-                <h2 id="snake-overlay-text">Молодец</h2>
+                <h2 id="snake-overlay-text">...</h2>
                 <div style="display: flex; gap: 10px; margin-top: 15px;">
-                    <button id="snake-next-btn" class="main-btn" style="display:none;" onclick="snakeNextLevel()">Перейти на следующий</button>
-                    <button class="main-btn secondary-btn" onclick="startSnake(snakeLevel)">Играть заново</button>
+                    <button id="snake-next-btn" class="main-btn" style="display:none;" onclick="snakeNextLevel()" data-i18n="btn_next_lvl">Следующий</button>
+                    <button class="main-btn secondary-btn" onclick="startSnake(snakeLevel)" data-i18n="btn_restart">Заново</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- ПРИЛОЖЕНИЕ: УБЕЙ КРОТА -->
+    <!-- УБЕЙ КРОТА -->
     <div id="app-moles" class="hidden">
         <div class="chess-header">
-            <button class="main-btn secondary-btn" onclick="switchApp('menu')">← Меню</button>
+            <button class="main-btn secondary-btn" onclick="switchApp('menu')" data-i18n="btn_back_menu">← Меню</button>
             <h1 class="animated-title" style="margin: 0; font-size: 24px;">Weixt Kill The Mole</h1>
-            <button class="main-btn" onclick="startMoles(moleLevel)">Заново</button>
+            <button class="main-btn" onclick="startMoles(moleLevel)" data-i18n="btn_restart">Заново</button>
         </div>
 
         <div id="moles-mode-select">
-            <h2 class="animated-title" style="font-size: 22px;">Выберите уровень</h2>
+            <h2 class="animated-title" style="font-size: 22px;" data-i18n="snake_select_lvl">Выберите уровень</h2>
             <div id="moles-levels-container"></div>
         </div>
 
         <div id="moles-game" class="hidden">
             <div class="moles-top-bar">
-                <span id="moles-hit">Убито: 0 / 10</span>
-                <span id="moles-miss" style="color: var(--wrong);">Промахи: 0 / 3</span>
+                <span id="moles-hit">...</span>
+                <span id="moles-miss" style="color: var(--wrong);">...</span>
             </div>
             <div id="moles-grid"></div>
             
             <div style="margin-top: 20px; display: flex; justify-content: center; gap: 10px;">
-                <button class="main-btn secondary-btn" onclick="startMoles(moleLevel)">Начать заново</button>
-                <button class="main-btn secondary-btn" onclick="showMolesMenu()">← Выбор уровня</button>
+                <button class="main-btn secondary-btn" onclick="startMoles(moleLevel)" data-i18n="btn_restart">Заново</button>
+                <button class="main-btn secondary-btn" onclick="showMolesMenu()" data-i18n="btn_back">← Назад</button>
             </div>
             
             <div id="moles-overlay" class="overlay hidden" style="max-width: 500px; margin: 0 auto; aspect-ratio: 1/1; top: 150px;">
-                <h2 id="moles-overlay-text">Уровень пройден!</h2>
+                <h2 id="moles-overlay-text">...</h2>
                 <div style="display: flex; gap: 10px; margin-top: 15px; flex-wrap: wrap; justify-content: center;">
-                    <button id="moles-next-btn" class="main-btn" style="display:none;" onclick="molesNextLevel()">Следующий уровень</button>
-                    <button id="moles-record-btn" class="main-btn" style="display:none; background: var(--warning);" onclick="startMolesRecord()">Играть на рекорд</button>
-                    <button class="main-btn secondary-btn" onclick="startMoles(moleLevel)">Играть заново</button>
+                    <button id="moles-next-btn" class="main-btn" style="display:none;" onclick="molesNextLevel()" data-i18n="btn_next_lvl">Следующий</button>
+                    <button id="moles-record-btn" class="main-btn" style="display:none; background: var(--warning);" onclick="startMolesRecord()" data-i18n="btn_record_mode">Играть на рекорд</button>
+                    <button class="main-btn secondary-btn" onclick="startMoles(moleLevel)" data-i18n="btn_restart">Заново</button>
                 </div>
             </div>
         </div>
@@ -791,6 +818,109 @@
 </div>
 
 <script>
+    // ==========================================
+    // ЛОКАЛИЗАЦИЯ И ШРИФТЫ
+    // ==========================================
+    const i18n = {
+        ru: {
+            subtitle: "Начинайте Игру. Удачи",
+            menu_sciences: "Науки",
+            btn_back_menu: "← Главное меню",
+            btn_back: "← Назад",
+            btn_skip: "Пропустить",
+            btn_restart: "Заново",
+            btn_study: "Изучать формулы",
+            btn_study_chem: "Изучать химию",
+            btn_start_test: "Начать тест",
+            test_finished: "Тест завершён!",
+            settings_lang: "Язык",
+            settings_theme: "Тема",
+            settings_font: "Шрифт",
+            settings_music: "Музыка",
+            music_on: "Включить",
+            music_off: "Выключить",
+            chess_you_play: "Вы играете:",
+            score: "Счёт",
+            record: "Рекорд",
+            controls_2048: "Управление: Стрелки или свайпы",
+            ttt_select_diff: "Выберите сложность",
+            ttt_easy: "Легкий", ttt_easy_desc: "(Бот проигрывает)",
+            ttt_med: "Средний", ttt_med_desc: "(Как повезет)",
+            ttt_hard: "Невозможно", ttt_hard_desc: "(Для гениев)",
+            ttt_friend: "С другом", ttt_friend_desc: "(На одном ПК)",
+            snake_select_lvl: "Выберите уровень",
+            btn_next_lvl: "Следующий",
+            btn_record_mode: "Играть на рекорд",
+            btn_play_more: "Играть ещё",
+            theme_classic: "Классическая", theme_light: "Светлая", theme_dark: "Темная", theme_cyberpunk: "Киберпанк", theme_forest: "Лесная", theme_ocean: "Океан", theme_sunset: "Закат"
+        },
+        en: {
+            subtitle: "Start the Game. Good luck",
+            menu_sciences: "Sciences",
+            btn_back_menu: "← Main Menu",
+            btn_back: "← Back",
+            btn_skip: "Skip",
+            btn_restart: "Restart",
+            btn_study: "Study Formulas",
+            btn_study_chem: "Study Chemistry",
+            btn_start_test: "Start Test",
+            test_finished: "Test Completed!",
+            settings_lang: "Language",
+            settings_theme: "Theme",
+            settings_font: "Font",
+            settings_music: "Music",
+            music_on: "Turn On",
+            music_off: "Turn Off",
+            chess_you_play: "You play as:",
+            score: "Score",
+            record: "Record",
+            controls_2048: "Controls: Arrows or swipes",
+            ttt_select_diff: "Select Difficulty",
+            ttt_easy: "Easy", ttt_easy_desc: "(Bot always loses)",
+            ttt_med: "Medium", ttt_med_desc: "(50/50 chance)",
+            ttt_hard: "Impossible", ttt_hard_desc: "(For geniuses)",
+            ttt_friend: "With Friend", ttt_friend_desc: "(Same PC)",
+            snake_select_lvl: "Select Level",
+            btn_next_lvl: "Next",
+            btn_record_mode: "Play for Record",
+            btn_play_more: "Play More",
+            theme_classic: "Classic", theme_light: "Light", theme_dark: "Dark", theme_cyberpunk: "Cyberpunk", theme_forest: "Forest", theme_ocean: "Ocean", theme_sunset: "Sunset"
+        }
+    };
+
+    let currentLang = localStorage.getItem('weixtor_lang') || 'ru';
+    let currentFont = localStorage.getItem('weixtor_font') || 'segoe';
+
+    function applyLanguage() {
+        document.querySelectorAll('[data-i18n]').forEach(el => {
+            const key = el.getAttribute('data-i18n');
+            if (i18n[currentLang][key]) {
+                el.textContent = i18n[currentLang][key];
+            }
+        });
+        document.getElementById('lang-ru').classList.toggle('active', currentLang === 'ru');
+        document.getElementById('lang-en').classList.toggle('active', currentLang === 'en');
+        updateMenuBadges(); // Update dynamic text
+    }
+
+    function setLanguage(lang) {
+        currentLang = lang;
+        localStorage.setItem('weixtor_lang', lang);
+        applyLanguage();
+    }
+
+    function setFont(fontName) {
+        currentFont = fontName;
+        localStorage.setItem('weixtor_font', fontName);
+        document.body.className = `font-${fontName}`;
+        document.querySelectorAll('.font-btn').forEach(btn => btn.classList.remove('active'));
+        document.getElementById(`font-${fontName}`).classList.add('active');
+    }
+
+    // Инициализация шрифта и языка
+    document.body.className = `font-${currentFont}`;
+    applyLanguage();
+
     // ==========================================
     // ЛОГИКА ТЕМ И МУЗЫКИ
     // ==========================================
@@ -803,7 +933,6 @@
         localStorage.setItem('weixtor_theme', theme);
     }
 
-    // Восстановление темы при загрузке
     const savedTheme = localStorage.getItem('weixtor_theme') || 'classic';
     document.body.setAttribute('data-theme', savedTheme);
 
@@ -813,25 +942,27 @@
 
     function toggleMusic() {
         const btn = document.getElementById('music-btn');
+        const span = btn.querySelector('span');
         if (isMusicPlaying) {
             bgMusic.pause();
-            btn.textContent = "▶️ Включить";
+            span.textContent = i18n[currentLang].music_on;
+            btn.innerHTML = "▶️ " + span.outerHTML;
             isMusicPlaying = false;
         } else {
             bgMusic.play().then(() => {
-                btn.textContent = "⏸️ Выключить";
+                span.textContent = i18n[currentLang].music_off;
+                btn.innerHTML = "⏸️ " + span.outerHTML;
                 isMusicPlaying = true;
             }).catch(e => {
-                alert("Браузер заблокировал музыку. Попробуйте кликнуть по экрану и нажать еще раз.");
+                alert("Browser blocked music. Click screen and try again.");
             });
         }
     }
 
-    // Закрытие меню настроек при клике вне его
     document.addEventListener('click', function(event) {
         const menu = document.getElementById('settings-menu');
         const btn = document.querySelector('.settings-btn');
-        if (!menu.contains(event.target) && !btn.contains(event.target)) {
+        if (menu && !menu.contains(event.target) && !btn.contains(event.target)) {
             menu.classList.add('hidden');
         }
     });
@@ -851,11 +982,9 @@
     if (!progress.moles.completed) progress.moles.completed = [];
     if (progress.moles.record === undefined) progress.moles.record = 0;
 
-    if (!progress.sciences) progress.sciences = { formulaScore: 0, formulaPlayed: false };
+    if (!progress.sciences) progress.sciences = { formulaScore: 0, formulaPlayed: false, chemScore: 0, chemPlayed: false };
     if (!progress.sciences.formulaScore) progress.sciences.formulaScore = 0;
-    
-    if (!progress.chemistry) progress.chemistry = { record: 0 };
-    if (!progress.chemistry.record) progress.chemistry.record = 0;
+    if (!progress.sciences.chemScore) progress.sciences.chemScore = 0;
 
     if (!progress.chessStats) progress.chessStats = { w: 0, l: 0, d: 0 };
     if (!progress.tttStats) progress.tttStats = { w: 0, l: 0, d: 0 };
@@ -867,13 +996,22 @@
     }
 
     function getFormulaRank(score) {
-        if (score >= 60) return { name: "Эйнштейн", val: 11 };
-        if (score >= 50) return { name: "Ньютон", val: 10 };
-        if (score >= 40) return { name: "Архимед", val: 8 };
-        if (score >= 30) return { name: "Профессор", val: 6 };
-        if (score >= 20) return { name: "Учитель", val: 5 };
-        if (score >= 10) return { name: "Студент", val: 3 };
-        return { name: "Школьник", val: 2 };
+        if (score >= 60) return "Эйнштейн";
+        if (score >= 50) return "Ньютон";
+        if (score >= 40) return "Архимед";
+        if (score >= 30) return "Профессор";
+        if (score >= 20) return "Учитель";
+        if (score >= 10) return "Студент";
+        return "Школьник";
+    }
+
+    function getChemRank(score) {
+        if (score >= 100) return "Менделеев";
+        if (score >= 85) return "Ломоносов";
+        if (score >= 65) return "Бутлеров";
+        if (score >= 46) return "Мария Кюри";
+        if (score >= 20) return "Валя Будейко";
+        return "Школьник";
     }
 
     function updateMenuBadges() {
@@ -886,24 +1024,24 @@
             const molesBadge = document.getElementById('badge-moles');
 
             let fRank = getFormulaRank(progress.sciences.formulaScore);
-            sciencesBadge.textContent = `Физика: ${fRank.name}`;
+            sciencesBadge.textContent = `Phys: ${fRank}`;
 
-            chessBadge.textContent = `В: ${progress.chessStats.w} | П: ${progress.chessStats.l}`;
-            tttBadge.textContent = `В: ${progress.tttStats.w} | П: ${progress.tttStats.l}`;
-            game2048Badge.textContent = `Рекорд: ${progress.game2048.highScore}`;
+            chessBadge.textContent = `W: ${progress.chessStats.w} | L: ${progress.chessStats.l}`;
+            tttBadge.textContent = `W: ${progress.tttStats.w} | L: ${progress.tttStats.l}`;
+            game2048Badge.textContent = `Rec: ${progress.game2048.highScore}`;
             
-            snakeBadge.textContent = `Рекорд: ${progress.snake.record}`;
+            snakeBadge.textContent = `Rec: ${progress.snake.record}`;
             if (progress.snake.completed.length > 0) {
-                snakeBadge.textContent += ` | Пройдено: ${progress.snake.completed.length}/13`;
+                snakeBadge.textContent += ` | ${progress.snake.completed.length}/13`;
             }
 
-            molesBadge.textContent = `Рекорд: ${progress.moles.record}`;
+            molesBadge.textContent = `Rec: ${progress.moles.record}`;
             if (progress.moles.completed.length > 0) {
-                molesBadge.textContent += ` | Пройдено: ${progress.moles.completed.length}/21`;
+                molesBadge.textContent += ` | ${progress.moles.completed.length}/21`;
             }
 
-            document.getElementById('sciences-rank-formulas').textContent = `Звание: ${fRank.name}`;
-            document.getElementById('sciences-rank-chemistry').textContent = `Рекорд: ${progress.chemistry.record}`;
+            document.getElementById('sciences-rank-formulas').textContent = `Звание: ${fRank}`;
+            document.getElementById('sciences-rank-chemistry').textContent = `Звание: ${getChemRank(progress.sciences.chemScore)}`;
 
         } catch (e) {
             console.error(e);
@@ -966,12 +1104,12 @@
             loadPhysicsState();
         } else if (subApp === 'chemistry') {
             document.getElementById('sciences-chemistry').classList.remove('hidden');
-            initChemistry();
+            loadChemState();
         }
     }
 
     // ==========================================
-    // ЛОГИКА ФИЗИКИ (ФОРМУЛЫ)
+    // ФИЗИКА (ФОРМУЛЫ)
     // ==========================================
     const mainFormulas = [
         { category: "Механика", name: "Проекция скорости при равномерном прямолинейном движении", formula: "v_x = \\frac{s_x}{t}" },
@@ -1139,7 +1277,7 @@
 
         const progressPercent = (solvedCount / maxScore) * 100;
         document.getElementById('progress-bar').style.width = `${progressPercent}%`;
-        document.getElementById('progress-text').textContent = `${solvedCount} из ${maxScore}`;
+        document.getElementById('progress-text').textContent = `${solvedCount} / ${maxScore}`;
         document.getElementById('question').textContent = currentItem.name;
 
         let options = [currentItem.formula];
@@ -1170,7 +1308,7 @@
             totalScore += points;
             solvedCount++;
             const feedbackEl = document.getElementById('feedback');
-            feedbackEl.textContent = `Правильно! +${points} балл(а)`;
+            feedbackEl.textContent = `+${points}`;
             feedbackEl.style.color = "var(--correct)";
             disableAllButtons();
             savePhysicsState();
@@ -1183,7 +1321,7 @@
                 isLocked = true;
                 solvedCount++;
                 const feedbackEl = document.getElementById('feedback');
-                feedbackEl.textContent = "Попытки закончились 😢 Правильный ответ подсвечен.";
+                feedbackEl.textContent = "0";
                 feedbackEl.style.color = "var(--wrong)";
                 revealCorrectAnswer();
                 disableAllButtons();
@@ -1191,7 +1329,7 @@
                 setTimeout(() => { currentIndex++; loadNextQuestion(); }, 1000);
             } else {
                 const feedbackEl = document.getElementById('feedback');
-                feedbackEl.textContent = `Ошибка! У вас осталось ${3 - currentAttempt + 1} попытки.`;
+                feedbackEl.textContent = `-1`;
                 feedbackEl.style.color = "var(--warning)";
                 savePhysicsState();
             }
@@ -1215,7 +1353,7 @@
         queue.push(currentItem);
         currentIndex++;
         const feedbackEl = document.getElementById('feedback');
-        feedbackEl.textContent = "Вопрос отложен на конец.";
+        feedbackEl.textContent = "Skip";
         feedbackEl.style.color = "var(--text-muted)";
         isLocked = true;
         disableAllButtons();
@@ -1258,17 +1396,19 @@
         }
 
         const percent = (totalScore / maxScore) * 100;
-        document.getElementById('result-score').textContent = `Баллы: ${totalScore.toFixed(2)} из ${maxScore}`;
+        document.getElementById('result-score').textContent = `${totalScore.toFixed(2)} / ${maxScore}`;
         document.getElementById('result-percent').textContent = `${percent.toFixed(1)}%`;
-        let rank = "";
-        if (percent >= 93.7) rank = "Эйнштейн! 🏆";
-        else if (percent >= 78.1) rank = "Ньютон 🍎";
-        else if (percent >= 62.5) rank = "Архимед 🛁";
-        else if (percent >= 46.8) rank = "Профессор 🎓";
-        else if (percent >= 31.2) rank = "Учитель 📚";
-        else if (percent >= 15.6) rank = "Студент 🎒";
-        else rank = "Школьник 📝";
-        document.getElementById('result-rank').textContent = rank;
+        
+        let rank = getFormulaRank(totalScore);
+        let rankDisplay = "";
+        if (percent >= 93.7) rankDisplay = "Эйнштейн! 🏆";
+        else if (percent >= 78.1) rankDisplay = "Ньютон 🍎";
+        else if (percent >= 62.5) rankDisplay = "Архимед 🛁";
+        else if (percent >= 46.8) rankDisplay = "Профессор 🎓";
+        else if (percent >= 31.2) rankDisplay = "Учитель 📚";
+        else if (percent >= 15.6) rankDisplay = "Студент 🎒";
+        else rankDisplay = "Школьник 📝";
+        document.getElementById('result-rank').textContent = rankDisplay;
     }
 
     function showStudyScreen(isLoading = false) {
@@ -1307,7 +1447,7 @@
     }
 
     // ==========================================
-    // ЛОГИКА ХИМИИ (ТАБЛИЦА МЕНДЕЛЕЕВА)
+    // ХИМИЯ (ТАБЛИЦА МЕНДЕЛЕЕВА)
     // ==========================================
     const periodicTable = [
         { s: "H", n: "Водород" }, { s: "He", n: "Гелий" }, { s: "Li", n: "Литий" }, { s: "Be", n: "Бериллий" },
@@ -1342,85 +1482,240 @@
         { s: "Ts", n: "Теннессин" }, { s: "Og", n: "Оганесон" }
     ];
 
+    let chemQueue = [];
+    let chemIndex = 0;
+    let chemSolved = 0;
     let chemScore = 0;
-    let chemCurrentElement = null;
+    const chemMax = periodicTable.length;
+    let chemCurrentItem = null;
+    let chemAttempt = 1;
     let chemLocked = false;
+    let chemHintsLeft = 2;
+    let isChemStudyRendered = false;
 
-    function initChemistry() {
-        chemScore = 0;
-        document.getElementById('chem-score-val').textContent = chemScore;
-        document.getElementById('chem-feedback').textContent = "";
-        loadChemQuestion();
+    function saveChemState() {
+        if (currentApp !== 'sciences') return;
+        const state = {
+            screen: document.getElementById('chem-test-screen').classList.contains('hidden') ? 
+                   (document.getElementById('chem-result-screen').classList.contains('hidden') ? 'study' : 'result') : 'test',
+            chemQueue, chemIndex, chemSolved, chemScore, chemHintsLeft, chemAttempt
+        };
+        localStorage.setItem('chemState', JSON.stringify(state));
     }
 
-    function loadChemQuestion() {
-        chemLocked = false;
-        chemCurrentElement = periodicTable[Math.floor(Math.random() * periodicTable.length)];
-        document.getElementById('chem-element').textContent = chemCurrentElement.s;
+    function loadChemState() {
+        const saved = localStorage.getItem('chemState');
+        if (saved) {
+            const state = JSON.parse(saved);
+            chemQueue = state.chemQueue || [];
+            chemIndex = state.chemIndex || 0;
+            chemSolved = state.chemSolved || 0;
+            chemScore = state.chemScore || 0;
+            chemHintsLeft = state.chemHintsLeft !== undefined ? state.chemHintsLeft : 2;
+            
+            document.getElementById('chem-test-screen').classList.add('hidden');
+            document.getElementById('chem-result-screen').classList.add('hidden');
+            document.getElementById('chem-study-screen').classList.add('hidden');
 
-        let options = [chemCurrentElement.n];
-        let allNames = periodicTable.map(e => e.n).filter(n => n !== chemCurrentElement.n);
-        allNames = shuffle(allNames);
-        
-        for (let i = 0; i < 5; i++) {
-            options.push(allNames[i]);
+            if (state.screen === 'result') {
+                document.getElementById('chem-result-screen').classList.remove('hidden');
+                showChemResults(true);
+            } else if (state.screen === 'study') {
+                document.getElementById('chem-study-screen').classList.remove('hidden');
+                showChemStudyScreen(true);
+            } else {
+                document.getElementById('chem-test-screen').classList.remove('hidden');
+                if (chemQueue.length > 0 && chemIndex < chemQueue.length) {
+                    chemCurrentItem = chemQueue[chemIndex];
+                    loadNextChemQuestion(true);
+                } else {
+                    startNewChemTest();
+                }
+            }
+        } else {
+            startNewChemTest();
         }
+    }
+
+    function startNewChemTest() {
+        chemQueue = shuffle([...periodicTable]);
+        chemIndex = 0;
+        chemSolved = 0;
+        chemScore = 0;
+        chemHintsLeft = 2;
+        document.getElementById('chem-result-screen').classList.add('hidden');
+        document.getElementById('chem-study-screen').classList.add('hidden');
+        document.getElementById('chem-test-screen').classList.remove('hidden');
+        updateChemHintsUI();
+        loadNextChemQuestion();
+    }
+
+    function loadNextChemQuestion(isLoadingState = false) {
+        if (chemIndex >= chemQueue.length) { showChemResults(); return; }
+        chemCurrentItem = chemQueue[chemIndex];
+        chemAttempt = 1;
+        chemLocked = false;
+        document.getElementById('chem-feedback').textContent = "";
+        document.getElementById('chem-skip-btn').disabled = false;
+        document.getElementById('chem-hint-btn').disabled = chemHintsLeft === 0;
+
+        const progressPercent = (chemSolved / chemMax) * 100;
+        document.getElementById('chem-progress-bar').style.width = `${progressPercent}%`;
+        document.getElementById('chem-progress-text').textContent = `${chemSolved} / ${chemMax}`;
+        document.getElementById('chem-question').textContent = chemCurrentItem.s;
+
+        let options = [chemCurrentItem.n];
+        let allWrongPool = periodicTable.filter(f => f.n !== chemCurrentItem.n).map(f => f.n);
+        allWrongPool = shuffle(allWrongPool);
+        for (let i = 0; i < 5; i++) { options.push(allWrongPool[i]); }
         options = shuffle(options);
 
         const optionsEl = document.getElementById('chem-options');
         optionsEl.innerHTML = "";
-        options.forEach(opt => {
+        options.forEach(option => {
             const btn = document.createElement('button');
-            btn.className = 'chem-btn';
-            btn.textContent = opt;
-            btn.onclick = () => checkChemAnswer(btn, opt);
+            btn.className = 'option-btn';
+            btn.textContent = option;
+            btn.onclick = () => checkChemAnswer(btn, option);
             optionsEl.appendChild(btn);
         });
-        
-        document.getElementById('chem-feedback').textContent = "";
+        saveChemState();
     }
 
-    function checkChemAnswer(btn, selectedName) {
+    function checkChemAnswer(btn, selectedOption) {
         if (chemLocked) return;
-        chemLocked = true;
-        
-        const buttons = document.querySelectorAll('.chem-btn');
-        
-        if (selectedName === chemCurrentElement.n) {
+        if (selectedOption === chemCurrentItem.n) {
+            chemLocked = true;
             btn.classList.add('correct');
-            document.getElementById('chem-feedback').textContent = "Правильно! 🎉";
-            document.getElementById('chem-feedback').style.color = "var(--correct)";
-            
-            chemScore++;
-            document.getElementById('chem-score-val').textContent = chemScore;
-            
-            if (chemScore > progress.chemistry.record) {
-                progress.chemistry.record = chemScore;
-                saveProgress();
-            }
-            
-            buttons.forEach(b => b.disabled = true);
-            setTimeout(loadChemQuestion, 1000);
+            let points = chemAttempt === 1 ? 1.0 : (chemAttempt === 2 ? 0.5 : 0.25);
+            chemScore += points;
+            chemSolved++;
+            const feedbackEl = document.getElementById('chem-feedback');
+            feedbackEl.textContent = `+${points}`;
+            feedbackEl.style.color = "var(--correct)";
+            disableAllChemButtons();
+            saveChemState();
+            setTimeout(() => { chemIndex++; loadNextChemQuestion(); }, 400); 
         } else {
             btn.classList.add('wrong');
-            document.getElementById('chem-feedback').textContent = "Ошибка! 😢";
-            document.getElementById('chem-feedback').style.color = "var(--wrong)";
-            
-            buttons.forEach(b => {
-                if (b.textContent === chemCurrentElement.n) {
-                    b.classList.add('correct');
-                }
-                b.disabled = true;
-            });
-            
-            setTimeout(() => {
-                initChemistry(); 
-            }, 2000);
+            btn.disabled = true;
+            chemAttempt++;
+            if (chemAttempt > 3) {
+                chemLocked = true;
+                chemSolved++;
+                const feedbackEl = document.getElementById('chem-feedback');
+                feedbackEl.textContent = "0";
+                feedbackEl.style.color = "var(--wrong)";
+                revealChemCorrectAnswer();
+                disableAllChemButtons();
+                saveChemState();
+                setTimeout(() => { chemIndex++; loadNextChemQuestion(); }, 1000);
+            } else {
+                const feedbackEl = document.getElementById('chem-feedback');
+                feedbackEl.textContent = `-1`;
+                feedbackEl.style.color = "var(--warning)";
+                saveChemState();
+            }
         }
     }
 
+    function revealChemCorrectAnswer() {
+        document.getElementById('chem-options').querySelectorAll('.option-btn').forEach(b => {
+            if (b.textContent === chemCurrentItem.n) b.classList.add('correct');
+        });
+    }
+
+    function disableAllChemButtons() {
+        document.getElementById('chem-options').querySelectorAll('.option-btn').forEach(b => b.disabled = true);
+        document.getElementById('chem-skip-btn').disabled = true;
+        document.getElementById('chem-hint-btn').disabled = true;
+    }
+
+    function skipChemQuestion() {
+        if (chemLocked) return;
+        chemQueue.push(chemCurrentItem);
+        chemIndex++;
+        const feedbackEl = document.getElementById('chem-feedback');
+        feedbackEl.textContent = "Skip";
+        feedbackEl.style.color = "var(--text-muted)";
+        chemLocked = true;
+        disableAllChemButtons();
+        saveChemState();
+        setTimeout(() => { loadNextChemQuestion(); }, 400);
+    }
+
+    function useChemHint() {
+        if (chemHintsLeft <= 0 || chemLocked) return;
+        chemHintsLeft--;
+        updateChemHintsUI();
+        const buttons = Array.from(document.getElementById('chem-options').querySelectorAll('.option-btn'));
+        const wrongButtons = buttons.filter(b => b.textContent !== chemCurrentItem.n);
+        shuffle(wrongButtons);
+        for (let i = 0; i < 5; i++) {
+            if (wrongButtons[i]) { wrongButtons[i].disabled = true; wrongButtons[i].style.opacity = '0.1'; }
+        }
+        if (chemHintsLeft === 0) document.getElementById('chem-hint-btn').disabled = true;
+        saveChemState();
+    }
+
+    function updateChemHintsUI() {
+        document.getElementById('chem-hints-display').textContent = `💡 50/50: ${chemHintsLeft}`;
+        document.getElementById('chem-hint-btn').textContent = `💡 50/50`;
+        if (chemHintsLeft === 0) document.getElementById('chem-hint-btn').disabled = true;
+    }
+
+    function showChemResults(isLoading = false) {
+        if (!isLoading) {
+            document.getElementById('chem-test-screen').classList.add('hidden');
+            document.getElementById('chem-study-screen').classList.add('hidden');
+            document.getElementById('chem-result-screen').classList.remove('hidden');
+            saveChemState();
+        }
+        
+        if (chemScore > progress.sciences.chemScore) {
+            progress.sciences.chemScore = chemScore;
+            progress.sciences.chemPlayed = true;
+            saveProgress();
+        }
+
+        const percent = (chemScore / chemMax) * 100;
+        document.getElementById('chem-result-score').textContent = `${chemScore.toFixed(2)} / ${chemMax}`;
+        document.getElementById('chem-result-percent').textContent = `${percent.toFixed(1)}%`;
+        
+        let rank = getChemRank(chemScore);
+        document.getElementById('chem-result-rank').textContent = rank;
+    }
+
+    function showChemStudyScreen(isLoading = false) {
+        if (!isLoading) {
+            document.getElementById('chem-test-screen').classList.add('hidden');
+            document.getElementById('chem-result-screen').classList.add('hidden');
+            document.getElementById('chem-study-screen').classList.remove('hidden');
+            saveChemState();
+        }
+        const studyContentEl = document.getElementById('chem-study-content');
+        if (!isChemStudyRendered) {
+            let html = "";
+            periodicTable.forEach(e => {
+                html += `<div class="study-item" style="padding:10px; background:rgba(255,255,255,0.05); border-radius:8px;">
+                            <div class="study-name" style="color:var(--accent); font-size:20px; font-weight:900;">${e.s}</div>
+                            <div class="study-formula" style="font-size:14px;">${e.n}</div>
+                         </div>`;
+            });
+            studyContentEl.innerHTML = html;
+            isChemStudyRendered = true;
+        }
+    }
+
+    function returnToChemResults() {
+        document.getElementById('chem-study-screen').classList.add('hidden');
+        document.getElementById('chem-test-screen').classList.add('hidden');
+        document.getElementById('chem-result-screen').classList.remove('hidden');
+        showChemResults(true);
+    }
+
     // ==========================================
-    // ЛОГИКА ШАХМАТ
+    // ШАХМАТЫ
     // ==========================================
     let game = new Chess();
     let playerColor = 'w';
@@ -1573,7 +1868,7 @@
 
     function updateChessStatsUI() {
         document.getElementById('chess-stats').textContent = 
-            `Победы: ${progress.chessStats.w} | Поражения: ${progress.chessStats.l} | Ничьи: ${progress.chessStats.d}`;
+            `W: ${progress.chessStats.w} | L: ${progress.chessStats.l} | D: ${progress.chessStats.d}`;
     }
 
     function makeAiMove() {
@@ -1639,7 +1934,7 @@
     }
 
     // ==========================================
-    // ЛОГИКА 2048
+    // 2048
     // ==========================================
     let board2048 = [];
     let score2048 = 0;
@@ -1826,7 +2121,7 @@
     }, { passive: false });
 
     // ==========================================
-    // ЛОГИКА КРЕСТИКОВ-НОЛИКОВ
+    // КРЕСТИКИ-НОЛИКИ
     // ==========================================
     let tttBoard = Array(9).fill(null);
     let tttCurrentPlayer = 'X';
@@ -1843,7 +2138,7 @@
 
     function updateTttStatsUI() {
         document.getElementById('ttt-stats').textContent = 
-            `Победы: ${progress.tttStats.w} | Поражения: ${progress.tttStats.l} | Ничьи: ${progress.tttStats.d}`;
+            `W: ${progress.tttStats.w} | L: ${progress.tttStats.l} | D: ${progress.tttStats.d}`;
     }
 
     function startTTT(mode) {
@@ -2040,7 +2335,7 @@
     }
 
     // ==========================================
-    // ЛОГИКА ЗМЕЙКИ
+    // ЗМЕЙКА
     // ==========================================
     let snakeGridSize = 10;
     let snakeBody = [];
@@ -2078,11 +2373,11 @@
         container.innerHTML = '';
 
         const groups = [
-            { name: "Легкие", levels: [1, 2, 3] },
-            { name: "Средние", levels: [4, 5, 6, 7] },
-            { name: "Сложные", levels: [8, 9, 10] },
-            { name: "Максимальные", levels: [11, 12] },
-            { name: "Королевский", levels: [13] }
+            { name: "Easy", levels: [1, 2, 3] },
+            { name: "Medium", levels: [4, 5, 6, 7] },
+            { name: "Hard", levels: [8, 9, 10] },
+            { name: "Max", levels: [11, 12] },
+            { name: "Royal", levels: [13] }
         ];
 
         groups.forEach(group => {
@@ -2256,7 +2551,7 @@
     }
 
     function updateSnakeHUD() {
-        document.getElementById('snake-status').textContent = `Очки: ${snakeScore} / ${snakeTargetScore}`;
+        document.getElementById('snake-status').textContent = `${snakeScore} / ${snakeTargetScore}`;
     }
 
     function snakeWin() {
@@ -2323,7 +2618,7 @@
     }, { passive: false });
 
     // ==========================================
-    // ЛОГИКА ИГРЫ "УБЕЙ КРОТА"
+    // УБЕЙ КРОТА
     // ==========================================
     let moleLevel = 1;
     let molesHit = 0;
@@ -2389,11 +2684,11 @@
         container.innerHTML = '';
 
         const groups = [
-            { name: "Легкие", levels: [1, 2, 3, 4, 5] },
-            { name: "Средние", levels: [6, 7, 8, 9, 10] },
-            { name: "Сложные", levels: [11, 12, 13, 14, 15] },
-            { name: "Максимальные", levels: [16, 17, 18, 19, 20] },
-            { name: "Королевский", levels: [21] }
+            { name: "Easy", levels: [1, 2, 3, 4, 5] },
+            { name: "Medium", levels: [6, 7, 8, 9, 10] },
+            { name: "Hard", levels: [11, 12, 13, 14, 15] },
+            { name: "Max", levels: [16, 17, 18, 19, 20] },
+            { name: "Royal", levels: [21] }
         ];
 
         groups.forEach(group => {
@@ -2576,11 +2871,11 @@
 
     function updateMolesHUD() {
         if (isRecordMode) {
-            document.getElementById('moles-hit').textContent = `Убито: ${molesHit} (Рекорд: ${progress.moles.record})`;
+            document.getElementById('moles-hit').textContent = `Hit: ${molesHit} (Rec: ${progress.moles.record})`;
         } else {
-            document.getElementById('moles-hit').textContent = `Убито: ${molesHit} / ${moleTarget}`;
+            document.getElementById('moles-hit').textContent = `Hit: ${molesHit} / ${moleTarget}`;
         }
-        document.getElementById('moles-miss').textContent = `Промахи: ${molesMissed} / 3`;
+        document.getElementById('moles-miss').textContent = `Miss: ${molesMissed} / 3`;
     }
 
     function molesWin() {
@@ -2615,7 +2910,7 @@
                 progress.moles.record = molesHit;
                 saveProgress();
             }
-            document.getElementById('moles-overlay-text').textContent = `Рекорд: ${molesHit}`;
+            document.getElementById('moles-overlay-text').textContent = `Record: ${molesHit}`;
             document.getElementById('moles-overlay-text').style.color = "var(--warning)";
             document.getElementById('moles-record-btn').style.display = 'inline-block';
         } else {
@@ -2638,6 +2933,7 @@
     // ИНИЦИАЛИЗАЦИЯ
     // ==========================================
     window.onload = () => {
+        applyLanguage();
         updateMenuBadges();
         
         const savedApp = localStorage.getItem('appMode');
