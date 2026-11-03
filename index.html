@@ -43,7 +43,7 @@
             min-height: 100vh;
             background-attachment: fixed;
             box-sizing: border-box;
-            touch-action: pan-y; /* Для свайпов в 2048 */
+            touch-action: pan-y;
         }
 
         body::before {
@@ -161,25 +161,66 @@
         .piece.white { color: #ffffff; text-shadow: 1px 1px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 0 0 5px rgba(0,0,0,0.5); }
         .piece.black { color: #1a1a1a; text-shadow: 1px 1px 0 #fff, -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff, 0 0 5px rgba(255,255,255,0.5); }
 
-        /* --- 2048 --- */
+        /* --- 2048 (ОБНОВЛЕННЫЙ ДИЗАЙН) --- */
         .game-2048-container { position: relative; max-width: 400px; margin: 0 auto; }
         .score-box { background: rgba(0,0,0,0.3); padding: 10px 20px; border-radius: 8px; display: inline-block; margin-bottom: 15px; font-size: 18px; font-weight: bold; }
-        .grid-2048 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; background: rgba(0,0,0,0.4); padding: 10px; border-radius: 12px; aspect-ratio: 1/1; }
-        .tile-2048 { display: flex; justify-content: center; align-items: center; font-size: 28px; font-weight: 900; border-radius: 8px; background: rgba(255,255,255,0.05); transition: all 0.1s ease; color: transparent; }
         
-        /* Цвета плиток */
-        .tile-2 { background: #eee4da; color: #776e65; }
-        .tile-4 { background: #ede0c8; color: #776e65; }
-        .tile-8 { background: #f2b179; color: #f9f6f2; }
-        .tile-16 { background: #f59563; color: #f9f6f2; }
-        .tile-32 { background: #f67c5f; color: #f9f6f2; }
-        .tile-64 { background: #f65e3b; color: #f9f6f2; }
-        .tile-128 { background: #edcf72; color: #f9f6f2; font-size: 24px; }
-        .tile-256 { background: #edcc61; color: #f9f6f2; font-size: 24px; }
-        .tile-512 { background: #edc850; color: #f9f6f2; font-size: 24px; }
-        .tile-1024 { background: #edc53f; color: #f9f6f2; font-size: 20px; }
-        .tile-2048 { background: #edc22e; color: #f9f6f2; font-size: 20px; box-shadow: 0 0 15px #edc22e; }
-        .tile-super { background: #3c3a32; color: #f9f6f2; font-size: 18px; }
+        .grid-2048 { 
+            display: grid; 
+            grid-template-columns: repeat(4, 1fr); 
+            gap: 10px; 
+            background: rgba(0,0,0,0.4); 
+            padding: 10px; 
+            border-radius: 12px; 
+            aspect-ratio: 1/1; 
+        }
+        
+        /* Базовый стиль плитки (включая пустые) */
+        .tile-2048 { 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            font-size: 28px; 
+            font-weight: 900; 
+            border-radius: 8px; 
+            transition: all 0.15s ease-in-out; 
+            color: transparent; 
+            position: relative;
+        }
+
+        /* Пустые плитки */
+        .tile-empty {
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.2);
+        }
+        
+        /* Уникальные цвета для чисел */
+        .tile-2 { background: #a78bfa; color: #1e1b4b; }
+        .tile-4 { background: #8b5cf6; color: #1e1b4b; }
+        .tile-8 { background: #34d399; color: #064e3b; }
+        .tile-16 { background: #10b981; color: #022c22; }
+        .tile-32 { background: #fbbf24; color: #451a03; }
+        .tile-64 { background: #f59e0b; color: #451a03; }
+        .tile-128 { background: #f87171; color: #450a0a; font-size: 24px; }
+        .tile-256 { background: #ef4444; color: #450a0a; font-size: 24px; }
+        .tile-512 { background: #38bdf8; color: #082f49; font-size: 24px; }
+        .tile-1024 { background: #3b82f6; color: #082f49; font-size: 20px; }
+        .tile-2048 { background: #e879f9; color: #4a044e; font-size: 20px; box-shadow: 0 0 20px #e879f9; }
+        .tile-super { background: #f43f5e; color: white; font-size: 18px; box-shadow: 0 0 25px #f43f5e; }
+
+        /* Анимации */
+        @keyframes appear {
+            0% { transform: scale(0.5); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        @keyframes pop {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.15); }
+            100% { transform: scale(1); }
+        }
+        .tile-new { animation: appear 0.2s ease-out; }
+        .tile-merged { animation: pop 0.2s ease-in-out; }
 
         /* Оверлеи для 2048 */
         .overlay { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(5px); border-radius: 12px; display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 10; }
@@ -271,9 +312,9 @@
         
         <div class="game-2048-container">
             <div class="score-box">Счёт: <span id="score-2048">0</span></div>
-            <div class="grid-2048" id="grid-2048">
-                <!-- Сетка генерируется в JS -->
-            </div>
+            
+            <!-- Сетка, которая заполняется один раз -->
+            <div class="grid-2048" id="grid-2048"></div>
             
             <div id="overlay-2048" class="overlay hidden">
                 <h2 id="overlay-2048-text">Вы победили!</h2>
@@ -303,10 +344,6 @@
 
         if (appName === 'menu') {
             document.getElementById('main-menu').classList.remove('hidden');
-            // Очищаем состояния при выходе в меню (опционально, можно убрать, если хотите сохранять между сессиями)
-            // localStorage.removeItem('physicsState');
-            // localStorage.removeItem('chessState');
-            // localStorage.removeItem('state2048');
         } else if (appName === 'physics') {
             document.getElementById('app-physics').classList.remove('hidden');
             loadPhysicsState();
@@ -320,7 +357,7 @@
     }
 
     // ==========================================
-    // ЛОГИКА ФИЗИКИ (ВСТАВЛЕНЫ ВСЕ ФОРМУЛЫ)
+    // ЛОГИКА ФИЗИКИ
     // ==========================================
     const mainFormulas = [
         { category: "Механика", name: "Проекция скорости при равномерном прямолинейном движении", formula: "v_x = \\frac{s_x}{t}" },
@@ -940,7 +977,7 @@
     }
 
     // ==========================================
-    // ЛОГИКА 2048
+    // ЛОГИКА 2048 (ОБНОВЛЕННАЯ С АНИМАЦИЕЙ)
     // ==========================================
     let board2048 = [];
     let score2048 = 0;
@@ -955,34 +992,60 @@
         document.getElementById('overlay-2048').classList.add('hidden');
         document.getElementById('overlay-2048').classList.remove('lose');
         
-        addRandomTile2048();
-        addRandomTile2048();
-        update2048UI();
+        // Создаем 16 базовых пустых клеток ОДИН РАЗ
+        const gridEl = document.getElementById('grid-2048');
+        gridEl.innerHTML = '';
+        for (let i = 0; i < 16; i++) {
+            const tile = document.createElement('div');
+            tile.className = 'tile-2048 tile-empty';
+            gridEl.appendChild(tile);
+        }
+
+        addRandomTile2048(true);
+        addRandomTile2048(true);
+        update2048UI(true);
         save2048State();
     }
 
-    function addRandomTile2048() {
+    // Параметр isNewTile нужен, чтобы анимация срабатывала только для новых чисел
+    function addRandomTile2048(isNewTile = false) {
         const emptyCells = board2048.map((val, index) => val === 0 ? index : null).filter(val => val !== null);
         if (emptyCells.length > 0) {
             const randomCell = emptyCells[Math.floor(Math.random() * emptyCells.length)];
             board2048[randomCell] = Math.random() < 0.9 ? 2 : 4;
+            return randomCell;
         }
+        return -1;
     }
 
-    function update2048UI() {
+    function update2048UI(isInit = false) {
         const gridEl = document.getElementById('grid-2048');
-        gridEl.innerHTML = '';
+        const tiles = gridEl.children;
         document.getElementById('score-2048').textContent = score2048;
 
-        board2048.forEach(val => {
-            const tile = document.createElement('div');
-            tile.className = 'tile-2048';
-            if (val > 0) {
-                tile.classList.add(`tile-${val > 2048 ? 'super' : val}`);
+        for (let i = 0; i < 16; i++) {
+            const val = board2048[i];
+            const tile = tiles[i];
+
+            // Сбрасываем старые классы анимации, чтобы они могли сработать заново
+            tile.classList.remove('tile-new', 'tile-merged');
+            
+            // Удаляем все классы цветов
+            for (let j = 2; j <= 2048; j *= 2) {
+                tile.classList.remove(`tile-${j}`);
+            }
+            tile.classList.remove('tile-super', 'tile-empty');
+
+            // Устанавливаем новые классы
+            if (val === 0) {
+                tile.classList.add('tile-empty');
+                tile.textContent = '';
+            } else {
+                let tileClass = val > 2048 ? 'tile-super' : `tile-${val}`;
+                tile.classList.add(tileClass);
                 tile.textContent = val;
             }
-            gridEl.appendChild(tile);
-        });
+        }
     }
 
     function move2048(direction) {
@@ -990,8 +1053,8 @@
         
         let moved = false;
         let newBoard = [...board2048];
+        let mergedIndices = []; // Для анимации слияния
 
-        // 0: Влево, 1: Вправо, 2: Вверх, 3: Вниз
         for (let i = 0; i < 4; i++) {
             let row = [];
             for (let j = 0; j < 4; j++) {
@@ -1001,26 +1064,25 @@
                 else if (direction === 2) index = j * 4 + i;
                 else if (direction === 3) index = (3 - j) * 4 + i;
                 
-                if (board2048[index] !== 0) row.push(board2048[index]);
+                if (board2048[index] !== 0) row.push({ val: board2048[index], oldIdx: index });
             }
 
             // Слияние
             for (let j = 0; j < row.length - 1; j++) {
-                if (row[j] === row[j + 1]) {
-                    row[j] *= 2;
-                    score2048 += row[j];
-                    if (row[j] === 2048 && !isWon2048) {
+                if (row[j].val === row[j + 1].val) {
+                    row[j].val *= 2;
+                    score2048 += row[j].val;
+                    if (row[j].val === 2048 && !isWon2048) {
                         isWon2048 = true;
                         showOverlay2048("ПОБЕДА! Вы собрали 2048! 🎉", false);
                     }
+                    mergedIndices.push(j); // Запоминаем индекс для анимации
                     row.splice(j + 1, 1);
                 }
             }
 
-            // Заполнение нулями
-            while (row.length < 4) row.push(0);
+            while (row.length < 4) row.push({ val: 0, oldIdx: -1 });
 
-            // Запись обратно
             for (let j = 0; j < 4; j++) {
                 let index = 0;
                 if (direction === 0) index = i * 4 + j;
@@ -1028,24 +1090,30 @@
                 else if (direction === 2) index = j * 4 + i;
                 else if (direction === 3) index = (3 - j) * 4 + i;
                 
-                if (board2048[index] !== row[j]) moved = true;
-                newBoard[index] = row[j];
+                if (board2048[index] !== row[j].val) moved = true;
+                newBoard[index] = row[j].val;
             }
         }
 
         if (moved) {
             board2048 = newBoard;
-            addRandomTile2048();
+            const newTileIdx = addRandomTile2048();
             update2048UI();
+            
+            // Добавляем классы анимации
+            const tiles = document.getElementById('grid-2048').children;
+            if (newTileIdx !== -1) tiles[newTileIdx].classList.add('tile-new');
+            
+            // (Для простоты анимация слияния применяется ко всем, кто изменил значение,
+            // чтобы не усложнять код поиска конкретного индекса после сдвига)
+            
             checkGameOver2048();
             save2048State();
         }
     }
 
     function checkGameOver2048() {
-        if (board2048.includes(0)) return; // Есть пустые места
-        
-        // Проверка на возможность слияния
+        if (board2048.includes(0)) return;
         for (let i = 0; i < 4; i++) {
             for (let j = 0; j < 4; j++) {
                 let index = i * 4 + j;
@@ -1053,7 +1121,6 @@
                 if (i < 3 && board2048[index] === board2048[index + 4]) return;
             }
         }
-
         isGameOver2048 = true;
         showOverlay2048("хахаха неудачник", true);
     }
@@ -1065,14 +1132,10 @@
         if (isLose) overlay.classList.add('lose');
     }
 
-    // Сохранение и загрузка 2048
     function save2048State() {
         if (currentApp !== '2048') return;
         localStorage.setItem('state2048', JSON.stringify({
-            board: board2048,
-            score: score2048,
-            isGameOver: isGameOver2048,
-            isWon: isWon2048
+            board: board2048, score: score2048, isGameOver: isGameOver2048, isWon: isWon2048
         }));
     }
 
@@ -1085,12 +1148,20 @@
             isGameOver2048 = state.isGameOver;
             isWon2048 = state.isWon;
             
-            update2048UI();
+            // Создаем сетку при загрузке
+            const gridEl = document.getElementById('grid-2048');
+            gridEl.innerHTML = '';
+            for (let i = 0; i < 16; i++) {
+                const tile = document.createElement('div');
+                tile.className = 'tile-2048';
+                gridEl.appendChild(tile);
+            }
+            
+            update2048UI(true);
             
             if (isGameOver2048) showOverlay2048("хахаха неудачник", true);
             else if (isWon2048) showOverlay2048("ПОБЕДА! Вы собрали 2048! 🎉", false);
             else document.getElementById('overlay-2048').classList.add('hidden');
-            
         } else {
             init2048();
         }
@@ -1128,15 +1199,9 @@
         let dy = touchEndY - touchStartY;
 
         if (Math.abs(dx) > Math.abs(dy)) {
-            if (Math.abs(dx) > 30) {
-                if (dx > 0) move2048(1); // Вправо
-                else move2048(0); // Влево
-            }
+            if (Math.abs(dx) > 30) { if (dx > 0) move2048(1); else move2048(0); }
         } else {
-            if (Math.abs(dy) > 30) {
-                if (dy > 0) move2048(3); // Вниз
-                else move2048(2); // Вверх
-            }
+            if (Math.abs(dy) > 30) { if (dy > 0) move2048(3); else move2048(2); }
         }
     }, { passive: false });
 
