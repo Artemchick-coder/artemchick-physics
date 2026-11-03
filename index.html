@@ -31,7 +31,7 @@
             padding: 20px;
             display: flex;
             justify-content: center;
-            align-items: flex-start; /* Изменено для скролла длинных страниц */
+            align-items: flex-start;
             min-height: 100vh;
         }
 
@@ -52,12 +52,10 @@
             margin-bottom: 10px;
         }
 
-        /* Скрытие экранов */
         .hidden {
             display: none !important;
         }
 
-        /* Экран теста */
         .progress {
             font-size: 14px;
             color: #7f8c8d;
@@ -128,7 +126,6 @@
             min-height: 25px;
         }
 
-        /* Экран результатов */
         .result-title {
             font-size: 28px;
             font-weight: bold;
@@ -175,7 +172,6 @@
             background-color: #7f8c8d;
         }
 
-        /* Экран изучения формул */
         .study-header {
             display: flex;
             justify-content: space-between;
@@ -232,43 +228,34 @@
 <body>
 
 <div class="container">
-    <!-- ЭКРАН 1: ТЕСТ -->
     <div id="test-screen">
         <h1>Тренажёр формул ОГЭ по физике</h1>
         <div class="progress" id="progress">Вопрос 1 из 64</div>
         <div class="question" id="question">...</div>
-        <div class="options-grid" id="options">
-            <!-- Сюда будут вставляться кнопки -->
-        </div>
+        <div class="options-grid" id="options"></div>
         <div class="feedback" id="feedback"></div>
     </div>
 
-    <!-- ЭКРАН 2: РЕЗУЛЬТАТЫ -->
     <div id="result-screen" class="hidden">
         <div class="result-title">Тест завершён!</div>
         <div class="result-score" id="result-score">Правильных ответов: 0 из 64</div>
         <div class="result-rank" id="result-rank">Школьник</div>
-        
         <button class="main-btn" onclick="startNewTest()">Начать тест заново</button>
         <button class="main-btn secondary-btn" onclick="showStudyScreen()">Изучать формулы</button>
     </div>
 
-    <!-- ЭКРАН 3: ИЗУЧЕНИЕ ФОРМУЛ -->
     <div id="study-screen" class="hidden">
         <div class="study-header">
             <h2>Все формулы по разделам</h2>
             <button class="main-btn" style="width: auto; padding: 10px 20px;" onclick="showResultScreen()">Назад</button>
         </div>
-        <div id="study-content">
-            <!-- Сюда будут генерироваться разделы -->
-        </div>
+        <!-- Убрал комментарий отсюда, чтобы скрипт не путался -->
+        <div id="study-content"></div>
     </div>
 </div>
 
 <script>
-    // База всех формул с указанием разделов
     const allFormulas = [
-        // --- МЕХАНИКА ---
         { category: "Механика", name: "Проекция скорости при равномерном прямолинейном движении", formula: "v_x = \\frac{s_x}{t}" },
         { category: "Механика", name: "Средняя путевая скорость", formula: "v_{cp} = \\frac{S_{общ}}{t_{общ}}" },
         { category: "Механика", name: "Координата при равномерном прямолинейном движении", formula: "x(t) = x_0 + v_x t" },
@@ -301,14 +288,12 @@
         { category: "Механика", name: "Давление внутри жидкости", formula: "p = p_{атм} + \\rho gh" },
         { category: "Механика", name: "Модуль силы Архимеда", formula: "F_A = \\rho_ж g V_{пор}" },
         
-        // --- КОЛЕБАНИЯ И ВОЛНЫ ---
         { category: "Колебания и волны", name: "Связь частоты и периода колебаний", formula: "\\nu = \\frac{1}{T}" },
         { category: "Колебания и волны", name: "Период колебаний математического маятника", formula: "T = 2\\pi \\sqrt{\\frac{l}{g}}" },
         { category: "Колебания и волны", name: "Период колебаний пружинного маятника", formula: "T = 2\\pi \\sqrt{\\frac{m}{k}}" },
         { category: "Колебания и волны", name: "Длина волны", formula: "\\lambda = vT" },
         { category: "Колебания и волны", name: "Скорость распространения волны", formula: "v = \\lambda \\nu" },
         
-        // --- ТЕПЛОВЫЕ ЯВЛЕНИЯ ---
         { category: "Тепловые явления", name: "Количество теплоты при нагревании/охлаждении", formula: "Q = cm(t_2 - t_1)" },
         { category: "Тепловые явления", name: "Закон сохранения энергии (Тепловой баланс)", formula: "Q_{пол} = Q_{отд}" },
         { category: "Тепловые явления", name: "Количество теплоты при кипении/конденсации", formula: "Q = Lm" },
@@ -318,7 +303,6 @@
         { category: "Тепловые явления", name: "Работа газа", formula: "A = p\\Delta V" },
         { category: "Тепловые явления", name: "КПД теплового двигателя", formula: "\\eta = \\frac{A_{пол}}{Q_{затр}} \\cdot 100\\%" },
         
-        // --- ЭЛЕКТРОМАГНИТНЫЕ ЯВЛЕНИЯ ---
         { category: "Электромагнитные явления", name: "Закон Кулона", formula: "F = k\\frac{|q_1 q_2|}{r^2}" },
         { category: "Электромагнитные явления", name: "Сила тока", formula: "I = \\frac{q}{t}" },
         { category: "Электромагнитные явления", name: "Напряжение", formula: "U = \\frac{A}{q}" },
@@ -332,28 +316,25 @@
         { category: "Электромагнитные явления", name: "Сила Ампера", formula: "F_A = BIl \\sin \\alpha" },
         { category: "Электромагнитные явления", name: "Сила Лоренца", formula: "F_Л = |q|vB \\sin \\alpha" },
         
-        // --- ОПТИКА ---
         { category: "Оптика", name: "Оптическая сила линзы", formula: "D = \\frac{1}{F}" },
         { category: "Оптика", name: "Формула тонкой линзы", formula: "\\frac{1}{F} = \\frac{1}{d} + \\frac{1}{f}" },
         { category: "Оптика", name: "Увеличение линзы", formula: "\\Gamma = \\frac{H}{h} = \\frac{f}{d}" },
         { category: "Оптика", name: "Закон отражения света", formula: "\\alpha = \\gamma" },
         { category: "Оптика", name: "Закон преломления света", formula: "\\frac{\\sin \\alpha}{\\sin \\beta} = n" },
         
-        // --- КВАНТОВЫЕ ЯВЛЕНИЯ ---
         { category: "Квантовые явления", name: "Закон альфа-распада", formula: "{}_{Z}^{A}X \\rightarrow {}_{Z-2}^{A-4}Y + {}_{2}^{4}He" },
         { category: "Квантовые явления", name: "Закон бета-распада", formula: "{}_{Z}^{A}X \\rightarrow {}_{Z+1}^{A}Y + {}_{-1}^{0}e" },
         { category: "Квантовые явления", name: "Закон гамма-распада", formula: "{}_{Z}^{A}X^* \\rightarrow {}_{Z}^{A}X + \\gamma" }
     ];
 
-    // Переменные состояния
     let currentQueue = [];
     let currentIndex = 0;
     let correctAnswer = "";
     let isLocked = false;
     let correctCount = 0;
     let totalQuestions = allFormulas.length;
+    let isStudyRendered = false; // Новый флаг для правильной отрисовки
 
-    // DOM Элементы
     const testScreen = document.getElementById('test-screen');
     const resultScreen = document.getElementById('result-screen');
     const studyScreen = document.getElementById('study-screen');
@@ -367,7 +348,6 @@
     const resultRankEl = document.getElementById('result-rank');
     const studyContentEl = document.getElementById('study-content');
 
-    // Перемешивание
     function shuffle(array) {
         let currentIndex = array.length, randomIndex;
         while (currentIndex !== 0) {
@@ -378,7 +358,6 @@
         return array;
     }
 
-    // Начать тест заново
     function startNewTest() {
         correctCount = 0;
         currentQueue = shuffle([...allFormulas]);
@@ -391,7 +370,6 @@
         loadNextQuestion();
     }
 
-    // Загрузка вопроса
     function loadNextQuestion() {
         if (currentIndex >= currentQueue.length) {
             showResults();
@@ -406,7 +384,6 @@
         progressEl.textContent = `Вопрос ${currentIndex + 1} из ${totalQuestions}`;
         questionEl.textContent = currentItem.name;
 
-        // Подготовка вариантов
         let options = [correctAnswer];
         let allOtherFormulas = allFormulas.filter(f => f.formula !== correctAnswer).map(f => f.formula);
         allOtherFormulas = shuffle(allOtherFormulas);
@@ -417,7 +394,6 @@
 
         options = shuffle(options);
 
-        // Рендер кнопок
         optionsEl.innerHTML = "";
         options.forEach(option => {
             const btn = document.createElement('button');
@@ -432,7 +408,6 @@
         }
     }
 
-    // Проверка ответа
     function checkAnswer(btn, selectedOption) {
         if (isLocked) return;
         isLocked = true;
@@ -443,7 +418,7 @@
             btn.classList.add('correct');
             feedbackEl.textContent = "Правильно! 🎉";
             feedbackEl.style.color = "var(--correct)";
-            correctCount++; // Считаем правильные ответы
+            correctCount++;
             
             setTimeout(() => {
                 currentIndex++;
@@ -467,7 +442,6 @@
         }
     }
 
-    // Показать результаты
     function showResults() {
         testScreen.classList.add('hidden');
         studyScreen.classList.add('hidden');
@@ -475,7 +449,6 @@
 
         resultScoreEl.textContent = `Правильных ответов: ${correctCount} из ${totalQuestions}`;
 
-        // Определение звания
         let rank = "";
         if (correctCount >= 60) rank = "Эйнштейн! 🏆";
         else if (correctCount >= 50) rank = "Ньютон 🍎";
@@ -488,28 +461,24 @@
         resultRankEl.textContent = rank;
     }
 
-    // Переход к экрану результатов (из режима изучения)
     function showResultScreen() {
         studyScreen.classList.add('hidden');
         resultScreen.classList.remove('hidden');
     }
 
-    // Экран изучения формул
     function showStudyScreen() {
         resultScreen.classList.add('hidden');
         testScreen.classList.add('hidden');
         studyScreen.classList.remove('hidden');
 
-        // Генерация контента, если еще не сгенерирован
-        if (studyContentEl.innerHTML === "") {
-            // Группировка по категориям
+        // Теперь проверяем не текст в блоке, а специальный флаг
+        if (!isStudyRendered) {
             const grouped = {};
             allFormulas.forEach(f => {
                 if (!grouped[f.category]) grouped[f.category] = [];
                 grouped[f.category].push(f);
             });
 
-            // Построение HTML
             let html = "";
             for (const category in grouped) {
                 html += `<div class="study-section">`;
@@ -525,15 +494,14 @@
                 html += `</div>`;
             }
             studyContentEl.innerHTML = html;
+            isStudyRendered = true; // Отмечаем, что мы создали контент
 
-            // Отрисовка формул через MathJax
             if (window.MathJax) {
                 MathJax.typesetPromise([studyContentEl]).catch(err => console.error(err));
             }
         }
     }
 
-    // Инициализация
     window.onload = () => {
         setTimeout(startNewTest, 500);
     };
