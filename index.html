@@ -129,6 +129,7 @@
             display: flex;
             flex-direction: column;
             align-items: center;
+            justify-content: space-between;
         }
         .menu-card:hover {
             background: rgba(255, 255, 255, 0.1);
@@ -137,15 +138,17 @@
             border-color: var(--accent);
         }
         .menu-icon { font-size: 40px; margin-bottom: 10px; }
-        .menu-title { font-size: 16px; font-weight: bold; margin-bottom: 5px; }
+        .menu-title { font-size: 16px; font-weight: bold; margin-bottom: 5px; flex-grow: 1; }
         
         .menu-badge {
             font-size: 12px;
             background: rgba(0,0,0,0.4);
-            padding: 3px 8px;
+            padding: 4px 8px;
             border-radius: 10px;
             color: var(--correct);
-            margin-top: 5px;
+            margin-top: auto;
+            text-align: center;
+            line-height: 1.2;
         }
         .menu-badge.record { color: var(--warning); }
 
@@ -727,12 +730,48 @@
     let progress = JSON.parse(localStorage.getItem('weixtor_progress')) || {
         snake: { completed: [], record: 0 },
         moles: { completed: [], record: 0 },
+        physics: { score: 0, played: false },
         hangman: { score: 0, rank: "", completed: false }
     };
 
     function saveProgress() {
         localStorage.setItem('weixtor_progress', JSON.stringify(progress));
         updateMenuBadges();
+    }
+
+    const genitiveRanks = {
+        "Эйнштейн": "Эйнштейна",
+        "Ньютон": "Ньютона",
+        "Галилей": "Галилея",
+        "Герц": "Герца",
+        "Архимед": "Архимеда",
+        "Профессор": "Профессора",
+        "Учитель": "Учителя",
+        "Ученик": "Ученика",
+        "Студент": "Студента",
+        "Школьник": "Школьника",
+        "Ребенок": "Ребенка",
+        "Тупица": "Тупицы"
+    };
+
+    function getFormulaRank(score) {
+        if (score >= 60) return { name: "Эйнштейн", val: 11 };
+        if (score >= 50) return { name: "Ньютон", val: 10 };
+        if (score >= 40) return { name: "Архимед", val: 8 };
+        if (score >= 30) return { name: "Профессор", val: 6 };
+        if (score >= 20) return { name: "Учитель", val: 5 };
+        if (score >= 10) return { name: "Студент", val: 3 };
+        return { name: "Школьник", val: 2 };
+    }
+
+    function getHangmanRank(score) {
+        if (score >= 130) return { name: "Эйнштейн", val: 11 };
+        if (score >= 100) return { name: "Ньютон", val: 10 };
+        if (score >= 80) return { name: "Галилей", val: 9 };
+        if (score >= 60) return { name: "Герц", val: 7 };
+        if (score >= 40) return { name: "Ученик", val: 4 };
+        if (score >= 20) return { name: "Ребенок", val: 1 };
+        return { name: "Тупица", val: 0 };
     }
 
     function updateMenuBadges() {
@@ -752,13 +791,32 @@
             molesBadge.classList.add('record');
         }
 
-        if (progress.hangman.completed) {
-            physicsBadge.textContent = `Виселица: ${progress.hangman.rank}`;
-        } else if (progress.hangman.score > 0) {
-            physicsBadge.textContent = `Виселица: ${progress.hangman.score}/150`;
-        } else {
-            physicsBadge.textContent = "Формулы и Виселица";
+        let fRank = null, hRank = null;
+        let p = progress.physics || { score: 0, played: false };
+        let h = progress.hangman || { score: 0, completed: false };
+
+        if (p.played) fRank = getFormulaRank(p.score);
+        if (h.completed) hRank = getHangmanRank(h.score);
+
+        let badgeText = "Формулы и Виселица";
+        if (fRank && !hRank) {
+            badgeText = `Формулы: ${fRank.name}`;
+        } else if (!fRank && hRank) {
+            badgeText = `Виселица: ${hRank.name}`;
+        } else if (fRank && hRank) {
+            if (fRank.name === hRank.name) {
+                badgeText = `Умнее ${genitiveRanks[fRank.name]}`;
+            } else {
+                badgeText = `Ф: ${fRank.name} | В: ${hRank.name}`;
+            }
         }
+        
+        // Prevent overflow
+        if (badgeText.length > 25 && fRank && hRank) {
+            badgeText = `Ф: ${fRank.name} | В: ${hRank.name}`;
+        }
+        
+        physicsBadge.textContent = badgeText;
     }
 
     function switchApp(appName) {
@@ -1099,6 +1157,15 @@
             document.getElementById('result-screen').classList.remove('hidden');
             savePhysicsState();
         }
+        
+        // Сохраняем рекорд формул
+        if (!progress.physics) progress.physics = { score: 0, played: false };
+        if (totalScore > progress.physics.score) {
+            progress.physics.score = totalScore;
+            progress.physics.played = true;
+            saveProgress();
+        }
+
         const percent = (totalScore / maxScore) * 100;
         document.getElementById('result-score').textContent = `Баллы: ${totalScore.toFixed(2)} из ${maxScore}`;
         document.getElementById('result-percent').textContent = `${percent.toFixed(1)}%`;
@@ -1152,12 +1219,9 @@
     // ЛОГИКА ВИСЕЛИЦЫ
     // ==========================================
     const hangmanWords = [
-        // Группа 1 (Легкие - 3 ошибки)
         ["СИЛА", "МАССА", "ВРЕМЯ", "ПУТЬ", "СКОРОСТЬ", "ПЛОТНОСТЬ", "ДАВЛЕНИЕ", "РАБОТА", "МОЩНОСТЬ", "ЭНЕРГИЯ", "АТОМ", "МОЛЕКУЛА", "ТЕПЛО", "ПАР", "ЛЕД", "ВОДА", "ОГОНЬ", "СВЕТ", "ЗВУК", "ВОЛНА", "ОПЫТ", "МЕТР", "СЕКУНДА", "КИЛОГРАММ", "НЬЮТОН", "ДЖОУЛЬ", "ВАТТ", "ПАСКАЛЬ", "СИЛАЧ", "РЫЧАГ", "БЛОК", "ВИНТ", "ТРЕНИЕ", "ИНЕРЦИЯ", "ДИНАМОМЕТР", "МЕНЗУРКА", "ВЕСЫ", "ЛИНЕЙКА", "ТЕРМОМЕТР", "СВЕЧА", "ЛАМПА", "ТЕНЬ", "ЭХО", "РАДУГА", "МОЛНИЯ", "ГРОМ", "ВЕТЕР", "ПЫЛЬ", "КРИСТАЛЛ", "ГРАД"],
-        // Группа 2 (Средние - 4 ошибки)
-        ["ТЕМПЕРАТУРА", "КОЛИЧЕСТВО", "ТЕПЛОПЕРЕДАЧА", "ТЕПЛОПРОВОДНОСТЬ", "КОНВЕКЦИЯ", "ИЗЛУЧЕНИЕ", "ПЛАВЛЕНИЕ", "КРИСТАЛЛИЗАЦИЯ", "ИСПАРЕНИЕ", "КОНДЕНСАЦИЯ", "КИПЕНИЕ", "ВЛАЖНОСТЬ", "ДВИГАТЕЛЬ", "ТУРБИНА", "ЭЛЕКТРИЗАЦИЯ", "ЗАРЯД", "ЭЛЕКТРОСКОП", "ПРОВОДНИК", "ДИЭЛЕКТРИК", "НАПРЯЖЕНИЕ", "СОПРОТИВЛЕНИЕ", "АМПЕРМЕТР", "ВОЛЬТМЕТР", "РЕЗИСТОР", "РЕОСТАТ", "ПОЛУПРОВОДНИК", "ТОК", "НАПРЯЖЕНИЕ", "МОЩНОСТЬ", "ЛАМПА", "ПРЕДОХРАНИТЕЛЬ", "КОРОТКОЕ", "МАГНИТ", "КАТУШКА", "ЭЛЕКТРОМАГНИТ", "КОМПАС", "МОТОР", "ГЕНЕРАТОР", "ТРАНСФОРМАТОР", "ЗВУК", "ЭХО", "ИНФРАЗВУК", "УЛЬТРАЗВУК", "ОКТАВА", "ТЕМБР", "АМПЛИТУДА", "ЧАСТОТА", "ПЕРИОД", "РЕЗОНАНС", "КОЛЕБАНИЕ"],
-        // Группа 3 (Сложные - 5 ошибок)
-        ["УСКОРЕНИЕ", "ТРАЕКТОРИЯ", "ПЕРЕМЕЩЕНИЕ", "ОТНОСИТЕЛЬНОСТЬ", "РАВНОМЕРНОЕ", "УСКОРЕННОЕ", "ЦЕНТРОСТРЕМИТЕЛЬНОЕ", "ИМПУЛЬС", "РЕАКТИВНОЕ", "ВСЕМИРНОЕ", "ТЯГОТЕНИЕ", "НЕВЕСОМОСТЬ", "ОРБИТА", "СПУТНИК", "РАКЕТА", "КОСМОНАВТ", "ЛИНЗА", "ФОКУС", "ДИОПТРИЯ", "МИКРОСКОП", "ТЕЛЕСКОП", "ДИСПЕРСИЯ", "СПЕКТР", "ИНТЕРФЕРЕНЦИЯ", "ДИФРАКЦИЯ", "ПОЛЯРИЗАЦИЯ", "ФОТОН", "КВАНТ", "ПЛАНК", "БОР", "РЕЗЕРФОРД", "РАДИОАКТИВНОСТЬ", "ИЗОТОП", "НЕЙТРОН", "ПРОТОН", "ЭЛЕКТРОН", "ЯДРО", "РАСПАД", "ГАММА", "БЕТА", "АЛЬФА", "АТОМ", "МОЛЕКУЛА", "ИОН", "ПЛАЗМА", "ВАККУУМ", "АНТИЧАСТИЦА", "ПОЗИТРОН", "НЕЙТРИНО", "ГРАВИТОН"]
+        ["ТЕМПЕРАТУРА", "КОЛИЧЕСТВО", "ТЕПЛОПЕРЕДАЧА", "ТЕПЛОПРОВОДНОСТЬ", "КОНВЕКЦИЯ", "ИЗЛУЧЕНИЕ", "ПЛАВЛЕНИЕ", "КРИСТАЛЛИЗАЦИЯ", "ИСПАРЕНИЕ", "КОНДЕНСАЦИЯ", "КИПЕНИЕ", "ВЛАЖНОСТЬ", "ДВИГАТЕЛЬ", "ТУРБИНА", "ЭЛЕКТРИЗАЦИЯ", "ЗАРЯД", "ЭЛЕКТРОСКОП", "ПРОВОДНИК", "ДИЭЛЕКТРИК", "НАПРЯЖЕНИЕ", "СОПРОТИВЛЕНИЕ", "АМПЕРМЕТР", "ВОЛЬТМЕТР", "РЕЗИСТОР", "РЕОСТАТ", "ПОЛУПРОВОДНИК", "ТОК", "ЭЛЕКТРОН", "ПРОВОД", "ЛАМПА", "ПРЕДОХРАНИТЕЛЬ", "КОРОТКОЕ", "МАГНИТ", "КАТУШКА", "ЭЛЕКТРОМАГНИТ", "КОМПАС", "МОТОР", "ГЕНЕРАТОР", "ТРАНСФОРМАТОР", "ЗВУК", "ЭХО", "ИНФРАЗВУК", "УЛЬТРАЗВУК", "ОКТАВА", "ТЕМБР", "АМПЛИТУДА", "ЧАСТОТА", "ПЕРИОД", "РЕЗОНАНС", "КОЛЕБАНИЕ"],
+        ["УСКОРЕНИЕ", "ТРАЕКТОРИЯ", "ПЕРЕМЕЩЕНИЕ", "ОТНОСИТЕЛЬНОСТЬ", "РАВНОМЕРНОЕ", "УСКОРЕННОЕ", "ЦЕНТРОСТРЕМИТЕЛЬНОЕ", "ИМПУЛЬС", "РЕАКТИВНОЕ", "ВСЕМИРНОЕ", "ТЯГОТЕНИЕ", "НЕВЕСОМОСТЬ", "ОРБИТА", "СПУТНИК", "РАКЕТА", "КОСМОНАВТ", "ЛИНЗА", "ФОКУС", "ДИОПТРИЯ", "МИКРОСКОП", "ТЕЛЕСКОП", "ДИСПЕРСИЯ", "СПЕКТР", "ИНТЕРФЕРЕНЦИЯ", "ДИФРАКЦИЯ", "ПОЛЯРИЗАЦИЯ", "ФОТОН", "КВАНТ", "ПЛАНК", "БОР", "РЕЗЕРФОРД", "РАДИОАКТИВНОСТЬ", "ИЗОТОП", "НЕЙТРОН", "ПРОТОН", "ЭЛЕКТРОН", "ЯДРО", "РАСПАД", "ГАММА", "БЕТА", "АЛЬФА", "АТОМ", "ИОН", "ПЛАЗМА", "ВАККУУМ", "АНТИЧАСТИЦА", "ПОЗИТРОН", "НЕЙТРИНО", "ГРАВИТОН", "КВАЗАР"]
     ];
 
     let hangmanState = JSON.parse(localStorage.getItem('hangmanState')) || {
@@ -1184,7 +1248,6 @@
         document.getElementById('hangman-game-screen').classList.remove('hidden');
         document.getElementById('hangman-result-screen').classList.add('hidden');
         
-        // Синхронизация с глобальным прогрессом
         hangmanState.score = progress.hangman.score;
         
         if (hangmanState.currentGroup >= 3) {
@@ -1202,7 +1265,6 @@
         else hangmanState.maxMistakes = 5;
 
         if (hangmanState.currentWordIndex === 0 && hangmanState.currentGroup === 0) {
-            // Сброс подсказок при старте с нуля
             if(hangmanState.score === 0) hangmanState.hintsLeft = 5;
         }
         if (hangmanState.currentWordIndex === 0 && hangmanState.currentGroup > 0) {
@@ -1296,11 +1358,9 @@
         document.getElementById(`key-${char}`).disabled = true;
 
         if (currentHangmanWord.includes(char)) {
-            // Правильно
             renderHangmanWord();
             checkHangmanWin();
         } else {
-            // Ошибка
             mistakes++;
             updateHangmanInfo();
             if (mistakes >= hangmanState.maxMistakes) {
@@ -1324,18 +1384,17 @@
             saveHangmanState();
             saveProgress();
             
-            setTimeout(nextHangmanWord, 1000); // Пауза перед следующим словом
+            setTimeout(nextHangmanWord, 1000);
         }
     }
 
     function hangmanGameOver() {
         isHangmanActive = false;
-        // Показываем правильное слово
         guessedLetters = currentHangmanWord.split('');
         renderHangmanWord();
         renderKeyboard();
         
-        setTimeout(nextHangmanWord, 2000); // Пауза перед следующим
+        setTimeout(nextHangmanWord, 2000);
     }
 
     function useHangmanHint() {
@@ -1343,7 +1402,6 @@
         hangmanState.hintsLeft--;
         updateHangmanInfo();
 
-        // Ищем неотгаданную букву
         let hiddenChars = [];
         for (let char of currentHangmanWord) {
             if (!guessedLetters.includes(char)) {
@@ -1360,7 +1418,6 @@
     function nextHangmanWord() {
         hangmanState.currentWordIndex++;
         
-        // Проверка переходов между группами
         if (hangmanState.currentGroup === 0 && hangmanState.currentWordIndex >= 50) {
             hangmanState.currentGroup = 1;
             hangmanState.currentWordIndex = 0;
@@ -1867,4 +1924,773 @@
 
     function getTttSymbol(player) {
         if (player === 'X') {
-            return `<svg class="ttt-svg
+            return `<svg class="ttt-svg x" viewBox="0 0 100 100"><path d="M 20 20 L 80 80 M 80 20 L 20 80" /></svg>`;
+        } else {
+            return `<svg class="ttt-svg o" viewBox="0 0 100 100"><circle cx="50" cy="50" r="30" /></svg>`;
+        }
+    }
+
+    function handleTttClick(index) {
+        if (!tttGameActive || tttBoard[index] || (currentTttMode !== 'friend' && tttCurrentPlayer !== 'X')) return;
+        
+        makeTttMove(index, tttCurrentPlayer);
+        
+        if (currentTttMode !== 'friend' && tttGameActive && tttCurrentPlayer === 'O') {
+            tttBotTimeout = setTimeout(botTttMove, 500);
+        }
+    }
+
+    function makeTttMove(index, player) {
+        tttBoard[index] = player;
+        renderTttBoard();
+        
+        const winner = checkTttWinner();
+        if (winner) {
+            tttGameActive = false;
+            if (winner === 'X') {
+                updateTttStatus("Вы победили! 🎉");
+            } else if (winner === 'O') {
+                updateTttStatus(currentTttMode === 'friend' ? "Победили Нолики! 🎉" : "Бот победил! 🤖");
+            } else if (winner === 'Draw') {
+                updateTttStatus("Ничья! 🤝");
+            }
+            renderTttBoard();
+            return;
+        }
+
+        tttCurrentPlayer = tttCurrentPlayer === 'X' ? 'O' : 'X';
+        updateTttStatus();
+    }
+
+    function updateTttStatus(msg) {
+        const statusEl = document.getElementById('ttt-status');
+        if (msg) {
+            statusEl.textContent = msg;
+        } else {
+            if (currentTttMode === 'friend') {
+                statusEl.textContent = `Ход: ${tttCurrentPlayer}`;
+            } else {
+                statusEl.textContent = tttCurrentPlayer === 'X' ? "Ваш ход (X)" : "Бот думает...";
+            }
+        }
+    }
+
+    function checkTttWinner() {
+        const lines = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+        for (let i = 0; i < lines.length; i++) {
+            const [a, b, c] = lines[i];
+            if (tttBoard[a] && tttBoard[a] === tttBoard[b] && tttBoard[a] === tttBoard[c]) {
+                return tttBoard[a];
+            }
+        }
+        return tttBoard.includes(null) ? null : 'Draw';
+    }
+
+    function botTttMove() {
+        if (!tttGameActive || tttCurrentPlayer !== 'O') return;
+        let moveIndex = -1;
+
+        if (currentTttMode === 'easy') {
+            const available = tttBoard.map((v, i) => v === null ? i : null).filter(v => v !== null);
+            moveIndex = available[Math.floor(Math.random() * available.length)];
+        } else if (currentTttMode === 'medium') {
+            moveIndex = findWinningMove('O') ?? findWinningMove('X') ?? getRandomTttMove();
+        } else if (currentTttMode === 'hard') {
+            let gamesPlayed = parseInt(localStorage.getItem('tttHardGames') || '0');
+            gamesPlayed++;
+            localStorage.setItem('tttHardGames', gamesPlayed);
+            if (gamesPlayed % 21 === 0) {
+                const available = tttBoard.map((v, i) => v === null ? i : null).filter(v => v !== null);
+                moveIndex = available[Math.floor(Math.random() * available.length)];
+            } else {
+                moveIndex = getBestTttMoveMinimax();
+            }
+        }
+        if (moveIndex !== -1) makeTttMove(moveIndex, 'O');
+    }
+
+    function findWinningMove(player) {
+        const lines = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+        for (let i = 0; i < lines.length; i++) {
+            const [a, b, c] = lines[i];
+            if (tttBoard[a] === player && tttBoard[b] === player && tttBoard[c] === null) return c;
+            if (tttBoard[a] === player && tttBoard[c] === player && tttBoard[b] === null) return b;
+            if (tttBoard[b] === player && tttBoard[c] === player && tttBoard[a] === null) return a;
+        }
+        return null;
+    }
+
+    function getRandomTttMove() {
+        const available = tttBoard.map((v, i) => v === null ? i : null).filter(v => v !== null);
+        return available[Math.floor(Math.random() * available.length)];
+    }
+
+    function getBestTttMoveMinimax() {
+        let bestScore = -Infinity;
+        let bestMove = -1;
+        if (tttBoard.every(cell => cell === null)) return 4;
+        for (let i = 0; i < 9; i++) {
+            if (tttBoard[i] === null) {
+                tttBoard[i] = 'O';
+                let score = minimaxTtt(tttBoard, 0, false);
+                tttBoard[i] = null;
+                if (score > bestScore) { bestScore = score; bestMove = i; }
+            }
+        }
+        return bestMove;
+    }
+
+    function minimaxTtt(board, depth, isMaximizing) {
+        let result = checkTttWinnerForMinimax(board);
+        if (result !== null) {
+            if (result === 'O') return 10 - depth;
+            if (result === 'X') return depth - 10;
+            if (result === 'Draw') return 0;
+        }
+        if (isMaximizing) {
+            let bestScore = -Infinity;
+            for (let i = 0; i < 9; i++) {
+                if (board[i] === null) {
+                    board[i] = 'O';
+                    let score = minimaxTtt(board, depth + 1, false);
+                    board[i] = null;
+                    bestScore = Math.max(score, bestScore);
+                }
+            }
+            return bestScore;
+        } else {
+            let bestScore = Infinity;
+            for (let i = 0; i < 9; i++) {
+                if (board[i] === null) {
+                    board[i] = 'X';
+                    let score = minimaxTtt(board, depth + 1, true);
+                    board[i] = null;
+                    bestScore = Math.min(score, bestScore);
+                }
+            }
+            return bestScore;
+        }
+    }
+
+    function checkTttWinnerForMinimax(board) {
+        const lines = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+        for (let i = 0; i < lines.length; i++) {
+            const [a, b, c] = lines[i];
+            if (board[a] && board[a] === board[b] && board[a] === board[c]) return board[a];
+        }
+        return board.includes(null) ? null : 'Draw';
+    }
+
+    // ==========================================
+    // ЛОГИКА ЗМЕЙКИ
+    // ==========================================
+    let snakeGridSize = 10;
+    let snakeBody = [];
+    let snakeDir = { x: 1, y: 0 };
+    let snakeNextDir = { x: 1, y: 0 };
+    let snakeScore = 0;
+    let snakeTargetScore = 7;
+    let snakeFood = { x: 0, y: 0, type: 'star' };
+    let snakeLevel = 1;
+    let snakeGameActive = false;
+    let snakeInterval = null;
+
+    const snakeLevelConfigs = [
+        { target: 7, speed: 240 },  // 1
+        { target: 7, speed: 240 },  // 2
+        { target: 7, speed: 240 },  // 3
+        { target: 12, speed: 192 }, // 4
+        { target: 12, speed: 192 }, // 5
+        { target: 12, speed: 192 }, // 6
+        { target: 12, speed: 192 }, // 7
+        { target: 15, speed: 160 }, // 8
+        { target: 15, speed: 160 }, // 9
+        { target: 15, speed: 160 }, // 10
+        { target: 20, speed: 137 }, // 11
+        { target: 25, speed: 120 }, // 12
+        { target: 35, speed: 80, crown: true } // 13
+    ];
+
+    function showSnakeMenu() {
+        snakeStopGame();
+        document.getElementById('snake-mode-select').classList.remove('hidden');
+        document.getElementById('snake-game').classList.add('hidden');
+        
+        const container = document.getElementById('snake-levels-container');
+        container.innerHTML = '';
+
+        const groups = [
+            { name: "Легкие", levels: [1, 2, 3] },
+            { name: "Средние", levels: [4, 5, 6, 7] },
+            { name: "Сложные", levels: [8, 9, 10] },
+            { name: "Максимальные", levels: [11, 12] },
+            { name: "Королевский", levels: [13] }
+        ];
+
+        groups.forEach(group => {
+            const groupDiv = document.createElement('div');
+            groupDiv.className = 'level-group';
+            groupDiv.innerHTML = `<div class="level-group-title">${group.name}</div>`;
+            
+            const gridDiv = document.createElement('div');
+            gridDiv.className = 'level-grid';
+
+            group.levels.forEach(lvlNum => {
+                const btn = document.createElement('button');
+                btn.className = 'level-btn';
+                
+                if (lvlNum === 13) {
+                    btn.innerHTML = `<span class="crown-icon">👑</span>13`;
+                    btn.style.borderColor = 'gold';
+                } else {
+                    btn.textContent = lvlNum;
+                }
+
+                if (progress.snake.completed.includes(lvlNum)) {
+                    btn.classList.add('completed');
+                }
+
+                btn.onclick = () => startSnake(lvlNum);
+                gridDiv.appendChild(btn);
+            });
+            groupDiv.appendChild(gridDiv);
+            container.appendChild(groupDiv);
+        });
+    }
+
+    function startSnake(lvlIndex) {
+        snakeStopGame();
+        snakeLevel = lvlIndex;
+        const config = snakeLevelConfigs[snakeLevel - 1];
+        snakeTargetScore = config.target;
+        snakeGameActive = true;
+        
+        document.getElementById('snake-mode-select').classList.add('hidden');
+        document.getElementById('snake-game').classList.remove('hidden');
+        document.getElementById('snake-overlay').classList.add('hidden');
+        document.getElementById('snake-next-btn').style.display = 'none';
+
+        snakeBody = [{ x: 5, y: 5 }];
+        snakeDir = { x: 1, y: 0 };
+        snakeNextDir = { x: 1, y: 0 };
+        snakeScore = 0;
+        
+        spawnSnakeFood();
+        updateSnakeHUD();
+        renderSnake();
+        
+        snakeInterval = setInterval(snakeTick, config.speed);
+    }
+
+    function snakeStopGame() {
+        snakeGameActive = false;
+        if (snakeInterval) {
+            clearInterval(snakeInterval);
+            snakeInterval = null;
+        }
+    }
+
+    function spawnSnakeFood() {
+        let emptyCells = [];
+        for (let x = 0; x < snakeGridSize; x++) {
+            for (let y = 0; y < snakeGridSize; y++) {
+                if (!snakeBody.some(s => s.x === x && s.y === y)) emptyCells.push({x, y});
+            }
+        }
+        if (emptyCells.length === 0) return;
+        let pos = emptyCells[Math.floor(Math.random() * emptyCells.length)];
+        let type = Math.random() < 0.25 ? 'emblem' : 'star';
+        snakeFood = { x: pos.x, y: pos.y, type: type };
+    }
+
+    function snakeChangeDir(nx, ny) {
+        if (!snakeGameActive) return;
+        if (snakeDir.x === -nx && snakeDir.y === -ny) return;
+        snakeNextDir = { x: nx, y: ny };
+    }
+
+    function snakeTick() {
+        if (!snakeGameActive) return;
+        snakeDir = { x: snakeNextDir.x, y: snakeNextDir.y };
+        
+        let head = { x: snakeBody[0].x + snakeDir.x, y: snakeBody[0].y + snakeDir.y };
+        
+        if (head.x < 0) head.x = snakeGridSize - 1;
+        if (head.x >= snakeGridSize) head.x = 0;
+        if (head.y < 0) head.y = snakeGridSize - 1;
+        if (head.y >= snakeGridSize) head.y = 0;
+
+        for (let i = 0; i < snakeBody.length - 1; i++) {
+            if (snakeBody[i].x === head.x && snakeBody[i].y === head.y) {
+                snakeGameOver();
+                return;
+            }
+        }
+
+        snakeBody.unshift(head);
+
+        if (head.x === snakeFood.x && head.y === snakeFood.y) {
+            let pts = snakeFood.type === 'emblem' ? 3 : 1;
+            snakeScore += pts;
+            updateSnakeHUD();
+            
+            if (snakeScore >= snakeTargetScore) {
+                snakeWin();
+                return;
+            }
+            spawnSnakeFood();
+        } else {
+            snakeBody.pop();
+        }
+
+        renderSnake();
+    }
+
+    function renderSnake() {
+        const boardEl = document.getElementById('snake-board');
+        boardEl.innerHTML = '';
+        
+        for (let y = 0; y < snakeGridSize; y++) {
+            for (let x = 0; x < snakeGridSize; x++) {
+                const cell = document.createElement('div');
+                cell.className = 'snake-cell';
+                
+                if (snakeFood.x === x && snakeFood.y === y) {
+                    const foodSpan = document.createElement('span');
+                    foodSpan.className = 'snake-food';
+                    if (snakeFood.type === 'emblem') {
+                        foodSpan.innerHTML = '☭';
+                        foodSpan.style.color = '#fbbf24';
+                        foodSpan.style.textShadow = '0 0 8px #fbbf24';
+                    } else {
+                        foodSpan.innerHTML = '★';
+                        foodSpan.style.color = '#ef4444';
+                        foodSpan.style.textShadow = '0 0 8px #ef4444';
+                    }
+                    cell.appendChild(foodSpan);
+                }
+
+                const segIndex = snakeBody.findIndex(s => s.x === x && s.y === y);
+                if (segIndex !== -1) {
+                    const segDiv = document.createElement('div');
+                    segDiv.className = segIndex === 0 ? 'snake-head' : 'snake-body';
+                    
+                    if (segIndex === 0) {
+                        segDiv.innerHTML = `
+                            <svg viewBox="0 0 100 100" style="width:100%; height:100%; display:block;">
+                                <rect width="100" height="100" fill="#2e4a2e" />
+                                <path d="M 0 0 L 100 0 L 100 45 Q 50 90 0 40 Z" fill="black" />
+                            </svg>`;
+                    } else {
+                        segDiv.innerHTML = `
+                            <svg viewBox="0 0 100 100" style="width:100%; height:100%; display:block;">
+                                <rect width="100" height="100" fill="#2e4a2e" />
+                                <path d="M 30 20 L 70 80 M 70 20 L 30 80" stroke="black" stroke-width="18" stroke-linecap="round"/>
+                                <path d="M 30 20 L 70 80 M 70 20 L 30 80" stroke="white" stroke-width="6" stroke-linecap="round"/>
+                            </svg>`;
+                    }
+                    cell.appendChild(segDiv);
+                }
+                
+                boardEl.appendChild(cell);
+            }
+        }
+    }
+
+    function updateSnakeHUD() {
+        document.getElementById('snake-status').textContent = `Очки: ${snakeScore} / ${snakeTargetScore}`;
+    }
+
+    function snakeWin() {
+        snakeStopGame();
+        
+        if (!progress.snake.completed.includes(snakeLevel)) {
+            progress.snake.completed.push(snakeLevel);
+        }
+        if (snakeLevel === 13 && snakeScore > progress.snake.record) {
+            progress.snake.record = snakeScore;
+        }
+        saveProgress();
+
+        const winWords = ["Молодец", "Красава"];
+        document.getElementById('snake-overlay-text').textContent = winWords[Math.floor(Math.random() * winWords.length)];
+        document.getElementById('snake-overlay-text').style.color = "var(--correct)";
+        
+        const nextBtn = document.getElementById('snake-next-btn');
+        if (snakeLevel < 12) {
+            nextBtn.style.display = 'inline-block';
+        } else if (snakeLevel === 12) {
+            nextBtn.style.display = 'inline-block';
+            nextBtn.onclick = () => startSnake(13);
+        } else {
+            nextBtn.style.display = 'none';
+            document.getElementById('snake-overlay-text').textContent = "Вы прошли игру!";
+        }
+        
+        document.getElementById('snake-overlay').classList.remove('hidden');
+    }
+
+    function snakeGameOver() {
+        snakeStopGame();
+        const loseWords = ["Лох", "Лузер", "Неудача"];
+        document.getElementById('snake-overlay-text').textContent = loseWords[Math.floor(Math.random() * loseWords.length)];
+        document.getElementById('snake-overlay-text').style.color = "var(--wrong)";
+        document.getElementById('snake-next-btn').style.display = 'none';
+        document.getElementById('snake-overlay').classList.remove('hidden');
+    }
+
+    function snakeNextLevel() {
+        if (snakeLevel < 12) {
+            startSnake(snakeLevel + 1);
+        }
+    }
+
+    let snakeTouchStartX = 0;
+    let snakeTouchStartY = 0;
+    const snakeBoardEl = document.getElementById('snake-board');
+    snakeBoardEl.addEventListener('touchstart', e => {
+        if (currentApp !== 'snake') return;
+        snakeTouchStartX = e.changedTouches[0].screenX;
+        snakeTouchStartY = e.changedTouches[0].screenY;
+    }, { passive: false });
+    snakeBoardEl.addEventListener('touchend', e => {
+        if (currentApp !== 'snake') return;
+        let dx = e.changedTouches[0].screenX - snakeTouchStartX;
+        let dy = e.changedTouches[0].screenY - snakeTouchStartY;
+        if (Math.abs(dx) > Math.abs(dy)) {
+            if (Math.abs(dx) > 30) { if (dx > 0) snakeChangeDir(1, 0); else snakeChangeDir(-1, 0); }
+        } else {
+            if (Math.abs(dy) > 30) { if (dy > 0) snakeChangeDir(0, 1); else snakeChangeDir(0, -1); }
+        }
+    }, { passive: false });
+
+    // ==========================================
+    // ЛОГИКА ИГРЫ "УБЕЙ КРОТА"
+    // ==========================================
+    let moleLevel = 1;
+    let molesHit = 0;
+    let molesMissed = 0;
+    let moleTarget = 10;
+    let moleGridSize = 2;
+    let moleSpeed = 1300;
+    let moleActiveIndex = -1;
+    let moleTimeout = null;
+    let moleGameActive = false;
+    let isRecordMode = false;
+
+    const moleLevelConfigs = [
+        { grid: 2, target: 10, time: 1300 }, // 1-5
+        { grid: 2, target: 10, time: 1300 },
+        { grid: 2, target: 10, time: 1300 },
+        { grid: 2, target: 10, time: 1300 },
+        { grid: 2, target: 10, time: 1300 },
+        { grid: 3, target: 15, time: 1100 }, // 6-10
+        { grid: 3, target: 15, time: 1100 },
+        { grid: 3, target: 15, time: 1100 },
+        { grid: 3, target: 15, time: 1100 },
+        { grid: 3, target: 15, time: 1100 },
+        { grid: 4, target: 20, time: 900 },  // 11-15
+        { grid: 4, target: 20, time: 900 },
+        { grid: 4, target: 20, time: 900 },
+        { grid: 4, target: 20, time: 900 },
+        { grid: 4, target: 20, time: 900 },
+        { grid: 4, target: 23, time: 700 },  // 16-20
+        { grid: 4, target: 23, time: 700 },
+        { grid: 4, target: 23, time: 700 },
+        { grid: 4, target: 23, time: 700 },
+        { grid: 4, target: 23, time: 700 },
+        { grid: 5, target: 50, time: 500, crown: true } // 21
+    ];
+
+    const hammerCursor = document.getElementById('hammer');
+    document.addEventListener('mousemove', (e) => {
+        if (currentApp === 'moles' && moleGameActive) {
+            hammerCursor.style.display = 'block';
+            hammerCursor.style.left = (e.clientX - 30) + 'px';
+            hammerCursor.style.top = (e.clientY - 30) + 'px';
+        } else {
+            hammerCursor.style.display = 'none';
+        }
+    });
+    document.addEventListener('touchmove', (e) => {
+        if (currentApp === 'moles' && moleGameActive) {
+            hammerCursor.style.display = 'block';
+            let touch = e.touches[0];
+            hammerCursor.style.left = (touch.clientX - 30) + 'px';
+            hammerCursor.style.top = (touch.clientY - 30) + 'px';
+        }
+    }, { passive: true });
+
+    function showMolesMenu() {
+        molesStopGame();
+        document.getElementById('moles-mode-select').classList.remove('hidden');
+        document.getElementById('moles-game').classList.add('hidden');
+        hammerCursor.style.display = 'none';
+
+        const container = document.getElementById('moles-levels-container');
+        container.innerHTML = '';
+
+        const groups = [
+            { name: "Легкие", levels: [1, 2, 3, 4, 5] },
+            { name: "Средние", levels: [6, 7, 8, 9, 10] },
+            { name: "Сложные", levels: [11, 12, 13, 14, 15] },
+            { name: "Максимальные", levels: [16, 17, 18, 19, 20] },
+            { name: "Королевский", levels: [21] }
+        ];
+
+        groups.forEach(group => {
+            const groupDiv = document.createElement('div');
+            groupDiv.className = 'level-group';
+            groupDiv.innerHTML = `<div class="level-group-title">${group.name}</div>`;
+            
+            const gridDiv = document.createElement('div');
+            gridDiv.className = 'level-grid';
+
+            group.levels.forEach(lvlNum => {
+                const btn = document.createElement('button');
+                btn.className = 'level-btn';
+                
+                if (lvlNum === 21) {
+                    btn.innerHTML = `<span class="crown-icon">👑</span>21`;
+                    btn.style.borderColor = 'gold';
+                } else {
+                    btn.textContent = lvlNum;
+                }
+
+                if (progress.moles.completed.includes(lvlNum)) {
+                    btn.classList.add('completed');
+                }
+
+                btn.onclick = () => startMoles(lvlNum);
+                gridDiv.appendChild(btn);
+            });
+            groupDiv.appendChild(gridDiv);
+            container.appendChild(groupDiv);
+        });
+    }
+
+    function startMoles(level) {
+        molesStopGame();
+        moleLevel = level;
+        isRecordMode = false;
+        const config = moleLevelConfigs[level - 1];
+        
+        moleGridSize = config.grid;
+        moleTarget = config.target;
+        moleSpeed = config.time;
+        molesHit = 0;
+        molesMissed = 0;
+        moleGameActive = true;
+        moleActiveIndex = -1;
+
+        document.getElementById('moles-mode-select').classList.add('hidden');
+        document.getElementById('moles-game').classList.remove('hidden');
+        document.getElementById('moles-overlay').classList.add('hidden');
+        document.getElementById('moles-next-btn').style.display = 'none';
+        document.getElementById('moles-record-btn').style.display = 'none';
+
+        renderMolesGrid();
+        updateMolesHUD();
+        spawnMole();
+    }
+
+    function startMolesRecord() {
+        isRecordMode = true;
+        molesHit = 0;
+        molesMissed = 0;
+        moleGameActive = true;
+        moleTarget = Infinity;
+        moleSpeed = 500;
+        moleGridSize = 5;
+
+        document.getElementById('moles-overlay').classList.add('hidden');
+        renderMolesGrid();
+        updateMolesHUD();
+        spawnMole();
+    }
+
+    function molesStopGame() {
+        moleGameActive = false;
+        if (moleTimeout) clearTimeout(moleTimeout);
+        hammerCursor.style.display = 'none';
+    }
+
+    function renderMolesGrid() {
+        const gridEl = document.getElementById('moles-grid');
+        gridEl.innerHTML = '';
+        gridEl.style.gridTemplateColumns = `repeat(${moleGridSize}, 1fr)`;
+        gridEl.style.gridTemplateRows = `repeat(${moleGridSize}, 1fr)`;
+        
+        for (let i = 0; i < moleGridSize * moleGridSize; i++) {
+            const hole = document.createElement('div');
+            hole.className = 'mole-hole';
+            hole.onclick = (e) => { e.stopPropagation(); handleMoleMiss(); };
+
+            const mole = document.createElement('div');
+            mole.className = 'mole';
+            mole.id = `mole-${i}`;
+            
+            mole.innerHTML = `
+                <svg viewBox="0 0 100 100">
+                    <ellipse cx="50" cy="50" rx="48" ry="48" fill="#8b5a2b" />
+                    <circle cx="35" cy="35" r="8" fill="#1a0f07" />
+                    <circle cx="65" cy="35" r="8" fill="#1a0f07" />
+                    <ellipse cx="50" cy="65" rx="20" ry="15" fill="#d4a373" />
+                    <ellipse cx="50" cy="60" rx="8" ry="5" fill="#1a0f07" />
+                    <rect x="45" y="70" width="4" height="10" fill="white" rx="2"/>
+                    <rect x="51" y="70" width="4" height="10" fill="white" rx="2"/>
+                </svg>
+            `;
+
+            hole.appendChild(mole);
+            gridEl.appendChild(hole);
+        }
+    }
+
+    function spawnMole() {
+        if (!moleGameActive) return;
+
+        document.querySelectorAll('.mole').forEach(m => m.classList.remove('active'));
+        
+        const totalHoles = moleGridSize * moleGridSize;
+        moleActiveIndex = Math.floor(Math.random() * totalHoles);
+        
+        const activeMole = document.getElementById(`mole-${moleActiveIndex}`);
+        if (activeMole) {
+            activeMole.classList.add('active');
+            activeMole.onclick = (e) => { e.stopPropagation(); handleMoleHit(); };
+        }
+
+        moleTimeout = setTimeout(() => {
+            if (moleGameActive) {
+                triggerHammerStrike();
+                molesMissed++;
+                updateMolesHUD();
+                if (molesMissed >= 3) {
+                    molesGameOver();
+                } else {
+                    spawnMole();
+                }
+            }
+        }, moleSpeed);
+    }
+
+    function handleMoleHit() {
+        if (!moleGameActive) return;
+        
+        clearTimeout(moleTimeout);
+        triggerHammerStrike();
+        molesHit++;
+        updateMolesHUD();
+        
+        const activeMole = document.getElementById(`mole-${moleActiveIndex}`);
+        if (activeMole) activeMole.classList.remove('active');
+
+        if (molesHit >= moleTarget) {
+            molesWin();
+        } else {
+            setTimeout(spawnMole, 100);
+        }
+    }
+
+    function handleMoleMiss() {
+        if (!moleGameActive) return;
+        
+        clearTimeout(moleTimeout);
+        triggerHammerStrike();
+        molesMissed++;
+        updateMolesHUD();
+        
+        const activeMole = document.getElementById(`mole-${moleActiveIndex}`);
+        if (activeMole) activeMole.classList.remove('active');
+
+        if (molesMissed >= 3) {
+            molesGameOver();
+        } else {
+            setTimeout(spawnMole, 100);
+        }
+    }
+
+    function triggerHammerStrike() {
+        hammerCursor.classList.add('strike');
+        setTimeout(() => hammerCursor.classList.remove('strike'), 100);
+    }
+
+    function updateMolesHUD() {
+        if (isRecordMode) {
+            document.getElementById('moles-hit').textContent = `Убито: ${molesHit} (Рекорд: ${progress.moles.record})`;
+        } else {
+            document.getElementById('moles-hit').textContent = `Убито: ${molesHit} / ${moleTarget}`;
+        }
+        document.getElementById('moles-miss').textContent = `Промахи: ${molesMissed} / 3`;
+    }
+
+    function molesWin() {
+        molesStopGame();
+        
+        if (isRecordMode) return; 
+
+        if (!progress.moles.completed.includes(moleLevel)) {
+            progress.moles.completed.push(moleLevel);
+        }
+        saveProgress();
+
+        const winWords = ["Молодец", "Красава"];
+        document.getElementById('moles-overlay-text').textContent = winWords[Math.floor(Math.random() * winWords.length)];
+        document.getElementById('moles-overlay-text').style.color = "var(--correct)";
+        
+        if (moleLevel === 21) {
+            document.getElementById('moles-overlay-text').textContent = "Вы прошли игру!";
+            document.getElementById('moles-record-btn').style.display = 'inline-block';
+        } else {
+            document.getElementById('moles-next-btn').style.display = 'inline-block';
+        }
+        
+        document.getElementById('moles-overlay').classList.remove('hidden');
+    }
+
+    function molesGameOver() {
+        molesStopGame();
+
+        if (isRecordMode) {
+            if (molesHit > progress.moles.record) {
+                progress.moles.record = molesHit;
+                saveProgress();
+            }
+            document.getElementById('moles-overlay-text').textContent = `Рекорд: ${molesHit}`;
+            document.getElementById('moles-overlay-text').style.color = "var(--warning)";
+            document.getElementById('moles-record-btn').style.display = 'inline-block';
+        } else {
+            const loseWords = ["Лох", "Лузер", "Неудача"];
+            document.getElementById('moles-overlay-text').textContent = loseWords[Math.floor(Math.random() * loseWords.length)];
+            document.getElementById('moles-overlay-text').style.color = "var(--wrong)";
+        }
+        
+        document.getElementById('moles-next-btn').style.display = 'none';
+        document.getElementById('moles-overlay').classList.remove('hidden');
+    }
+
+    function molesNextLevel() {
+        if (moleLevel < 21) {
+            startMoles(moleLevel + 1);
+        }
+    }
+
+    // ==========================================
+    // ИНИЦИАЛИЗАЦИЯ
+    // ==========================================
+    window.onload = () => {
+        updateMenuBadges();
+        
+        const savedApp = localStorage.getItem('appMode');
+        if (savedApp && !['menu', 'physics', 'chess', '2048', 'ttt', 'snake', 'moles'].includes(savedApp)) {
+            localStorage.setItem('appMode', 'menu');
+        }
+
+        document.querySelectorAll('.container > div').forEach(el => el.classList.add('hidden'));
+        switchApp(localStorage.getItem('appMode') || 'menu');
+    };
+</script>
+
+</body>
+</html>
